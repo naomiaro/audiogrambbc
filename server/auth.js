@@ -29,6 +29,9 @@ module.exports = (WHITELIST) => {
       }
     }
 
+    // Do not proceed to the next code-block (white-list checking) as that feature is now deprecated.
+    return next();
+    
     var reg = new RegExp("^/(css|fonts|images|favicon|simulcast|whoami)", "i"); // Don't block these requests
     // if (reg.test(req.url) || (req.header('BBC_IDOK') === 'SUCCESS' && isWhitelisted(req.header('BBC_EMAIL')))) {
     if (reg.test(req.url) || (req.header('BBC_EMAIL') && isWhitelisted(req.header('BBC_EMAIL')))) {
