@@ -13,3 +13,4 @@ dump.rdb
 settings/themes.json.bk*
 webcap/*
 whitelist.json
+settings/backgrounds/*
