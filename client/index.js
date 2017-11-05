@@ -5,15 +5,19 @@ var d3 = require("d3"),
     preview = require("./preview.js"),
     minimap = require("./minimap.js"),
     video = require("./video.js"),
-    audio = require("./audio.js");
-global.jQuery = $;
+    audio = require("./audio.js"),
+    path = require("path"),
+    dateFormat = require('dateformat');
+
+global.jQuery = $,
+global.blobs={};
 
 var themesRaw,
     imgFile={},
     media={},
-    blobs={},
     vcsTranscriptTimeout,
-    audioSource = "vcs";
+    audioSource = null,
+    loadingProject = false;
 
 // Load user details
 global.USER = {"name":"Unknown","email":null};
@@ -40,6 +44,13 @@ jQuery.getJSON( "/whoami", function( data ) {
   // End Piwik Code
 
 });
+
+function getVCSList() {
+  jQuery.getJSON( "/vcs/list", function( list ) {
+    console.log(list);
+  });
+}
+getVCSList();
 
 d3.json("/settings/themes.json", function(err, themes){
 
@@ -183,10 +194,11 @@ function submitted() {
         console.log("Reuploading media");
         return reUploadMedia();
       }
+      setBreadcrumb("view", data.id.split("-").shift());
       poll(data.id, 0);
       // Logging
       var fields = [];
-      fields.push({'title': 'New Audiogram Started', 'value': '...' + data.id.split("-").pop(), 'short': true});
+      fields.push({'title': 'New Audiogram Started', 'value': '...' + data.id.split("-").shift(), 'short': true});
       fields.push({'title': 'User', 'value': "<http://ad-lookup.bs.bbc.co.uk/adlookup.php?q=" + USER.email + "|" + USER.name + ">", 'short': true});
       fields.push({'title': 'Theme', 'value': info.theme, 'short': true});
       fields.push({'title': 'Duration', 'value': info.duration, 'short': true});
@@ -206,6 +218,7 @@ function reUploadMedia() {
 }
 
 function uploadMedia(type, blob) {
+  if (loadingProject) return false;
   // Reset
     delete(media[type]);
     delete(blobs[type]);
@@ -233,6 +246,7 @@ function uploadMedia(type, blob) {
           // Only use response if the source name hasn't changed
           // (if it has, prob because another call was made before this one returned a response)
           media[data.type].path = data.path;
+          media[data.type].mimetype = data.mimetype;
           if (data.framesDir) media[data.type].framesDir = data.framesDir;
         }
       },
@@ -301,10 +315,121 @@ function pad(n, width, z) {
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 }
 
+function getProjects() {
+  // Load previously saved projects
+  $.ajax({
+    url: "/getProjects/",
+    error: error,
+    dataType: "json",
+    success: function(projects){
+      jQuery("#landing .saved .empty").hide();
+      var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      // Loop through each project
+      for (var i = projects.length - 1; i >= 0; i--) {
+        // Add new project
+        var el = jQuery("#landing .saved [data-id='template']").clone().appendTo("#landing .saved");
+        if (jQuery("#landing .saved [data-audioId='" + projects[i].audioId + "']:first").length) {
+          // If audioId already exists, increment the version number
+          var versions = +jQuery("#landing .saved [data-audioId='" + projects[i].audioId + "']:first .versions").text().split(" ")[0] + 1;
+          jQuery("#landing .saved [data-audioId='" + projects[i].audioId + "']:first .versions").text( versions + " versions" );
+          el.find(".versions").text();
+          jQuery("#landing .saved [data-audioId='" + projects[i].audioId + "'] .fa-link").removeClass("hidden");
+          el.hide();
+        }
+        el.find(".fa-link").removeClass("hidden");
+        el.attr("data-id", projects[i].id);
+        el.attr("data-audioId", projects[i].audioId);
+        el.find(".name").text( projects[i].audioId.split("-").shift() + " / " + projects[i].id.split("-").shift() );
+        var date = new Date(projects[i].date);
+        // el.find(".date").text(days[date.getDay()] + ", " + date.getHours() + ":" + pad(date.getMinutes(),2));
+        el.find(".date").text(dateFormat(date, "dd mmm, HH:MM"));
+        el.find(".duration").text(Math.round(projects[i].duration) + "s");
+        el.find(".user").text(projects[i].user);
+        el.find(".box-icon").css("background-image", "url(/video/" + projects[i].id + ".jpg)");
+      }
+    }
+  });
+}
+
+function expandProjectVersions(e) {
+  var audioId = jQuery(this).parents("[data-audioId]").attr("data-audioId");
+  if (!audioId) return false;
+  var count = jQuery( "#landing .saved [data-audioId='" + audioId + "']" ).length,
+      i = count;
+  jQuery( "#landing .saved [data-audioId='" + audioId + "']" ).each(function( index ) {
+    jQuery(this).find(".versions").replaceWith(i + " of " + count);
+    i--;
+  });
+  jQuery("#landing .saved [data-audioId='" + audioId + "']").show();
+  jQuery("#landing .saved [data-audioId='" + audioId + "'] .info-box-content").effect("highlight");
+  stopIt(e);
+}
+
+function newProject(type) {
+  type = type || d3.event ? d3.event.currentTarget.attributes["data-type"].value : null;
+  if (!type) return false;
+  setBreadcrumb("new");
+  audioSource = type;
+  if (type=="upload") {
+    jQuery("#input-audio").click();
+  } else {
+    jQuery("#new-" + type).modal('show');
+  }
+
+  console.log(d3.event);
+}
+
+function loadProject(e) {
+
+  function fetchProject(id, cb) {
+    jQuery.getJSON( "/getProject/" + id, function( data ) {
+      cb(data);
+    });
+  }
+
+  var id = jQuery(this).attr("data-id");
+  if (!id) return false;
+  loadingProject = true;
+  setBreadcrumb("edit", id.split("-").shift());
+  // jQuery.getJSON( "/getProject/" + id, function( data ) {
+  fetchProject(id, function(data){
+    console.log(data);
+    var q = d3.queue(1);
+    // Load media
+      media = data.media;
+      for (var type in media) {
+        q.defer(loadMediaFromURL, type, path.join("/media/", media[type].dest));
+      }
+    // Load theme
+      jQuery("#input-theme").val(data.theme.name);
+      updateTheme(data.theme);
+    // Load transcript
+      q.defer(function(data, cb){
+        var script = JSON.parse(data.transcript);
+        if (script) {
+          transcript.load(script);
+        } else {
+          generateTranscript(blobs.audio);
+        }
+        cb(null);
+      }, data);
+    // Load caption
+    // Update trim, and finish load
+    q.await(function(err){
+      updateTrim([data.start, data.end]);
+      video.update(path.join("/video/", id + ".mp4"), preview.theme());
+      setClass("rendered");
+      loadingProject = false;
+    });
+  });
+}
+
 // Once images are downloaded, set up listeners
 function initialize(err, themesWithImages) {
 
   console.log("Audiogram initializing...");
+
+  getProjects();
 
   // Populate dropdown menu
   d3.select("#input-theme")
@@ -390,6 +515,11 @@ function initialize(err, themesWithImages) {
 
   // Trim input listeners
   d3.selectAll("#start, #end").on("change", updateTrim).each(updateTrim);
+
+  // Project listeners
+  d3.selectAll("#landing .new > [data-type]").on("click", newProject);
+  jQuery(document).on('click', '#landing .saved [data-id]', loadProject);
+  jQuery(document).on('click', '#landing .saved .versions', expandProjectVersions);
 
   // Key listeners
   d3.select(document).on("keydown", function(){
@@ -480,6 +610,9 @@ function initialize(err, themesWithImages) {
 
   d3.selectAll("a[href^='#source-tab-']").on("click", sourceUpdate);
 
+  // Breadcrumbs
+  d3.select("section.breadcrumbs > span").on("click", clickBreadcrumb);
+
   // If there's an initial piece of audio (e.g. back button) load it
   d3.select("#input-audio").on("change", updateAudioFile).each(updateAudioFile);
 
@@ -544,12 +677,19 @@ function initialize(err, themesWithImages) {
     updateTheme(d3.select(sel.options[sel.selectedIndex]).datum());
   });
 
+  $(function() {
+    setClass("landing");
+  });
+
 }
 
 function windowResize() {
-  if (!jQuery("body").is(".loading,.rendered")) {
+  if (!jQuery("body").is(".loading,.rendered,.landing")) {
     preview.redraw();
-    minimap.width(jQuery("#sourceWrapper .tab-content").width());
+    var hidden = d3.select("#minimap").classed("hidden");
+    d3.select("#minimap").classed("hidden", false);
+    minimap.width(jQuery("#minimap .page-header").width());
+    d3.select("#minimap").classed("hidden", hidden);
   }
 }
 
@@ -849,23 +989,28 @@ function exportTranscript() {
     document.getElementById("trasncript-export-dummy").click();
   }
 
-  logger.info(USER.name + " exported the transcript (format: " + filename + ")");
+  logger.info(USER.name + " exported the transcript (" + format + ")");
 
 
 }
 
-function loadAudioFromURL(url) {
+function loadMediaFromURL(type, url, cb) {
   var blob = null;
   var xhr = new XMLHttpRequest(); 
   xhr.open("GET", url); 
   xhr.responseType = "blob";
   xhr.onload = function() {
-    updateAudioFile(xhr.response);
+    blobs[type] = xhr.response;
+    if (type=="audio") {
+      updateAudioFile(xhr.response, cb);
+    } else {
+      updateImage(null, type, xhr.response, cb);
+    }
   }
   xhr.send();
 }
 
-function updateAudioFile(blob) {
+function updateAudioFile(blob, cb) {
 
   d3.select("#row-audio").classed("error", false);
   audio.pause();
@@ -892,13 +1037,16 @@ function updateAudioFile(blob) {
     return;
   }
 
-  if (audioSource!="vcs") {
-    clearTimeout(vcsTranscriptTimeout);
-    generateTranscript(audioFile);
-  } else {
-    // Get transcript
-    clearTimeout(vcsTranscriptTimeout);
-    vcsTranscript(id, audioFile);
+  if (!loadingProject) {
+    if (audioSource!="vcs") {
+      // Generate transcript
+      clearTimeout(vcsTranscriptTimeout);
+      generateTranscript(audioFile);
+    } else {
+      // Get transcript from WoN
+      clearTimeout(vcsTranscriptTimeout);
+      vcsTranscript(id, audioFile);
+    }
   }
 
   d3.select("#splash").classed("hidden", true);
@@ -915,10 +1063,13 @@ function updateAudioFile(blob) {
     if (err) {
       d3.select("#row-audio").classed("error", true);
       setClass("error", "Error decoding audio file (" + filename + ")");
-    } else {
+      if (cb) cb(err);
+    } else if (!loadingProject) {
       setClass(null);
       uploadMedia("audio", audioFile);
       if (!blob) logger.info(USER.name + " uploaded a local audio file: " + filename);
+    } else if (cb) {
+      cb(null);
     }
 
     d3.selectAll("#minimap, #submit").classed("hidden", !!err);
@@ -951,12 +1102,15 @@ function txGetDate(time) {
 }
 
 function txSearch() {
-  setClass(null);
   var now = new Date(),
       min = now.getTime() - (12*60*60*1000),
       start = txGetDate($("#input-tx-start").val()),
       end = txGetDate($("#input-tx-end").val()),
       vpid = $("#input-tx-vpid").val();
+  if (!vpid) {
+    jQuery("#input-tx-vpid").effect("highlight");
+    return;
+  }
   console.log(start);
   console.log(end);
   if (start.getTime() < min) {
@@ -964,8 +1118,11 @@ function txSearch() {
   } else if (end.getTime() - start.getTime() > (15*60*1000)) {
     return setClass("error", "Please select a broadcast window < 15 minutes. If a larger window would be useful, let us know. (" + vpid + ", " + start + ")");
   }
+  setClass(null);
+  jQuery("#new-tx").modal('hide');
   d3.select("#loading-message").text("Fetching " + vpid + " media from " + start.toLocaleString());
   setClass("loading");
+  jQuery("audio").attr("data-type", "tx");
   var postData = {vpid: vpid, start: start.getTime()/1000, end: end.getTime()/1000, processStart: performance.now()};
   jQuery.post("/simulcast", postData)
         .fail(function(xhr, status, error) {
@@ -1001,7 +1158,7 @@ function txPoll(url, req) {
           logger.info(USER.name + " imported " + data.type + " from " + vpid + processDuration);
         }
         if (data.type==="audio") {
-          loadAudioFromURL(data.src);
+          loadMediaFromURL("audio", data.src);
         } else if (data.type==="video") {
           var blob = null;
           var xhr = new XMLHttpRequest(); 
@@ -1056,7 +1213,7 @@ function vcsAudio(url, item) {
   setClass("loading");
 
   // Get aduio
-  loadAudioFromURL("/vcs/media/" + id);
+  loadMediaFromURL("audio", "/vcs/media/" + id);
 
   item = item || d3.select("#input-vcs").property("value");
   logger.info(USER.name + " imported VCS Item #" + item);
@@ -1122,7 +1279,7 @@ function setBackground() {
   d3.select("#loading-message").text("Loading video...");
   setClass("loading");
   $("#videoload a").attr("data-used", true);
-  var type = $("#sourceWrapper li.active a").attr("href").split("-").pop();
+  var type = jQuery("audio").attr("data-type");
   if (type=="upload") {
     $("#input-background")[0].files = $("#input-audio")[0].files;
     setClass(null);
@@ -1135,7 +1292,7 @@ function setBackground() {
   d3.select("#videoload").classed("hidden", true);
 }
 
-function updateImage(event, type, blob) {
+function updateImage(event, type, blob, cb) {
 
     type = type ? type : event ? event.target.name : null;
     
@@ -1151,6 +1308,7 @@ function updateImage(event, type, blob) {
         uploadMedia(type, null);
       });
       setClass(null);
+      if (cb) cb(null);
       return true;
     }
 
@@ -1204,6 +1362,7 @@ function updateImage(event, type, blob) {
 
     }
     setClass(null);
+    if (cb) cb(null);
 
 }
 
@@ -1242,6 +1401,11 @@ function showAdvancedConfig() {
 }
 
 function updateTheme(theme) {
+  if (theme && themesRaw[theme.name]) {
+    theme.backgroundImageFile = jQuery.extend(true, {}, themesRaw[theme.name].backgroundImageFile);
+    theme.backgroundImageInfo = jQuery.extend(true, {}, themesRaw[theme.name].backgroundImageInfo);
+    theme.foregroundImageFile = jQuery.extend(true, {}, themesRaw[theme.name].foregroundImageFile);
+  }
   var theme = theme || d3.select(this.options[this.selectedIndex]).datum();
   preview.theme(theme);
   updateImage();
@@ -1252,9 +1416,6 @@ function updateTheme(theme) {
   $("#videoload a[data-used=true]").parent().removeClass("hidden");
   // Reset custom config fields
   jQuery(".themeConfig").each(function() {
-    if (this.name.includes("caption.fontWeight")) {
-      console.log(this.name);
-    }
     if (this.name!="size") {
       // XXX hack to set subproperties (eg: theme.prop.subprob) without the use of `eval`. Need a nicer wary of doing it.
       prop = this.name.split(".");
@@ -1268,9 +1429,10 @@ function updateTheme(theme) {
     }
   });
   // Force sizes if theme doesn't support all of them
-  jQuery("#input-size [data-orientation='landscape']").attr("disabled", (theme.backgroundImage && !theme.backgroundImage.landscape) || (theme.foregroundImage && !theme.foregroundImage.landscape) ? true : false);
-  jQuery("#input-size [data-orientation='square']").attr("disabled", (theme.backgroundImage && !theme.backgroundImage.square) || (theme.foregroundImage && !theme.foregroundImage.square) ? true : false);
-  jQuery("#input-size [data-orientation='portrait']").attr("disabled", (theme.backgroundImage && !theme.backgroundImage.portrait) || (theme.foregroundImage && !theme.foregroundImage.portrait) ? true : false);
+  jQuery("#input-size [data-orientation='landscape']").attr("disabled", (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.landscape) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.landscape) ? true : false);
+  jQuery("#input-size [data-orientation='square']").attr("disabled", (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.square) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.square) ? true : false);
+  jQuery("#input-size [data-orientation='portrait']").attr("disabled", (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.portrait) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.portrait) ? true : false);
+  jQuery("#input-size").val(jQuery("#input-size option[data-orientation='" + theme.orientation + "']:not(':disabled'):first").val());
   if (jQuery("#input-size option:selected").is(":disabled")) {
     jQuery("#input-size").val(jQuery("#input-size option:not(':disabled'):first").val());
   }
@@ -1396,8 +1558,12 @@ function preloadImages(themes) {
 }
 
 function setClass(cl, msg, log) {
-  d3.select("body").attr("class", cl || null);
-  d3.selectAll("#error, #success").text(msg || "");
+  if (jQuery(".modal").hasClass("in") && msg) {
+    alert(msg);
+  } else {
+    d3.select("body").attr("class", cl || null);
+    d3.selectAll("#error, #success").text(msg || "");
+  }
   // Log warning
   if ( (log || log===undefined && cl=="error") && msg ) {
     // Get stack trace
@@ -1409,6 +1575,29 @@ function setClass(cl, msg, log) {
     logger.warn(msg, err, USER);
   }
   jQuery('html,body').scrollTop(0);
+}
+
+function setBreadcrumb(level, id) {
+  jQuery("section.breadcrumbs > span").removeClass("active");
+  if (id) {
+    jQuery("#breadcrumb_edit span").text(id);
+  }
+  jQuery("#breadcrumb_" + level).addClass("active");
+  jQuery("#breadcrumb_" + level).prevAll().removeClass("hidden");
+  jQuery("#breadcrumb_" + level).nextAll().addClass("hidden");
+  d3.select("#breadcrumb_new").classed("hidden", level!="new");
+}
+function clickBreadcrumb(level) {
+  level = level || d3.event ? d3.event.currentTarget.attributes["id"].value.split("_").pop() : null;
+  if (!level) return false;
+  if (level=="home") {
+    if (!confirm("Are you sure you want to abandon your current proejct?")) return;
+    getProjects();
+    setClass("landing");
+  } else if (level=="edit") {
+    setClass(null);
+  }
+  setBreadcrumb(level);
 }
 
 function statusMessage(result) {

@@ -55,7 +55,9 @@ function route(req, res) {
   if (req.body.media.background) {
     var backgroundSrc = req.body.media.background.path,
         backgroundId = backgroundSrc.split(path.sep).reverse()[1],
-        backgroundImagePath = "background/" + backgroundId;
+        backgroundExt = req.body.media.background.mimetype.split("/").pop(),
+        backgroundImagePath = "background/" + backgroundId + "." + backgroundExt;
+    req.body.media.background.dest = backgroundImagePath;
     transports.uploadBackground(backgroundSrc, backgroundImagePath, function(err) {
       if (err) {
         throw err;
@@ -66,7 +68,9 @@ function route(req, res) {
   if (req.body.media.foreground) {
     var foregroundSrc = req.body.media.foreground.path,
         foregroundId = foregroundSrc.split(path.sep).reverse()[1],
-        foregroundImagePath = "foreground/" + foregroundId;
+        foregroundExt = req.body.media.foreground.mimetype.split("/").pop(),
+        foregroundImagePath = "foreground/" + foregroundId + "." + foregroundExt;
+    req.body.media.foreground.dest = foregroundImagePath;
     transports.uploadBackground(foregroundSrc, foregroundImagePath, function(err) {
       if (err) {
         throw err;
@@ -76,7 +80,9 @@ function route(req, res) {
 
   var audioSrc = req.body.media.audio.path,
       audioId = audioSrc.split(path.sep).reverse()[1],
-      audioPath = "audio/" + jobId;
+      audioExt = req.body.media.audio.mimetype.split("/").pop(),
+      audioPath = "audio/" + jobId + "." + audioExt;
+  req.body.media.audio.dest = audioPath;
   transports.uploadAudio(audioSrc, audioPath, function(err) {
 
     if (err) {

@@ -14,6 +14,7 @@ var whitelist = require("./whitelist.js"),
     logger = require("../lib/logger/"),
     render = require("./render.js"),
     status = require("./status.js"),
+    projects = require("./projects.js"),
     fonts = require("./fonts.js"),
     whoami = require("./whoami.js"),
     upload = require("./upload.js"),
@@ -93,6 +94,7 @@ app.post("/themes/add", [multer({ dest: "./settings/backgrounds" }).fields(files
 // If not using S3, serve videos locally
 if (!serverSettings.s3Bucket) {
   app.use("/video/", express.static(path.join(serverSettings.storagePath, "video")));
+  app.use('/media', express.static(serverSettings.storagePath));
 }
 
 // Serve custom fonts
@@ -102,6 +104,10 @@ app.get("/fonts/fonts.js", fonts.js);
 if (serverSettings.fonts) {
   app.get("/fonts/:font", fonts.font);
 }
+
+// Get projects
+app.get("/getProjects/", projects.getList);
+app.get("/getProject/:id", projects.getProject);
 
 // Get user info
 app.get("/whoami/", whoami);
@@ -120,8 +126,7 @@ app.get("/ichef/:pid/", ichef.pipe);
 app.get("/webcap/:file?", webcap);
 
 // VCS
-app.get("/vcs/search/:id/", vcs.search);
-app.get("/vcs/transcript/:id/", vcs.transcript);
+app.get("/vcs/list", vcs.list);
 app.get("/vcs/media/:id/", vcs.media);
 
 // Get simulcast media

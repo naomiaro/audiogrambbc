@@ -1,4 +1,190 @@
+.landing .breadcrumbs,
+.loading:not(.generating) .breadcrumbs {
+  display: none;
+}
+.breadcrumbs {
+    border: none !important;
+    padding: 10px 15px !important;
+    margin: -10px 0 10px 0 !important;
+    background: #ffffff !important;
+}
+.rendered .breadcrumbs {
+  width: 664px;
+  margin: -10px auto 10px auto !important;
+}
+.breadcrumbs a {
+  text-decoration: underline;
+}
+.breadcrumbs > span:not(:first-child)::before {
+  content: " > ";
+  padding: 0 5px;
+}
+#breadcumb_home {
+  font-weight: bold;
+}
+.breadcrumbs > span.active a {
+  color: #000000 !important;
+  cursor: default !important;
+  text-decoration: none !important;
+}
 
+
+#progressbar {
+  margin-bottom: 30px;
+  overflow: hidden;
+  /*CSS counters to number the steps*/
+  counter-reset: step;
+}
+#progressbar li {
+  list-style-type: none;
+  color: #b60000;
+  text-transform: uppercase;
+  font-size: 9px;
+  width: 25%;
+  float: left;
+  position: relative;
+  text-align: center;
+}
+#progressbar li.complete {
+  text-decoration: underline;
+  cursor: pointer;
+}
+#progressbar li:before {
+  content: counter(step);
+  counter-increment: step;
+  width: 20px;
+  line-height: 20px;
+  display: block;
+  font-size: 10px;
+  color: #333;
+  background: white;
+  border-radius: 3px;
+  margin: 0 auto 5px auto;
+}
+/*progressbar connectors*/
+#progressbar li:after {
+  content: '';
+  width: 100%;
+  height: 2px;
+  background: white;
+  position: absolute;
+  left: -50%;
+  top: 9px;
+  z-index: -1; /*put it behind the numbers*/
+}
+#progressbar li:first-child:after {
+  /*connector not needed before the first step*/
+  content: none; 
+}
+/*marking active/completed steps green*/
+/*The number of the step and the connector before it = green*/
+#progressbar li.complete:before,  #progressbar li.complete:after,
+#progressbar li.active:before,  #progressbar li.active:after{
+  background: #b60000;
+  color: white;
+}
+
+#landing {
+  margin-top: -30px;
+}
+
+#landing h2 {
+  max-width: 800px;
+  margin: 14px auto;
+  padding: 5px 0;
+  border-bottom: 1px solid #aaa;
+  font-size: 25px;
+}
+
+#landing > p {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3px 15px;
+}
+
+#landing .row {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+#landing .info-box {
+  cursor: pointer;
+  display: block;
+  background: #fff;
+  width: 100%;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  border-radius: 2px;
+  margin-bottom: 15px;
+}
+#landing .info-box:hover {
+  box-shadow: 0 0px 5px rgba(0, 0, 0, 0.4);
+}
+#landing .new .info-box {
+  min-height: 60px;
+}
+#landing .saved .info-box {
+  min-height: 90px;
+}
+
+#landing .saved [data-id='template'] {
+  display: none;
+}
+
+#landing .info-box .info-box-content i:not(:first-child) {
+  margin-left: 10px;
+}
+
+#landing .info-box .info-box-content .name {
+  font-style: italic;
+}
+
+#landing .box-icon {
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 2px;
+  margin-right: 20px;
+  display: block;
+  float: left;
+  text-align: center;
+  font-size: 45px;
+  background: rgba(0,0,0,0.2);
+}
+#landing .new .box-icon {
+  background-size: 40px !important;
+  height: 60px;
+  width: 60px;
+  line-height: 60px;
+}
+#landing .saved .box-icon {
+  background-color: #e6e6e6 !important;
+  background-size: auto 90px !important;
+  height: 90px;
+  width: 90px;
+  line-height: 90px;
+}
+
+#landing .new .info-box-content {
+  line-height: 60px;
+}
+#landing .saved .info-box-content {
+  line-height: 37px;
+}
+#landing .saved .info-box-content div:nth-child(2) {
+  margin: -12px 0;
+}
+
+#landing .saved .info-box-content .fa-link {
+  position: absolute;
+  top: 11px;
+  right: 20px;
+  color: #ccc;
+}
+#landing .saved .info-box-content .fa-link.hover {
+  color: #000000;
+}
 
 #unauth,
 #whitelist {
@@ -182,7 +368,13 @@ select.transcript-speaker {
     margin: 7px 0 3px 0;
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+}
+
 div.wrapper {
+  flex: 1 0 auto;
   width: 100%;
   max-width: 1500px;
   padding: 20px;
@@ -527,15 +719,18 @@ g.time line {
   margin: auto;
 }
 
+#landing,
 #loading,
 #error,
 #success,
 #generated,
+.landing #loaded,
 .loading #loaded,
 .rendered #loaded {
   display: none;
 }
 
+.landing #landing,
 .loading #loading,
 .error #error,
 .success #success,

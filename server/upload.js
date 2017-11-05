@@ -8,7 +8,7 @@ module.exports = function(req, res) {
 		mimetype = req.files['file'][0].mimetype,
 		name = req.files['file'][0].originalname;
 
-	var response = {type: req.body.type, name: name, path: path, size: size};
+	var response = {type: req.body.type, name: name, path: path, size: size, mimetype: mimetype};
 
 	// Process video file
 	if (req.body.type=="background" && mimetype.startsWith("video")) {

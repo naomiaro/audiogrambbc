@@ -147,8 +147,10 @@ function redraw() {
   renderer.bbcDog(bbcDog || null);
 
   // Render images
-  renderer.foregroundImage(img.foreground ? img.foreground : theme.foregroundImageFile ? theme.foregroundImageFile[theme.orientation] : null);
-  renderer.backgroundImage(img.background ? img.background : theme.backgroundImageFile ? theme.backgroundImageFile[theme.orientation] : null);
+  var foreground = img.foreground ? img.foreground : theme.foregroundImageFile ? theme.foregroundImageFile[theme.orientation] : null;
+  var background = img.background ? img.background : theme.backgroundImageFile ? theme.backgroundImageFile[theme.orientation] : null;
+  renderer.foregroundImage(jQuery.isEmptyObject(foreground) ? null : foreground);
+  renderer.backgroundImage(jQuery.isEmptyObject(background) ? null : background);
 
   renderer.drawFrame(context, {
     caption: theme.caption.text,

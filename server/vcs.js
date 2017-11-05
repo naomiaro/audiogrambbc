@@ -1,21 +1,31 @@
+'use strict';
+
 var request = require('request'),
+    xmlParser = require('xml2json'),
+	path = require('path'),
     fs = require("fs");
 
-function search(req, res) {
-	var requestURL = "http://vcsio.newslabs.co/vcs/search/" + req.params.id;
-	request(requestURL, function (error, response, body) {
-		return res.json(response);
+function list(req, res) {
+	const dir = path.join(__dirname, "../vcs");
+	let items = [];
+	fs.readdir(dir, function(err, files) {
+		for (var i = 0; i < files.length; i++) {
+			if (files[i].split('.')[1] === 'xml') {
+				var split = files[i].split('#'),
+					id = split[0],
+					name = split[1].split('.')[0];
+				items.push({id, name});
+			}
+		}
+		return res.json(items);
 	});
+
+// 	request(requestURL, function (error, response, body) {
+// 		return res.json(response);
+// 	});
 }
 
-function transcript(req, res) {
-	var requestURL = "http://vcsio.newslabs.co/vcs/transcript/" + req.params.id;
-	request(requestURL, function (error, response, body) {
-		return res.json(response);
-	});
-}
-
-function pipeMedia(req, res) {
+function media(req, res) {
 	var requestURL = "http://zgbwclabsocto4.labs.jupiter.bbc.co.uk/vcs/media/" + req.params.id;
 	var reply = request(requestURL);
 	req.pipe(reply);
@@ -23,7 +33,6 @@ function pipeMedia(req, res) {
 }
 
 module.exports = {
-  search: search,
-  transcript: transcript,
-  media: pipeMedia
+  list,
+  media
 };
