@@ -49,6 +49,8 @@ function validate(req, res, next) {
 
 function route(req, res) {
 
+    console.log(req.body.media);
+
   console.log("RLW routing");
   var jobId = uuidv4();
 

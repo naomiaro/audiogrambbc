@@ -172,13 +172,14 @@ function loadAudio(audioFile, cb) {
     .await(function(err, data){
 
       if (err) {
-        return cb(err);
+        return cb ? cb(err) : err;
       }
 
       file = audioFile;
       minimap.redraw(data.peaks);
 
-      cb(err);
+      if (cb) cb(err);
+      return;
 
     });
 

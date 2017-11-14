@@ -108,11 +108,33 @@ function _onBrushEnd(_) {
   onBrushEnd = _;
 }
 
+function updateTrim(extent) {
+    extent = extent || [];
+    var start = extent[0] || parseFloat(d3.select('#start').property('value'));
+    var end = extent[1] || parseFloat(d3.select('#end').property('value'));
+    if (!isNaN(start) && !isNaN(end)) {
+        if (start > end) {
+            end = extent[0] || parseFloat(d3.select('#start').property('value'));
+            start = extent[1] || parseFloat(d3.select('#end').property('value'));
+        }
+        var duration = Math.round(100 * audio.duration()) / 100;
+        start = start / duration;
+        end = end / duration;
+        drawBrush({ start: start, end: end });
+    }
+}
+
+function init() {
+    d3.selectAll("#start, #end").on("change", updateTrim).each(updateTrim);
+}
+
 module.exports = {
   time: time,
   redraw: redraw,
   drawBrush: drawBrush,
   width: _width,
   onBrush: _onBrush,
-  onBrushEnd: _onBrushEnd
+  onBrushEnd: _onBrushEnd,
+  updateTrim,
+  init
 };

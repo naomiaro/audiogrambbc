@@ -33,6 +33,12 @@ function update(url, theme) {
   d3.select(video).select("source")
     .attr("src", url);
 
+  d3.select('#return').on('click', function() {
+      d3.event.preventDefault();
+      video.kill();
+      utils.setClass(null);
+  });
+
   // SMP
   smpRequireMap = {
     'jquery-1.9'  : 'https://static.bbci.co.uk/frameworks/jquery/0.3.0/sharedmodules/jquery-1.9.1',

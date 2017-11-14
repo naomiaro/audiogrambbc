@@ -14,3 +14,4 @@ settings/themes.json.bk*
 webcap/*
 whitelist.json
 settings/backgrounds/*
+package-lock.json
