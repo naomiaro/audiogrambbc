@@ -272,5 +272,6 @@ d3.select('#videoload a').on('click', setBackground);
 
 module.exports = {
     raw: _raw,
-    update
+    update,
+    updateImage
 }

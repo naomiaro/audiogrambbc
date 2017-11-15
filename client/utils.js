@@ -1,6 +1,18 @@
-const projects = require('./projects');
+function navigate(state, msg, log) {
+    const classMap = {
+      home: "landing",
+      new: null,
+      edit: null,
+      generate: "loading",
+      view: "rendered"
+    };
+    setBreadcrumb(state);
+    const cl = classMap[state];
+    setClass(cl, msg, log);
+}
 
 function setClass(cl, msg, log) {
+  cl = LOADING ? 'loading' : cl;
   if (jQuery('.modal').hasClass('in') && msg) {
     alert(msg);
   } else {
@@ -63,7 +75,7 @@ function error(err) {
     }
     logger.error(error.message, error, USER);
     d3.select('#loading-message').text('Loading...');
-    utils.setClass('error', error.message, false);
+    setClass('error', error.message, false);
 }
 
 
@@ -83,14 +95,61 @@ function clickBreadcrumb(level) {
     if (!level) return false;
     if (level == 'home') {
         if (!confirm('Are you sure you want to abandon your current proejct?')) return;
-        projects.getProjects();
-        utils.setClass('landing');
+        const projectsInit = require("./projects").init;
+        projectsInit();
+        setClass('landing');
     } else if (level == 'edit') {
-        utils.setClass(null);
+        setClass(null);
     }
     setBreadcrumb(level);
 }
 d3.select('section.breadcrumbs > span').on('click', clickBreadcrumb);
+
+function statusMessage(result) {
+    const getBlobs = require("./media").blobs;
+    const blobs = getBlobs();
+  switch (result.status) {
+    case "queued":
+      return (
+        "Waiting for other jobs to finish, #" +
+        (result.position + 1) +
+        " in queue"
+      );
+    case "audio-download":
+      return "Downloading audio for processing";
+    case "trim":
+      return "Trimming audio";
+    case "video":
+      return "Processing background video";
+    case "probing":
+      return "Probing audio file";
+    case "waveform":
+      return "Analyzing waveform";
+    case "renderer":
+      return "Initializing renderer";
+    case "frames":
+      if (
+        !result.framesComplete &&
+        blobs.background &&
+        blobs.background.type.startsWith("video")
+      ) {
+        return "Processing background video";
+      }
+      var msg = "Generating frames";
+      if (result.numFrames) {
+        msg += ", " + Math.round(100 * (result.framesComplete || 0) / result.numFrames) + "% complete";
+      }
+      return msg;
+    case "combine":
+      return "Combining frames with audio";
+    case "subtitles":
+      return "Overlaying subtitles";
+    case "ready":
+      return "Cleaning up";
+    default:
+      return JSON.stringify(result);
+  }
+}
 
 module.exports = {
     setClass,
@@ -98,5 +157,7 @@ module.exports = {
     stopIt,
     pad,
     error,
-    setBreadcrumb
+    setBreadcrumb,
+    statusMessage,
+    navigate
 }

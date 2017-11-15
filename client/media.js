@@ -3,11 +3,7 @@ const video = require('./video');
 const preview = require('./preview');
 const transcript = require('./transcript');
 const logger = require('./slack');
-
-function setClass(test) {
-    const utils = require('./utils');
-    utils.setClass(test);
-}
+const utils = require('./utils');
 
 const MEDIA = {};
 const BLOBS = {};
@@ -26,11 +22,12 @@ function loadFromURL(type, url, cb) {
     xhr.open('GET', url);
     xhr.responseType = 'blob';
     xhr.onload = function() {
-        blobs[type] = xhr.response;
+        BLOBS[type] = xhr.response;
         if (type == 'audio') {
-            updateAudioFile(xhr.response, cb);
+            update(xhr.response, cb);
         } else {
-            updateImage(null, type, xhr.response, cb);
+            const themeHelper = require("./themeHelper");
+            themeHelper.updateImage(null, type, xhr.response, cb);
         }
     };
     xhr.send();
@@ -48,7 +45,7 @@ async function update(blob, cb) {
     if (!audioFile) {
         jQuery('#minimap').removeClass('hidden');
         preview.file(null);
-        setClass(null);
+        utils.setClass(null);
         return true;
     }
 
@@ -61,7 +58,7 @@ async function update(blob, cb) {
     var size = audioFile.size / 1000000;
 
     if (size >= 150) {
-        setClass(
+        utils.setClass(
             'error',
             'Maximum upload size is 150MB. (Audio: ' +
                 filename +
@@ -72,23 +69,24 @@ async function update(blob, cb) {
         return;
     }
 
-    transcript.generate(audioFile);
+    if (!LOADING) transcript.generate(audioFile);
 
     jQuery('#splash').addClass('hidden');
     jQuery('#subtitles, #transcript').removeClass('hidden');
     jQuery('#loading-message').text('Analyzing...');
-    setClass('loading');
+    utils.setClass('loading');
 
     const err = await preview.loadAudio(audioFile);
 
     jQuery('#minimap, #submit').removeClass('hidden');
+
     if (err) {
         jQuery('#row-audio').addClass('error');
-        setClass('error', 'Error decoding audio file (' + filename + ')');
+        utils.setClass('error', 'Error decoding audio file (' + filename + ')');
         if (cb) cb(err);
         jQuery('#minimap, #submit').addClass('hidden');
     } else {
-        setClass(null);
+        utils.setClass(null);
         await upload('audio', audioFile);
         if (!blob)
             logger.info(

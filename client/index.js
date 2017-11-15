@@ -2,7 +2,6 @@ global.d3 = require("d3");
 global.jQuery  = require("jquery");
 global.$ = jQuery;
 
-const dateFormat = require('dateformat');
 const path = require("path");
 
 const utils = require('./utils');
@@ -69,8 +68,6 @@ function initialize(err, themesWithImages) {
 
   console.log("Initializing...");
 
-  projects.getProjects();
-
   // Populate dropdown menu
   d3.select("#input-theme")
     .on("change", themeHelper.update)
@@ -82,7 +79,7 @@ function initialize(err, themesWithImages) {
         return d.name;
       });
 
-  // Initialize UI elements
+  // Initialize components
   audio.init();
   ichef.init();
   mediaSelector.init();
@@ -183,44 +180,6 @@ function preloadImages(themes) {
       return cb(err, theme);
     });
 
-  }
-
-}
-
-function statusMessage(result) {
-
-  switch (result.status) {
-    case "queued":
-      return "Waiting for other jobs to finish, #" + (result.position + 1) + " in queue";
-    case "audio-download":
-      return "Downloading audio for processing";
-    case "trim":
-      return "Trimming audio";
-    case "video":
-      return "Processing background video";
-    case "probing":
-      return "Probing audio file";
-    case "waveform":
-      return "Analyzing waveform";
-    case "renderer":
-      return "Initializing renderer";
-    case "frames":
-      if (!result.framesComplete && blobs.background && blobs.background.type.startsWith("video")) {
-        return "Processing background video";
-      }
-      var msg = "Generating frames";
-      if (result.numFrames) {
-        msg += ", " + Math.round(100 * (result.framesComplete || 0) / result.numFrames) + "% complete";
-      }
-      return msg;
-    case "combine":
-      return "Combining frames with audio";
-    case "subtitles":
-      return "Overlaying subtitles";
-    case "ready":
-      return "Cleaning up";
-    default:
-      return JSON.stringify(result);
   }
 
 }

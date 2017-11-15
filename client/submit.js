@@ -140,9 +140,9 @@ function poll(id) {
                     logger.success(result);
                 } else if (result.status === 'error') {
                     console.log('RLW status error');
-                    error(result.error);
+                    utils.error(result.error);
                 } else {
-                    d3.select('#loading-message').text(statusMessage(result));
+                    d3.select('#loading-message').text(utils.statusMessage(result));
                     poll(id);
                 }
             }
@@ -152,6 +152,9 @@ function poll(id) {
 
 function init() {
     d3.select('#submit').on('click', validate);
+    jQuery(document).on("click", "button#view", function() {
+      utils.setBreadcrumb('view');
+    });
 }
 
 module.exports = {

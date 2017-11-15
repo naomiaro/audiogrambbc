@@ -136,7 +136,10 @@ function resize(width, height) {
 
 function redraw() {
 
-  video.kill(); //'ed the radio star...
+  jQuery("#submit").removeClass("hidden");
+  jQuery("#view").addClass("hidden");
+
+  // video.kill(); //'ed the radio star...
 
   resize(theme.width, theme.height);
   theme.orientation = (theme.width==theme.height) ? "square" : (theme.width>theme.height) ? "landscape" : "portrait";

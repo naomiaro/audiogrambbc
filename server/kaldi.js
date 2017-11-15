@@ -59,8 +59,6 @@ function get(req, res) {
 }
 
 function post(req, res) {
-	console.log("POST KALDI");
-	console.log(req.files);
 	var formData = {
 		file: fs.createReadStream(req.files['audio'][0].path)
 	};
