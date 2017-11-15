@@ -106,6 +106,7 @@ function submitted() {
                 return reUploadMedia();
             }
             utils.setBreadcrumb('view', data.id.split('-').shift());
+            media.set(data.media);
             poll(data.id, 0);
             // Logging
             var fields = [];
@@ -115,7 +116,10 @@ function submitted() {
             fields.push({ title: 'Duration', value: info.duration, short: true });
             logger.info(null, fields, USER.name + ' started generating a new audiogram');
         },
-        error: error
+        error: function(err) {
+            console.log(err);
+            utils.error(err.responseText);
+        }
     });
 }
 

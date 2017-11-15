@@ -1,31 +1,69 @@
-module.exports = function(req, res) {
+const fs = require("fs");
+const rimraf = require("rimraf");
+const path = require("path");
 
-	console.log(req.files);
+module.exports.delete = function(req, res) {
+	const type = req.params.type;
+	const id = req.params.id;
 
-	var destination = req.files['file'][0].destination,
-		path = req.files['file'][0].path,
-		size = req.files['file'][0].size,
-		mimetype = req.files['file'][0].mimetype,
-		name = req.files['file'][0].originalname;
-
-	var response = {type: req.body.type, name: name, path: path, size: size, mimetype: mimetype};
-
-	// Process video file
-	if (req.body.type=="background" && mimetype.startsWith("video")) {
-
-	    var queue = require("d3").queue,
-		    q = queue(1),
-		    mkdirp = require("mkdirp"),
-		    backgroundVideo = require("../audiogram/background-video.js"),
-		    framesDir = destination + "/frames";
-
-	    q.defer(mkdirp, framesDir);
-	    q.defer(backgroundVideo, {origin: path, destination: framesDir});
-
-	    response.framesDir = framesDir;
-
+	const filePath = path.join(__dirname, "../tmp", type, id);
+	if (fs.existsSync(filePath)) {
+		fs.unlinkSync(filePath);
 	}
 
-	res.json(response);
+	const framesPath = path.join(__dirname, "../tmp/frames", id);
+  if (fs.existsSync(framesPath)) {
+    rimraf.sync(framesPath);
+  }
 
+	res.json({deleted: id});
+};
+
+module.exports.post = function(req, res) {
+
+  var uploadDest = req.files["file"][0].destination,
+    id = uploadDest.split("/").pop(),
+    tmp = req.files["file"][0].path,
+    size = req.files["file"][0].size,
+    mimetype = req.files["file"][0].mimetype,
+    name = req.files["file"][0].originalname,
+    type = req.body.type;
+
+	const destDir = path.join(__dirname, "../tmp/", type);
+	const dest = path.join(destDir, id);
+	if (!fs.existsSync(destDir)) {
+    fs.mkdirSync(destDir);
+  }
+	fs.renameSync(tmp, dest);
+	fs.rmdirSync(uploadDest);
+
+  var response = {
+    type,
+    name,
+		id,
+		path: dest,
+    size,
+    mimetype
+  };
+
+  // Process video file
+  if (req.body.type == "background" && mimetype.startsWith("video")) {
+		const backgroundVideo = require("../audiogram/background-video");
+
+		const framesPath = path.join(__dirname, "../tmp/frames/");
+    if (!fs.existsSync(framesPath)) {
+      fs.mkdirSync(framesPath);
+		}
+		
+		const framesDir = path.join(framesPath, id);
+		if (!fs.existsSync(framesDir)) {
+			fs.mkdirSync(framesDir);
+		}
+
+		backgroundVideo({ origin: dest, destination: framesDir });
+
+    response.frames = id;
+  }
+
+  res.json(response);
 };

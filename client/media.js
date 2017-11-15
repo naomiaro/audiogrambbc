@@ -5,11 +5,15 @@ const transcript = require('./transcript');
 const logger = require('./slack');
 const utils = require('./utils');
 
-const MEDIA = {};
+let MEDIA = {};
 const BLOBS = {};
 
 function _get(type) {
     return type ? MEDIA[type] : MEDIA;
+}
+
+function _set(obj) {
+    return MEDIA = obj;
 }
 
 function _blobs(type) {
@@ -76,34 +80,41 @@ async function update(blob, cb) {
     jQuery('#loading-message').text('Analyzing...');
     utils.setClass('loading');
 
-    const err = await preview.loadAudio(audioFile);
+    preview.loadAudio(audioFile, function(err){
+        jQuery('#minimap, #submit').removeClass('hidden');
+        if (err) {
+            jQuery('#row-audio').addClass('error');
+            utils.setClass('error', 'Error decoding audio file (' + filename + ')');
+            if (cb) cb(err);
+            jQuery('#minimap, #submit').addClass('hidden');
+        } else {
+            utils.setClass(null);
+            if (!LOADING) upload('audio', audioFile);
+            if (!blob) logger.info( USER.name + ' uploaded a local audio file: ' + filename );
+            if (cb) cb(null);
+        }
+        if (!blob && audioFile.type.startsWith('video')) {
+            jQuery('#videoload a').attr('data-used', false);
+            jQuery('#videoload').removeClass('hidden');
+        }
+    });
+}
 
-    jQuery('#minimap, #submit').removeClass('hidden');
-
-    if (err) {
-        jQuery('#row-audio').addClass('error');
-        utils.setClass('error', 'Error decoding audio file (' + filename + ')');
-        if (cb) cb(err);
-        jQuery('#minimap, #submit').addClass('hidden');
-    } else {
-        utils.setClass(null);
-        await upload('audio', audioFile);
-        if (!blob)
-            logger.info(
-                USER.name + ' uploaded a local audio file: ' + filename
-            );
-        if (cb) cb(null);
-    }
-
-    if (!blob && audioFile.type.startsWith('video')) {
-        jQuery('#videoload a').attr('data-used', false);
-        jQuery('#videoload').removeClass('hidden');
+function deleteAll() {
+    for (var type in MEDIA) {
+        deleteMedia(type);
     }
 }
 
-async function upload(type, blob) {  // Reset
-    delete(MEDIA[type]);
-    delete(BLOBS[type]);
+function deleteMedia(type) {
+    if (!MEDIA[type]) return;
+    jQuery.get("/delete/" + type + "/" + MEDIA[type].id);
+    delete MEDIA[type];
+    delete BLOBS[type];
+}
+
+function upload(type, blob) {  // Reset
+    deleteMedia(type);
     if (!blob) return;
     MEDIA[type] = {name: blob.name || "blob", size: blob.size};
     BLOBS[type] = blob;
@@ -135,5 +146,7 @@ module.exports = {
     update,
     upload,
     get: _get,
-    blobs: _blobs
+    set: _set,
+    blobs: _blobs,
+    deleteAll
 };

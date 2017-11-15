@@ -2,7 +2,8 @@ const preview = require('./preview');
 const media = require('./media');
 const utils = require('./utils');
 const ui = require('./ui');
-const transcript = require('./transcript');
+const transcript = require("./transcript");
+const logger = require("./slack");
 
 var themesRaw;
 function _raw(_) {
@@ -116,8 +117,8 @@ function updateImage(event, type, blob, cb) {
         return true;
     }
 
-    imgFile[type] = blob || this.files[0];
-    media.upload(type, imgFile[type]);
+    const imgFile = blob || this.files[0];
+    media.upload(type, imgFile);
     var filename = blob
         ? 'blob'
         : jQuery('#input-' + type)
@@ -125,13 +126,13 @@ function updateImage(event, type, blob, cb) {
               .split('\\')
               .pop();
 
-    var size = imgFile[type].size / 1000000;
+    var size = imgFile.size / 1000000;
     if (size >= 150) {
         utils.setClass('error', 'Maximum upload size is 150MB. (' + type + ': ' + filename + ' - ' + Math.round(size * 10) / 10 + 'MB)');
         return;
     }
 
-    if (type == 'background' && imgFile[type].type.startsWith('video')) {
+    if (type == 'background' && imgFile.type.startsWith('video')) {
         var vid = document.createElement('video');
         vid.autoplay = false;
         vid.loop = false;
@@ -141,27 +142,27 @@ function updateImage(event, type, blob, cb) {
             function() {
                 setTimeout(function() {
                     preview.img(type, vid);
-                    preview.imgInfo(type, { type: imgFile[type].type, height: vid.videoHeight, width: vid.videoWidth, duration: vid.duration });
+                    preview.imgInfo(type, { type: imgFile.type, height: vid.videoHeight, width: vid.videoWidth, duration: vid.duration });
                 });
             },
             false
         );
         var source = document.createElement('source');
-        source.type = imgFile[type].type;
-        source.src = window.URL.createObjectURL(imgFile[type]);
+        source.type = imgFile.type;
+        source.src = window.URL.createObjectURL(imgFile);
         vid.appendChild(source);
         if (!blob) logger.info(USER.name + ' uploaded a video ' + type + ' (' + filename + ')');
-    } else if ((type == 'background' && imgFile[type].type.startsWith('image')) || imgFile[type].type.endsWith('png')) {
+    } else if ((type == 'background' && imgFile.type.startsWith('image')) || imgFile.type.endsWith('png')) {
         function getImage(file) {
             var imageFile = new Image();
             imageFile.src = window.URL.createObjectURL(file);
             return imageFile;
         }
 
-        imgImage = getImage(imgFile[type]);
+        imgImage = getImage(imgFile);
         preview.img(type, imgImage);
         imgImage.onload = function() {
-            preview.imgInfo(type, { type: imgFile[type].type, height: this.height, width: this.width });
+            preview.imgInfo(type, { type: imgFile.type, height: this.height, width: this.width });
             if (!blob) logger.info(USER.name + ' uploaded an image ' + type + ' (' + filename + ')');
         };
     } else {

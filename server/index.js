@@ -77,8 +77,9 @@ if (serverSettings.maxUploadSize) {
   };
 }
 
-// Upload media
-app.post("/upload/", [multer(fileOptions).fields([{ name: 'file', maxCount: 1 }]), upload]);
+// Upload/delete media
+app.post("/upload/", [multer(fileOptions).fields([{ name: 'file', maxCount: 1 }]), upload.post]);
+app.get("/delete/:type/:id", upload.delete);
 
 // On submission, check upload, validate input, and start generating a video
 // app.post("/submit/", render.validate);

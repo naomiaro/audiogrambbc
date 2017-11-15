@@ -173,7 +173,6 @@ function loadAudio(audioFile, cb) {
     .defer(getWaveform, audioFile)
     .defer(audio.src, audioFile)
     .await(function(err, data){
-
       if (err) {
         return cb ? cb(err) : err;
       }

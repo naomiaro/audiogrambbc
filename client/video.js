@@ -74,11 +74,13 @@ function update(url, theme) {
       jQuery('#mediaPlayer').height(width * Math.min(ratio,1));
       mediaPlayer.setData({name: "SMP.subtitlesHref", data:{ url : window.location.protocol + "//" + window.location.host + url.replace(".mp4",".xml") }});
     });
-    jQuery(document).on('click', "#return", function(e){
-      jQuery("#submit").addClass("hidden");
-      jQuery("#view").removeClass("hidden");
-      mediaPlayer.pause();
-      utils.navigate('edit');
+    jQuery(document).on('click', "#return, #breadcrumb_edit", function(e){
+      if (jQuery('body').is('.rendered')) {
+        jQuery("#submit").addClass("hidden");
+        jQuery("#view").removeClass("hidden");
+        mediaPlayer.pause();
+        utils.navigate('edit');
+      }
     });
     jQuery(document).on("click", "#view", function(e) {
       utils.navigate('view');

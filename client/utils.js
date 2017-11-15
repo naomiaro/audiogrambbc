@@ -1,3 +1,5 @@
+const logger = require('./slack');
+
 function navigate(state, msg, log) {
     const classMap = {
       home: "landing",
@@ -79,12 +81,9 @@ function error(err) {
 }
 
 
-function setBreadcrumb(level, id) {
+function setBreadcrumb(level) {
     jQuery('section.breadcrumbs > span').removeClass('active');
-    if (id) {
-        jQuery('#breadcrumb_edit span').text(id);
-    }
-    jQuery('#breadcrumb_' + level).addClass('active');
+    jQuery('#breadcrumb_' + level).addClass('active').removeClass('hidden');
     jQuery('#breadcrumb_' + level).prevAll().removeClass('hidden');
     jQuery('#breadcrumb_' + level).nextAll().addClass('hidden');
     d3.select('#breadcrumb_new').classed('hidden', level != 'new');
@@ -94,12 +93,16 @@ function clickBreadcrumb(level) {
     level = level || d3.event ? d3.event.currentTarget.attributes['id'].value.split('_').pop() : null;
     if (!level) return false;
     if (level == 'home') {
+      if (jQuery('#submit').is(':visible')) {
         if (!confirm('Are you sure you want to abandon your current proejct?')) return;
-        const projectsInit = require("./projects").init;
-        projectsInit();
-        setClass('landing');
+      }
+      const projectsInit = require("./projects").init;
+      const deleteAllMedia = require('./media').deleteAll;
+      projectsInit();
+      deleteAllMedia();
+      setClass('landing');
     } else if (level == 'edit') {
-        setClass(null);
+      setClass(null);
     }
     setBreadcrumb(level);
 }

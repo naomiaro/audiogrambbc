@@ -3,11 +3,14 @@ const path = require("path");
 
 const utils = require("./utils");
 const media = require("./media");
+const audio = require("./audio");
 const video = require("./video");
 const preview = require("./preview");
 const minimap = require("./minimap");
 const transcript = require("./transcript");
 const themeHelper = require("./themeHelper");
+
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 function getVCSList() {
   jQuery.getJSON("/vcs/list", function(list) {
@@ -46,67 +49,29 @@ function getProjects() {
     error: error,
     dataType: "json",
     success: function(projects) {
-      jQuery("#landing .saved .empty").hide();
-      var days = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-      ];
+      jQuery("#landing .saved [data-id][data-id!='template']").remove();
+      if (projects.length) jQuery("#landing .saved .empty").hide();
       // Loop through each project
       for (var i = projects.length - 1; i >= 0; i--) {
         // Add new project
-        var el = jQuery("#landing .saved [data-id='template']")
-          .clone()
-          .appendTo("#landing .saved");
-        if (
-          jQuery(
-            "#landing .saved [data-audioId='" + projects[i].audioId + "']:first"
-          ).length
-        ) {
+        var el = jQuery("#landing .saved [data-id='template']").clone().appendTo("#landing .saved");
+        if ( jQuery( "#landing .saved [data-audioId='" + projects[i].audioId + "']:first").length ) {
           // If audioId already exists, increment the version number
-          var versions =
-            +jQuery(
-              "#landing .saved [data-audioId='" +
-                projects[i].audioId +
-                "']:first .versions"
-            )
-              .text()
-              .split(" ")[0] + 1;
-          jQuery(
-            "#landing .saved [data-audioId='" +
-              projects[i].audioId +
-              "']:first .versions"
-          ).text(versions + " versions");
+          var versions = +jQuery("#landing .saved [data-audioId='" +projects[i].audioId +"']:first .versions").text().split(" ")[0] + 1;
+          jQuery("#landing .saved [data-audioId='" +projects[i].audioId +"']:first .versions").text(versions + " versions").removeClass("hidden");
           el.find(".versions").text();
-          jQuery(
-            "#landing .saved [data-audioId='" +
-              projects[i].audioId +
-              "'] .fa-link"
-          ).removeClass("hidden");
+          jQuery("#landing .saved [data-audioId='" +projects[i].audioId +"'] .fa-link").removeClass("hidden");
+          el.find(".fa-link").removeClass("hidden");
           el.hide();
         }
-        el.find(".fa-link").removeClass("hidden");
         el.attr("data-id", projects[i].id);
         el.attr("data-audioId", projects[i].audioId);
-        el
-          .find(".name")
-          .text(
-            projects[i].audioId.split("-").shift() +
-              " / " +
-              projects[i].id.split("-").shift()
-          );
+        el.find(".name").text( projects[i].audioId.split("-").shift() + " / " + projects[i].id.split("-").shift() );
         var date = new Date(projects[i].date);
-        // el.find(".date").text(days[date.getDay()] + ", " + date.getHours() + ":" + pad(date.getMinutes(),2));
         el.find(".date").text(dateFormat(date, "dd mmm, HH:MM"));
         el.find(".duration").text(Math.round(projects[i].duration) + "s");
         el.find(".user").text(projects[i].user);
-        el
-          .find(".box-icon")
-          .css("background-image", "url(/video/" + projects[i].id + ".jpg)");
+        el.find(".box-icon").css("background-image", "url(/video/" + projects[i].id + ".jpg)");
       }
     }
   });
@@ -148,6 +113,7 @@ function loadProject(e) {
     var q = d3.queue(1);
     // Load media
     for (var type in data.media) {
+      media.set(data.media);
       q.defer(
         media.loadFromURL,
         type,
@@ -163,6 +129,7 @@ function loadProject(e) {
       if (script) {
         transcript.load(script);
       } else {
+        const blobs = media.blobs();
         transcript.generate(blobs.audio);
       }
       cb(null);
