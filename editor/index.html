@@ -318,6 +318,14 @@
         </div>
 
         <h2>Recent Projects</h2>
+        <div id="recent-filter-wrapper" class="intGEL">
+          <label for="recent-filter" class="intGEL-arrow">
+            <select id="recent-filter" class="form-control">
+              <option value="all" selected>All</option>
+              <option value="user">Mine only</option>
+            </select>
+          </label>
+        </div>
         <div class="row saved">
 
           <div class="col-md-12 empty">When you generate an Audiogram, it will be saved here for a few days in case you need to make changes.</div>
@@ -327,21 +335,40 @@
               <span class="box-icon">&nbsp;</span>
               <div class="info-box-content">
                 <div>
-                  <i class="fa fa-link hidden"></i>
-                  <span class="name">bbc_radio_fourfm import</span>
+                  <i class="private fa fa-lock hidden tooltip-info" data-placement="left" title="Only visible to you"></i>
+                  <span class="name">Untitled</span>
                 </div>
                 <div>
-                  <i class="fa fa-calendar"></i><span class="date">Day, HH:MM</span>
-                  <i class="fa fa-history"></i><a class="versions" href="#">1 version</a>
+                  <i class="fa fa-calendar"></i><span class="date">Unkown Date</span>
+                  <div class='version-count hidden'>
+                    <i class="fa fa-files-o"></i><span>1</span>
+                  </div>
                 </div>
                 <div>
-                  <i class="fa fa-clock-o"></i><span class="duration">00s</span>
-                  <i class="fa fa-user"></i><span class="user">username</span>
+                  <i class="fa fa-clock-o"></i><span class="duration">00:00</span>
+                  <i class="fa fa-user"></i><span class="user">unkown user</span>
                 </div>
               </div>
             </div>
           </div>
 
+        </div>
+
+        <div id="version-history" class="modal fade intGEL" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header" style="background: #b60000;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Version History</h4>
+              </div>
+              <div class="modal-body" style="background: #eee;">
+                <div id="version-history-body" style="padding-top: 15px;"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -955,10 +982,22 @@
           </section>
 
           <section class="well">
-            <div class="btn-group">
-              <button type="button" id="submit" class="btn btn-primary right"><i class="fa fa-film"></i>Generate Audiogram</button>
-              <button type="button" id="view" class="btn btn-primary right"><i class="fa fa-film"></i>View Audiogram</button>
-            </div> 
+            <div class="row">
+              <div class="col-md-5">
+                <label for="input-private" class="intGEL-arrow tooltip-info" data-placement="top" title="Shared audiograms will be visible to all users under 'Recent Projects'">
+                  <select id="input-private" name="private" class="form-control">
+                    <option value=0 selected>Shared</option>
+                    <option value=1>Private</option>
+                  </select>
+                </label>
+              </div>
+              <div class="col-md-7">
+                <div class="btn-group">
+                  <button type="button" id="submit" class="btn btn-primary right"><i class="fa fa-film"></i>Generate Audiogram</button>
+                  <button type="button" id="view" class="btn btn-primary right"><i class="fa fa-film"></i>View Audiogram</button>
+                </div> 
+              </div>
+            </div>
           </section>
 
         <div id="preview">
@@ -1020,9 +1059,9 @@
     </footer>
 
     <script src="/js/bundle.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="/fonts/fonts.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script type="text/javascript" src="https://static.bbci.co.uk/frameworks/requirejs/0.13.0/sharedmodules/require.js"></script>
 

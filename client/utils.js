@@ -8,6 +8,17 @@ function navigate(state, msg, log) {
       generate: "loading",
       view: "rendered"
     };
+    if (state == 'home') {
+      const projectsInit = require("./projects").init;
+      const deleteAllMedia = require("./media").deleteAll;
+      projectsInit();
+      deleteAllMedia();
+      jQuery("#input-audio").val('');
+    }
+    if (state != 'view' && jQuery('body').is('.rendered')) {
+      const exitVideo = require("./video").exit;
+      exitVideo();
+    }
     setBreadcrumb(state);
     const cl = classMap[state];
     setClass(cl, msg, log);
@@ -32,6 +43,10 @@ function setClass(cl, msg, log) {
     logger.warn(msg, err, USER);
   }
   jQuery('html,body').scrollTop(0);
+}
+
+function tooltips() {
+  jQuery(".tooltip-info").tooltip({ animation: false, html: true });
 }
 
 function getURLParams(qs) {
@@ -90,23 +105,19 @@ function setBreadcrumb(level) {
 }
 
 function clickBreadcrumb(level) {
-    level = level || d3.event ? d3.event.currentTarget.attributes['id'].value.split('_').pop() : null;
+    level = this ? jQuery(this).attr('id').split('_').pop() : level;
     if (!level) return false;
     if (level == 'home') {
       if (jQuery('#submit').is(':visible')) {
         if (!confirm('Are you sure you want to abandon your current proejct?')) return;
       }
-      const projectsInit = require("./projects").init;
-      const deleteAllMedia = require('./media').deleteAll;
-      projectsInit();
-      deleteAllMedia();
-      setClass('landing');
+      navigate('home');
     } else if (level == 'edit') {
-      setClass(null);
+      navigate('edit');
     }
     setBreadcrumb(level);
 }
-d3.select('section.breadcrumbs > span').on('click', clickBreadcrumb);
+jQuery(document).on('click', 'section.breadcrumbs > span', clickBreadcrumb);
 
 function statusMessage(result) {
     const getBlobs = require("./media").blobs;
@@ -162,5 +173,6 @@ module.exports = {
     error,
     setBreadcrumb,
     statusMessage,
-    navigate
+    navigate,
+    tooltips
 }

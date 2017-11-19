@@ -122,9 +122,13 @@ function updateTrim(extent) {
         }
         const audio = require('./audio');
         var duration = Math.round(100 * audio.duration()) / 100;
+        if (start < 0.1) start = 0;
+        if (end > (duration-0.1)) end = duration;
         start = start / duration;
         end = end / duration;
-        drawBrush({ start: start, end: end });
+        if (start!=0 || end!=1) {
+          drawBrush({ start: start, end: end });
+        }
     }
 }
 

@@ -91,6 +91,9 @@ function initialize(err, themesWithImages) {
   webcap.init();
   ui.init();
 
+  // Tooltips
+  utils.tooltips();
+
   // Get initial theme
   d3.select('#input-theme').each(themeHelper.update);
 
@@ -183,3 +186,7 @@ function preloadImages(themes) {
   }
 
 }
+
+jQuery(window).bind("beforeunload", function() {
+  return media.deleteAll();
+});

@@ -1,10 +1,12 @@
 const fs = require("fs");
 const rimraf = require("rimraf");
 const path = require("path");
+const backgroundVideo = require("../audiogram/background-video");
 
 module.exports.delete = function(req, res) {
-	const type = req.params.type;
+  const type = req.params.type;
 	const id = req.params.id;
+  console.log('DELETE', type, id);
 
 	const filePath = path.join(__dirname, "../tmp", type, id);
 	if (fs.existsSync(filePath)) {
@@ -13,6 +15,10 @@ module.exports.delete = function(req, res) {
 
 	const framesPath = path.join(__dirname, "../tmp/frames", id);
   if (fs.existsSync(framesPath)) {
+    const pid = backgroundVideo.getPid(id);
+    if (pid) {
+      process.kill(pid);
+    }
     rimraf.sync(framesPath);
   }
 
@@ -48,7 +54,6 @@ module.exports.post = function(req, res) {
 
   // Process video file
   if (req.body.type == "background" && mimetype.startsWith("video")) {
-		const backgroundVideo = require("../audiogram/background-video");
 
 		const framesPath = path.join(__dirname, "../tmp/frames/");
     if (!fs.existsSync(framesPath)) {
@@ -60,7 +65,7 @@ module.exports.post = function(req, res) {
 			fs.mkdirSync(framesDir);
 		}
 
-		backgroundVideo({ origin: dest, destination: framesDir });
+		backgroundVideo.splitFrames({ id ,origin: dest, destination: framesDir });
 
     response.frames = id;
   }

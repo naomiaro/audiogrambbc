@@ -6,8 +6,11 @@ jQuery.getJSON('/whoami', function(data) {
     if (data.email) {
         USER.name = data.name;
         USER.email = data.email;
+        jQuery("#recent-filter option[value='user']").text(data.name);
+        logger.info(USER.name + ' logged in.\n`' + navigator.userAgent + '`');
+    } else {
+        logger.error('Unkown user logged in... ' + data);
     }
-    logger.info(USER.name + ' logged in.\n`' + navigator.userAgent + '`');
 
     // Piwik Code - for now, replaces Google Analytics
     // global._paq = global._paq || [];

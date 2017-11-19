@@ -6,6 +6,15 @@ const preview = require('./preview');
 const transcript = require('./transcript');
 const logger = require('./slack');
 
+let title = 'Untitled';
+
+function submit() {
+    const audio = media.get('audio');
+    const theme = preview.theme();
+    title = audio.name || theme.name || 'Untitled';
+    validate();
+}
+
 function validate() {
     console.log('validate');
     d3.select('#loading-message').text('Uploading files...');
@@ -54,7 +63,11 @@ function submitted() {
 
     var formData = new FormData();
 
+    formData.append("title", title);
     formData.append('user', USER.email);
+
+    const private = +jQuery("#input-private").val();
+    formData.append('private', private);
 
     // formData.append("audio", audioFile);
     // formData.append("background", imgFile.background);
@@ -155,7 +168,7 @@ function poll(id) {
 }
 
 function init() {
-    d3.select('#submit').on('click', validate);
+    d3.select('#submit').on('click', submit);
     jQuery(document).on("click", "button#view", function() {
       utils.setBreadcrumb('view');
     });

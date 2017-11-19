@@ -5,7 +5,10 @@ var video = document.querySelector("video");
 
 function kill() {
   jQuery("#mediaPlayer").html("");
-  utils.navigate('edit');
+}
+
+function exit() {
+  jQuery(document).trigger('exit-video');
 }
 
 function update(url, theme) {
@@ -74,13 +77,13 @@ function update(url, theme) {
       jQuery('#mediaPlayer').height(width * Math.min(ratio,1));
       mediaPlayer.setData({name: "SMP.subtitlesHref", data:{ url : window.location.protocol + "//" + window.location.host + url.replace(".mp4",".xml") }});
     });
-    jQuery(document).on('click', "#return, #breadcrumb_edit", function(e){
-      if (jQuery('body').is('.rendered')) {
-        jQuery("#submit").addClass("hidden");
-        jQuery("#view").removeClass("hidden");
-        mediaPlayer.pause();
-        utils.navigate('edit');
-      }
+    jQuery(document).on('exit-video', function(e){
+      mediaPlayer.pause();
+      jQuery("#submit").addClass("hidden");
+      jQuery("#view").removeClass("hidden");
+    })
+    jQuery(document).on('click', ".rendered #return", function(e){
+      utils.navigate('edit');
     });
     jQuery(document).on("click", "#view", function(e) {
       utils.navigate('view');
@@ -93,5 +96,6 @@ function update(url, theme) {
 
 module.exports = {
   kill: kill,
+  exit,
   update: update
 }

@@ -81,18 +81,23 @@ function setBackground() {
     d3.select('#loading-message').text('Loading video...');
     utils.setClass('loading');
     $('#videoload a').attr('data-used', true);
-    var type = jQuery('audio').attr('data-type');
-    if (type == 'upload') {
-        $('#input-background')[0].files = $('#input-audio')[0].files;
-        utils.setClass(null);
-        var filename = jQuery('#input-audio')
-            .val()
-            .split('\\')
-            .pop();
-        logger.info(USER.name + ' used their audio source file (' + filename + ') as the background video');
-    } else if (type == 'tx') {
-        var src = $('#videoload a').attr('data-src');
-        txPoll(src, { processStart: performance.now() });
+    if ($('#input-audio')[0].files.length) {
+        // $('#input-background')[0].files = $('#input-audio')[0].files;
+        const blob = $("#input-audio")[0].files[0];
+        updateImage(null, 'background', blob, function(){
+            utils.setClass(null);
+            var filename = jQuery('#input-audio')
+                .val()
+                .split('\\')
+                .pop();
+            logger.info(USER.name + ' used their audio source file (' + filename + ') as the background video');
+        });
+    } else {
+        var id = $('#videoload a').attr('data-id');
+        const mediaSelector = require('./mediaSelector');
+        mediaSelector.poll(id, "video", {
+          processStart: performance.now()
+        });
     }
     d3.select('#videoload').classed('hidden', true);
 }
@@ -108,8 +113,9 @@ function updateImage(event, type, blob, cb) {
         var types = type ? [type] : ['background', 'foreground'];
         types.forEach(function(type) {
             preview.img(type, null);
-            var input = jQuery('#input-' + type);
-            input.replaceWith(input.val('').clone(true));
+            jQuery("#input-" + type).val('');
+            // var input = jQuery('#input-' + type);
+            // input.replaceWith(input.val('').clone(true));
             media.upload(type, null);
         });
         utils.setClass(null);

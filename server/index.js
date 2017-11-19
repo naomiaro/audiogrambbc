@@ -135,6 +135,7 @@ app.post("/simulcast/", simulcast.post);
 app.get("/simulcast/status/:id/", simulcast.poll);
 app.get("/simulcast/media/:id/", simulcast.pipe);
 app.get("/simulcast", simulcast.readme);
+app.get("/simulcast/delete/:id/", simulcast.delete);
 
 // Serve background images and themes JSON statically
 app.use("/settings/", function(req, res, next) {

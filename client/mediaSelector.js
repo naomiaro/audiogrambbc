@@ -1,4 +1,14 @@
-const utils = require('./utils');
+const utils = require("./utils");
+const logger = require('./slack');
+const media = require("./media");
+const themeHelper = require("./themeHelper");
+
+let MSID = null;
+
+function purge() {
+    console.log('MEDIA SELECTOR PURGE >> ', MSID);
+    jQuery.get("/simulcast/delete/" + MSID);
+}
 
 function txTimeUpdate() {
     var isValid = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(this.value);
@@ -27,8 +37,6 @@ function txSearch() {
         jQuery('#input-tx-vpid').effect('highlight');
         return;
     }
-    console.log(start);
-    console.log(end);
     if (start.getTime() < min) {
         return utils.setClass('error', 'Broadcast media is only available for the last 12 hours. (' + vpid + ', ' + start + ')');
     } else if (end.getTime() - start.getTime() > 15 * 60 * 1000) {
@@ -36,7 +44,8 @@ function txSearch() {
     }
     utils.setClass(null);
     jQuery('#new-tx').modal('hide');
-    d3.select('#loading-message').text('Fetching ' + vpid + ' media from ' + start.toLocaleString());
+    const sourceName = jQuery("#input-tx-vpid option[value='" + vpid + "']").text();
+    d3.select('#loading-message').text('Fetching media: ' + sourceName + ' (' + start.toLocaleString() + ')');
     utils.setClass('loading');
     jQuery('audio').attr('data-type', 'tx');
     var postData = { vpid: vpid, start: start.getTime() / 1000, end: end.getTime() / 1000, processStart: performance.now() };
@@ -50,17 +59,20 @@ function txSearch() {
             if (data.error) {
                 return utils.setClass('error', data.error);
             }
-            $('#videoload a').attr('data-src', data.video);
+            $('#videoload a').attr('data-id', data.video);
             $('#videoload a').attr('data-used', false);
             d3.select('#videoload').classed('hidden', data.video == null);
-            txPoll(data.audio, postData);
+            MSID = data.audio;
+            txPoll(data.audio, "audio", postData);
         });
 }
 
-function txPoll(url, req) {
-    utils.setClass('loading');
+function txPoll(id, type, req) {
     req = req || null;
-    vpid = req.vpid ? req.vpid : $('#input-tx-vpid').val();
+    const ext = (type=='audio') ? 'mp3' : 'mp4';
+    const url = "/simulcast/status/" + id + "." + ext;
+    utils.setClass('loading');
+    vpid = $('#input-tx-vpid').val();
     jQuery.getJSON(url, function(data) {
         console.log(data);
         if (data.err) {
@@ -70,26 +82,28 @@ function txPoll(url, req) {
             if (req.start && req.end) {
                 var startDate = new Date(req.start * 1000),
                     endDate = new Date(req.end * 1000);
-                logger.info(USER.name + ' imported ' + data.type + ' from ' + vpid + ' (' + pad(startDate.getHours()) + ':' + pad(startDate.getMinutes()) + ':' + pad(startDate.getSeconds()) + ' - ' + pad(endDate.getHours()) + ':' + pad(endDate.getMinutes()) + ':' + pad(endDate.getSeconds()) + ')' + processDuration);
+                logger.info(USER.name + " imported " + data.type + " from " + vpid + " (" + utils.pad(startDate.getHours()) + ":" + utils.pad(startDate.getMinutes()) + ":" + utils.pad(startDate.getSeconds()) + " - " + utils.pad(endDate.getHours()) + ":" + utils.pad(endDate.getMinutes()) + ":" + utils.pad(endDate.getSeconds()) + ")" + processDuration);
             } else {
                 logger.info(USER.name + ' imported ' + data.type + ' from ' + vpid + processDuration);
             }
             if (data.type === 'audio') {
-                media.loadFromURL('audio', data.src);
+                media.loadFromURL('audio', data.src, function(){
+                    media.deleteMedia('mediaselector-audio');
+                    utils.navigate('edit');
+                });
             } else if (data.type === 'video') {
                 var blob = null;
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', data.src);
                 xhr.responseType = 'blob';
                 xhr.onload = function() {
-                    updateImage(null, 'background', xhr.response);
+                    themeHelper.updateImage(null, 'background', xhr.response);
                 };
                 xhr.send();
-                console.log('LOAD VIDEO');
             }
         } else {
             txPollTimeout = setTimeout(function() {
-                txPoll(url, req);
+                txPoll(id, type, req);
             }, 5000);
         }
     });
@@ -98,7 +112,7 @@ function txPoll(url, req) {
 function init(){
     // Fetch broadcast audio
     d3.selectAll("input[id^='input-tx-']").on("keyup", txTimeUpdate);
-    d3.select("#tx-search").on("click", txSearch);
+    jQuery(document).on("click", "#tx-search", txSearch);
     // Populate tx times
     var now = new Date(),
         startDate = new Date(now - 120000),
@@ -108,5 +122,7 @@ function init(){
 }
 
 module.exports = {
-    init
+    init,
+    purge,
+    poll: txPoll
 }

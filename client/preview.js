@@ -113,7 +113,13 @@ minimap.onBrush(function(extent){
 // Resize video and preview canvas to maintain aspect ratio
 function resize(width, height) {
 
+  width = width || theme.width;
+  height = height || theme.height;
+
+  const bodyClass = jQuery("body").attr("class");
+  jQuery("body").attr("class",null);
   var wrapperWidth = d3.select("#canvas").node().getBoundingClientRect().width;
+  jQuery("body").attr("class", bodyClass);
   if (!wrapperWidth) return;
 
   var widthFactor = wrapperWidth / width,
@@ -196,5 +202,6 @@ module.exports = {
   imgInfo: _imgInfo,
   loadAudio: loadAudio,
   redraw: redraw,
+  resize,
   selection: _selection
 };

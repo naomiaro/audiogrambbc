@@ -146,9 +146,9 @@ function toJSON() {
 }
 
 function load(json) {
-    
+    clear();
     if (!json) {
-        return clear();
+        return;
     }
     
     if (json.hasOwnProperty("commaSegments")) {
@@ -181,6 +181,7 @@ function load(json) {
 
 function clear() {
     jQuery("transcript").text("");
+    jQuery("#transcript").removeClass("loading");
     currentTranscript = null;
     clearTimeout(kaldiPoll);
     return currentTranscript;

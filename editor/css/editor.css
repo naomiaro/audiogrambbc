@@ -122,6 +122,22 @@
 #landing .new .info-box {
   min-height: 60px;
 }
+
+#landing #recent-filter-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: right;
+  height: 0;
+  position: relative;
+  top: -53px;
+}
+#landing #recent-filter-wrapper label {
+  width: auto;
+}
+#landing #recent-filter-wrapper select {
+  background: #fff;
+}
+
 #landing .saved .info-box {
   min-height: 90px;
 }
@@ -136,6 +152,26 @@
 
 #landing .info-box .info-box-content .name {
   font-style: italic;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: calc(100% - 150px);
+  display: inline-block;
+  height: 1em;
+  line-height: 1em;
+  position: relative;
+  top: 3px;
+}
+
+#landing .info-box .info-box-content .user {
+  display: inline-block;
+  height: calc(1em + 2px);
+  line-height: 1em;
+  width: calc(100% - 230px);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  position: relative;
+  top: 4px;
 }
 
 #landing .box-icon {
@@ -158,6 +194,11 @@
   width: 60px;
   line-height: 60px;
 }
+
+#landing .saved [data-hideVersion=true] {
+  display: none;
+}
+
 #landing .saved .box-icon {
   background-color: #e6e6e6 !important;
   background-size: auto 90px !important;
@@ -176,14 +217,20 @@
   margin: -12px 0;
 }
 
-#landing .saved .info-box-content .fa-link {
-  position: absolute;
-  top: 11px;
-  right: 20px;
-  color: #ccc;
+#landing .saved .info-box-content .version-count {
+  display: inline-block;
+  padding-left: 10px;
 }
-#landing .saved .info-box-content .fa-link.hover {
-  color: #000000;
+
+#landing .saved .info-box-content .private {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding-left: 5px;
+}
+#landing .saved .info-box-content .private:before {
+    position: relative;
+    top: -10px;
 }
 
 #unauth,

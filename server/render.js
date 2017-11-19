@@ -53,12 +53,14 @@ function route(req, res) {
   
   console.log("RLW routing");
   var jobId = uuidv4();
+
+  console.log("UPLOADED BACKGROUND >>>>", req.body.media.background);
   
   if (req.body.media.background && !req.body.media.background.dest) {
     var backgroundSrc = req.body.media.background.path,
-    backgroundId = backgroundSrc.split(path.sep).reverse()[1],
-    backgroundExt = req.body.media.background.mimetype.split("/").pop(),
-    backgroundImagePath = "background/" + backgroundId + "." + backgroundExt;
+      backgroundId = req.body.media.background.id,
+      backgroundExt = req.body.media.background.mimetype.split("/").pop(),
+      backgroundImagePath = "background/" + backgroundId + "." + backgroundExt;
     req.body.media.background.dest = backgroundImagePath;
     transports.uploadBackground(backgroundSrc, backgroundImagePath, function(err) {
       if (err) {
@@ -70,9 +72,9 @@ function route(req, res) {
   
   if (req.body.media.foreground && !req.body.media.foreground.dest) {
     var foregroundSrc = req.body.media.foreground.path,
-    foregroundId = foregroundSrc.split(path.sep).reverse()[1],
-    foregroundExt = req.body.media.foreground.mimetype.split("/").pop(),
-    foregroundImagePath = "foreground/" + foregroundId + "." + foregroundExt;
+      foregroundId = req.body.media.foreground.id,
+      foregroundExt = req.body.media.foreground.mimetype.split("/").pop(),
+      foregroundImagePath = "foreground/" + foregroundId + "." + foregroundExt;
     req.body.media.foreground.dest = foregroundImagePath;
     transports.uploadBackground(foregroundSrc, foregroundImagePath, function(err) {
       if (err) {
@@ -85,9 +87,10 @@ function route(req, res) {
   if (!req.body.media.audio.dest) {
     console.log('MOVE AUDIO FILE');
     var audioSrc = req.body.media.audio.path,
-    audioId = audioSrc.split(path.sep).reverse()[1],
-    audioExt = req.body.media.audio.mimetype.split("/").pop(),
-    audioPath = "audio/" + jobId + "." + audioExt;
+      audioId = req.body.media.audio.id,
+      audioExt = req.body.media.audio.mimetype.split("/").pop(),
+      audioExt = (audioExt=='mpeg') ? 'mp3' : audioExt,
+      audioPath = "audio/" + jobId + "." + audioExt;
     req.body.media.audio.dest = audioPath;
     transports.uploadAudio(audioSrc, audioPath, function(err) {
       if (err) {

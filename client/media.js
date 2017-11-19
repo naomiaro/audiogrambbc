@@ -13,6 +13,7 @@ function _get(type) {
 }
 
 function _set(obj) {
+    console.log('SET MEDIA', obj);
     return MEDIA = obj;
 }
 
@@ -104,11 +105,14 @@ function deleteAll() {
     for (var type in MEDIA) {
         deleteMedia(type);
     }
+    const deleteMediaSelector = require("./mediaSelector").purge;
+    deleteMediaSelector();
 }
 
-function deleteMedia(type) {
-    if (!MEDIA[type]) return;
-    jQuery.get("/delete/" + type + "/" + MEDIA[type].id);
+function deleteMedia(type, id) {
+    if (!type || (!MEDIA[type] && !id)) return;
+    id = id || MEDIA[type].id;
+    jQuery.get("/delete/" + type + "/" + id);
     delete MEDIA[type];
     delete BLOBS[type];
 }
@@ -148,5 +152,6 @@ module.exports = {
     get: _get,
     set: _set,
     blobs: _blobs,
-    deleteAll
+    deleteAll,
+    deleteMedia
 };

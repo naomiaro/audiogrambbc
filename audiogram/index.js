@@ -109,7 +109,8 @@ Audiogram.prototype.backgroundVideo = function(cb) {
 
   this.status("video");
 
-  backgroundVideo({
+  backgroundVideo.splitFrames({
+    id: this.settings.media.background.id,
     origin: path.join(serverSettings.storagePath, this.settings.theme.customBackgroundPath),
     destination: this.backgroundFrameDir,
     duration: this.settings.duration
