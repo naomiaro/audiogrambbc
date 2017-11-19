@@ -2,6 +2,7 @@ const utils = require('./utils');
 const media = require('./media');
 const audio = require('./audio');
 const video = require('./video');
+const projects = require('./projects');
 const preview = require('./preview');
 const transcript = require('./transcript');
 const logger = require('./slack');
@@ -11,7 +12,6 @@ let title = 'Untitled';
 function submit() {
     const audio = media.get('audio');
     const theme = preview.theme();
-    title = audio.name || theme.name || 'Untitled';
     validate();
 }
 
@@ -63,7 +63,7 @@ function submitted() {
 
     var formData = new FormData();
 
-    formData.append("title", title);
+    formData.append("title", projects.title());
     formData.append('user', USER.email);
 
     const private = +jQuery("#input-private").val();

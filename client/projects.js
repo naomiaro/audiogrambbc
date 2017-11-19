@@ -2,10 +2,10 @@ const dateFormat = require("dateformat");
 const path = require("path");
 
 const utils = require("./utils");
-const submit = require('./submit');
 const media = require("./media");
 const audio = require("./audio");
 const video = require("./video");
+const vcs = require("./vcs");
 const preview = require("./preview");
 const minimap = require("./minimap");
 const transcript = require("./transcript");
@@ -13,20 +13,10 @@ const themeHelper = require("./themeHelper");
 
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-function getVCSList() {
-  jQuery.getJSON("/vcs/list", function(list) {
-    list.forEach(function(item) {
-      const el = `<tr><td><input type="radio" name="vcs-import" value="${item.id}"></td><td>${item.id}</td><td>${item.name}</td></tr>`;
-      jQuery("#new-vcs table tbody").append(el);
-    });
-    jQuery("#new-vcs input[name=vcs-import]:first").attr("checked", true);
-  });
+let title;
+function _title(_) {
+    return arguments.length ? (title = _) : title;
 }
-jQuery(document).on("click", "#new-vcs tr", function(e) {
-  jQuery(this)
-    .find("input[name=vcs-import]")
-    .prop("checked", true);
-});
 
 function newProject(e) {
   const type = e.target
@@ -38,6 +28,7 @@ function newProject(e) {
   if (type == "upload") {
     jQuery("#input-audio").click();
   } else {
+    vcs.updateList();
     jQuery("#new-" + type).modal("show");
   }
 }
@@ -128,6 +119,8 @@ function loadProject(id) {
   fetchProject(id, function(data) {
     console.log(data);
     var q = d3.queue(1);
+    // Set title
+    title(data.title);
     // Load media
     for (var type in data.media) {
       media.set(data.media);
@@ -169,13 +162,14 @@ function loadProject(id) {
 
 function init() {
   global.LOADING = false;
-  getVCSList();
   getProjects();
   // Event listeners
   jQuery(document).on("click", "#landing .new > [data-type]", newProject);
   jQuery(document).on("click", "#landing .saved [data-id]", selectProject);
   jQuery(document).on("change", "#input-audio", function(){
     media.update();
+    const name = jQuery('#input-audio')[0].files[0].name;
+    _title(name);
     utils.navigate("new");
   });
   jQuery(document).on("change", "#recent-filter", updateFilter);
@@ -183,5 +177,6 @@ function init() {
 
 module.exports = {
   getProjects,
+  title: _title,
   init
 };

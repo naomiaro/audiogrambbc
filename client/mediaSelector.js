@@ -1,12 +1,13 @@
 const utils = require("./utils");
 const logger = require('./slack');
 const media = require("./media");
+const projects = require("./projects");
 const themeHelper = require("./themeHelper");
+
 
 let MSID = null;
 
 function purge() {
-    console.log('MEDIA SELECTOR PURGE >> ', MSID);
     jQuery.get("/simulcast/delete/" + MSID);
 }
 
@@ -45,6 +46,7 @@ function txSearch() {
     utils.setClass(null);
     jQuery('#new-tx').modal('hide');
     const sourceName = jQuery("#input-tx-vpid option[value='" + vpid + "']").text();
+    projects.title(sourceName);
     d3.select('#loading-message').text('Fetching media: ' + sourceName + ' (' + start.toLocaleString() + ')');
     utils.setClass('loading');
     jQuery('audio').attr('data-type', 'tx');
@@ -55,7 +57,6 @@ function txSearch() {
             utils.setClass('error', status);
         })
         .done(function(data) {
-            console.log(data);
             if (data.error) {
                 return utils.setClass('error', data.error);
             }
@@ -74,7 +75,6 @@ function txPoll(id, type, req) {
     utils.setClass('loading');
     vpid = $('#input-tx-vpid').val();
     jQuery.getJSON(url, function(data) {
-        console.log(data);
         if (data.err) {
             utils.setClass('error', 'Simulcast Error: ' + data.err);
         } else if (data.ready === true) {

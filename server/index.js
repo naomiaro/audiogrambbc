@@ -128,7 +128,7 @@ app.get("/webcap/:file?", webcap);
 
 // VCS
 app.get("/vcs/list", vcs.list);
-app.get("/vcs/media/:id/", vcs.media);
+app.get("/vcs/media/:file/", vcs.media);
 
 // Get simulcast media
 app.post("/simulcast/", simulcast.post);

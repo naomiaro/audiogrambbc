@@ -21,7 +21,10 @@ function navigate(state, msg, log) {
     }
     setBreadcrumb(state);
     const cl = classMap[state];
+    jQuery('.modal').modal('hide');
     setClass(cl, msg, log);
+    const audio = require('./audio');
+    audio.pause();
 }
 
 function setClass(cl, msg, log) {
