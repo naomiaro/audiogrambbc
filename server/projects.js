@@ -16,7 +16,8 @@ function getList(req, res) {
           title = projects[i].title,
           user = projects[i].user,
           date = +projects[i].created,
-          duration = +projects[i].duration;
+          duration = +projects[i].duration,
+          orientation = projects[i].theme.orientation;
         // Don't returned expired projects (>3 days)
         var diffDays = Math.round(
           Math.abs((now - date) / (24 * 60 * 60 * 1000))
@@ -29,7 +30,8 @@ function getList(req, res) {
             user,
             date,
             duration,
-            private
+            private,
+            orientation
           });
         }
       }

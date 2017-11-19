@@ -12,10 +12,22 @@ const transcript = require("./transcript");
 const themeHelper = require("./themeHelper");
 
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const orientation_map = {
+    'landscape': 160,
+    'square': 90,
+    'portrait': 50
+}
 
 let title;
 function _title(_) {
     return arguments.length ? (title = _) : title;
+}
+
+function formatDuration(time) {
+    time = Math.round(time);
+    const minutes = Math.floor(time / 60);
+    const seconds = utils.pad(time - minutes * 60, 2);
+    return `${minutes}′${seconds}″`;
 }
 
 function newProject(e) {
@@ -64,11 +76,14 @@ function getProjects() {
         el.find(".name").text( projects[i].title );
         var date = new Date(projects[i].date);
         el.find(".date").text(dateFormat(date, "dd mmm, HH:MM"));
-        el.find(".duration").text(Math.round(projects[i].duration) + "s");
+        el.find(".duration").text(formatDuration(projects[i].duration));
         el.attr("data-user", projects[i].user);
         el.find(".user").text(projects[i].user.split('@').shift());
         el.find(".box-icon").css("background-image", "url(/video/" + projects[i].id + ".jpg)");
-      }
+        const imageWidth = orientation_map[projects[i].orientation];
+        el.find('.box-icon').css('width', imageWidth + "px");
+        el.find('.info-box-content').css('width', "calc(100% - " + imageWidth + "px - 20px)");
+    }
       utils.tooltips();
     }
   });
@@ -120,7 +135,7 @@ function loadProject(id) {
     console.log(data);
     var q = d3.queue(1);
     // Set title
-    title(data.title);
+    _title(data.title);
     // Load media
     for (var type in data.media) {
       media.set(data.media);

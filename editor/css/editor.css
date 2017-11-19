@@ -146,6 +146,11 @@
   display: none;
 }
 
+#landing .info-box .info-box-content {
+    float: left;
+    width: calc(100% - 90px - 20px);
+}
+
 #landing .info-box .info-box-content i:not(:first-child) {
   margin-left: 10px;
 }
@@ -155,7 +160,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  width: calc(100% - 150px);
+  width: calc(100% - 40px);
   display: inline-block;
   height: 1em;
   line-height: 1em;
@@ -167,7 +172,7 @@
   display: inline-block;
   height: calc(1em + 2px);
   line-height: 1em;
-  width: calc(100% - 230px);
+  width: calc(100% - 90px);
   text-overflow: ellipsis;
   overflow: hidden;
   position: relative;
