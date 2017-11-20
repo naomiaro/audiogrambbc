@@ -10,7 +10,7 @@ function list(req, res) {
 	let items = [];
 	fs.readdir(dir, function(err, files) {
 		for (var i = 0; i < files.length; i++) {
-			if (files[i].split('.')[1] != 'xml') {
+			if (files[i].includes('#') && files[i].split('.')[1] != 'xml') {
                 var file = files[i],
                     split = files[i].split('#'),
 					id = split[0],
