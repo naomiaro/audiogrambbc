@@ -12,6 +12,8 @@ media/
 dump.rdb
 settings/themes.json.bk*
 webcap/*
+vcs/*
+png/*
 whitelist.json
 settings/backgrounds/*
 package-lock.json

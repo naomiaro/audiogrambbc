@@ -10,20 +10,21 @@ var express = require("express"),
 
 // Routes and middleware
 var whitelist = require("./whitelist.js"),
-    themes = require("./themes.js"),
-    logger = require("../lib/logger/"),
-    render = require("./render.js"),
-    status = require("./status.js"),
-    projects = require("./projects.js"),
-    fonts = require("./fonts.js"),
-    whoami = require("./whoami.js"),
-    upload = require("./upload.js"),
-    kaldi = require("./kaldi.js"),
-    vcs = require("./vcs.js"),
-    ichef = require("./ichef.js"),
-    webcap = require("./webcap.js"),
-    simulcast = require("./simulcast.js"),
-    errorHandlers = require("./error.js");
+  themes = require("./themes.js"),
+  logger = require("../lib/logger/"),
+  render = require("./render.js"),
+  status = require("./status.js"),
+  projects = require("./projects.js"),
+  fonts = require("./fonts.js"),
+  whoami = require("./whoami.js"),
+  upload = require("./upload.js"),
+  kaldi = require("./kaldi.js"),
+  vcs = require("./vcs.js"),
+  png = require("./png.js"),
+  ichef = require("./ichef.js"),
+  webcap = require("./webcap.js"),
+  simulcast = require("./simulcast.js"),
+  errorHandlers = require("./error.js");
 
 // Settings
 var serverSettings = require("../lib/settings/");
@@ -129,6 +130,10 @@ app.get("/webcap/:file?", webcap);
 // VCS
 app.get("/vcs/list", vcs.list);
 app.get("/vcs/media/:file/", vcs.media);
+
+// PNG
+app.get("/png/list", png.list);
+app.get("/png/media/:file/", png.media);
 
 // Get simulcast media
 app.post("/simulcast/", simulcast.post);
