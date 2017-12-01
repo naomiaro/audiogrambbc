@@ -24,7 +24,6 @@ function validate(req, res, next) {
   
   // var audioFile = req.files['audio'][0]
   // if (!audioFile || !audioFile.filename) {
-    console.log(req.body);
   if (!req.body.media.audio || !req.body.media.audio.path) {
     return res.status(500).send("No valid audio received.");
   }
@@ -48,13 +47,9 @@ function validate(req, res, next) {
 }
 
 function route(req, res) {
-  
-  console.log(req.body.media);
-  
+    
   console.log("RLW routing");
   var jobId = uuidv4();
-
-  console.log("UPLOADED BACKGROUND >>>>", req.body.media.background);
   
   if (req.body.media.background && !req.body.media.background.dest) {
     var backgroundSrc = req.body.media.background.path,
@@ -85,7 +80,6 @@ function route(req, res) {
   }
   
   if (!req.body.media.audio.dest) {
-    console.log('MOVE AUDIO FILE');
     var audioSrc = req.body.media.audio.path,
       audioId = req.body.media.audio.id,
       audioExt = req.body.media.audio.mimetype.split("/").pop(),
@@ -101,7 +95,6 @@ function route(req, res) {
       runJob();
     });
   } else {
-    console.log("AUDIO FILE ALREADY WHERE IT SHOULD BE");
     runJob();
   }
     

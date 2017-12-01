@@ -31,6 +31,7 @@
     "canvas": "git+https://github.com/chearon/node-canvas.git#12971f64a66b",
     "compression": "1.6.2",
     "concat-files": "^0.1.1",
+    "config": "^1.28.1",
     "d3": "4.5.0",
     "dateformat": "^2.0.0",
     "dotenv": "2.0.0",
