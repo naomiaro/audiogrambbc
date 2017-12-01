@@ -159,8 +159,6 @@ function loadProject(id) {
       }
       cb(null);
     }, data);
-    // Load caption
-    // TO DO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     // Share settings
     jQuery("#input-private").val(data.private);
     // Update trim, and finish load

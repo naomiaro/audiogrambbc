@@ -37,7 +37,7 @@ function initializeSliders() {
 }
 
 function showAdvancedConfig() {
-    jQuery('#input-caption:not(:visible)').val('');
+    // jQuery('#input-caption:not(:visible)').val('');
     jQuery('#section-theme .row').removeClass('hidden');
     d3.select('#row-theme').classed('advanced', false);
     jQuery('#config-save').removeClass('hidden');
