@@ -3,10 +3,22 @@ const utils = require('./utils');
 
 function updateList() {
     jQuery.getJSON("/vcs/list", function (list) {
-        jQuery("#new-vcs table tbody").text('');
+        jQuery("#new-vcs-table-store tbody").text('');
         list.forEach(function (item) {
             const el = `<tr><td><input type="radio" name="vcs-import" value="${item.file}"></td><td>${item.id}</td><td>${item.name}</td></tr>`;
-            jQuery("#new-vcs table tbody").append(el);
+            jQuery("#new-vcs-table-store tbody").append(el);
+        });
+        jQuery("#new-vcs input[name=vcs-import]:first").attr("checked", true);
+    });
+}
+
+function search() {
+    const id = jQuery('#new-vcs-search-input').val();
+    jQuery.getJSON("/vcs/search/" + id, function (list) {
+        jQuery("#new-vcs-table-store tbody").text('');
+        list.forEach(function (item) {
+            const el = `<tr><td><input type="radio" name="vcs-import" value="${item.file}"></td><td>${item.id}</td><td>${item.name}</td></tr>`;
+            jQuery("#new-vcs-table-store tbody").append(el);
         });
         jQuery("#new-vcs input[name=vcs-import]:first").attr("checked", true);
     });

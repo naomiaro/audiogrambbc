@@ -117,6 +117,8 @@ function submitted() {
                 // Temporary media files have been lost. Reupload them and try again.
                 console.log('Reuploading media');
                 return reUploadMedia();
+            } else if (data.error) {
+                return utils.error(data.error);
             }
             utils.setBreadcrumb('view', data.id.split('-').shift());
             media.set(data.media);

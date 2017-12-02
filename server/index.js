@@ -128,6 +128,7 @@ app.get("/ichef/:pid/", ichef.pipe);
 app.get("/webcap/:file?", webcap);
 
 // VCS
+app.get("/vcs/search/:id/", vcs.search);
 app.get("/vcs/list", vcs.list);
 app.get("/vcs/media/:file/", vcs.media);
 
