@@ -6,6 +6,7 @@ const media = require("./media");
 const audio = require("./audio");
 const video = require("./video");
 const vcs = require("./vcs");
+const png = require("./png");
 const preview = require("./preview");
 const minimap = require("./minimap");
 const transcript = require("./transcript");
@@ -40,7 +41,12 @@ function newProject(e) {
   if (type == "upload") {
     jQuery("#input-audio").click();
   } else {
-    vcs.updateList();
+    if (type == "vcs") {
+        vcs.updateList();
+    }
+    if (type == "png") {
+        png.updateList();
+    }
     jQuery("#new-" + type).modal("show");
   }
 }

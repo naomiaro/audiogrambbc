@@ -30,6 +30,9 @@ function init() {
             .find("input[name=vcs-import]")
             .prop("checked", true);
     });
+    jQuery(document).on("dblclick", "#new-vcs tr", function (e) {
+        load();
+    });
     jQuery(document).on('click', '#vcs-import', function(){
         load();
     });

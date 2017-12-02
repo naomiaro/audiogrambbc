@@ -200,6 +200,19 @@
   line-height: 60px;
 }
 
+#new-vcs table tbody tr td:first-child,
+#new-png table tbody tr td:first-child {
+    text-align: center;
+}
+#new-vcs table tbody input,
+#new-png table tbody input {
+    margin: 0
+}
+#new-vcs table tbody tr,
+#new-png table tbody tr {
+    cursor: pointer;
+}
+
 #landing .saved [data-hideVersion=true] {
   display: none;
 }

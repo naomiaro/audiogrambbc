@@ -19,6 +19,7 @@ const ichef = require('./ichef');
 const mediaSelector = require('./mediaSelector');
 const submit = require('./submit');
 const vcs = require('./vcs');
+const png = require('./png');
 const webcap = require('./webcap');
 
 require('./user');
@@ -88,6 +89,7 @@ function initialize(err, themesWithImages) {
   submit.init();
   transcript.init();
   vcs.init();
+  png.init();
   webcap.init();
   ui.init();
 
