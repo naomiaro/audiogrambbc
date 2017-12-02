@@ -33,6 +33,29 @@ function list(req, res) {
 // 	reply.pipe(res);
 // }
 
+function search(req, res) {
+  var requestURL = "http://vcsio.newslabs.co/vcs/search/" + req.params.id;
+  console.log(requestURL);
+  request({url: requestURL, proxy: ''}, function(error, response, body) {
+    const results = JSON.parse(body);
+    const items = [];
+    results.forEach(result => {
+        const title = result.vcsinfo.take.GENERIC.GENE_TITLE;
+        const dir = result.dir.split('/');
+        const store = dir[dir.length - 1];
+        const meida = result.mediaurl;
+        items.push({
+          id: req.params.id,
+          title,
+          store, 
+          media
+        });
+    });
+    console.log(results);
+    return res.json(items);
+  });
+}
+
 function media(req, res) {
     const file = req.params.file;
     const src = path.join(__dirname, "../vcs", file);
@@ -45,5 +68,6 @@ function media(req, res) {
 
 module.exports = {
   list,
-  media
+  media,
+  search
 };

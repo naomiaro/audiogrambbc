@@ -117,20 +117,61 @@
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
                   <h4 class="modal-title">Import VCS Item</h4>
                 </div>
-                <div class="modal-body">
-                  <p>To import VCS items, save them to <b>W1 News > Export > To NewsLabs</b></p>
-                  <hr>
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th>Item #</th>
-                      <th>Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                </table>
+                <div class="modal-body" style="background: #eee;">
+                  <div>
+                    <ul class="nav nav-tabs">
+                      <li class="active">
+                        <a href="#new-vcs-tab-store" data-toggle="tab">News Labs Logstore</a>
+                      </li>
+                      <li>
+                        <a href="#new-vcs-tab-search" data-toggle="tab">Search</a>
+                      </li>
+                    </ul>
+                    <div class="tab-content">
+                      <div class="tab-pane active" id="new-vcs-tab-store">
+                        <p>
+                          To import VCS items directly, save them to
+                          <b>W1 News > Export > To NewsLabs</b>
+                        </p>
+                        <hr>
+                        <table id="new-vcs-table-store" class="table table-striped">
+                          <thead>
+                            <tr>
+                              <th></th>
+                              <th>Item #</th>
+                              <th>Name</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="tab-pane" id="new-vcs-tab-search">
+                        <p>
+                          Search for items saved to log stores which auto-export to the S-drive. 
+                        </p>
+                        <hr>
+                        <div class="input-group">
+                          <input id="new-vcs-search-input" type="text" placeholder="00000" class="form-control" name="vcs" value="">
+                          <span class="input-group-btn">
+                            <button id="new-vcs-search" class="btn btn-secondary" type="button">Search</button>
+                          </span>
+                        </div>
+                        <hr>
+                        <table id="new-vcs-table-search" class="table table-striped">
+                          <thead>
+                            <tr>
+                              <th></th>
+                              <th>Store</th>
+                              <th>Name</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
