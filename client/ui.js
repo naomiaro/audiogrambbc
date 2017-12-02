@@ -48,9 +48,15 @@ function showAdvancedConfig() {
 function windowResize() {
     if (!jQuery('body').is('.loading,.rendered,.landing')) {
         preview.redraw();
+        const audio = require('./audio');
+        const duration = audio.duration();
+        const extent = audio.extent().map((e) => {
+            return e * duration;
+        });
         var hidden = d3.select('#minimap').classed('hidden');
         d3.select('#minimap').classed('hidden', false);
         minimap.width(jQuery('#minimap .page-header').width());
+        minimap.updateTrim(extent);
         d3.select('#minimap').classed('hidden', hidden);
     }
 }
