@@ -84,6 +84,16 @@
   color: white;
 }
 
+#user-messages .message {
+    cursor: pointer;
+    display: block;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    border-radius: 2px;
+    margin-bottom: 15px;
+}
+
 #landing {
   margin-top: -30px;
 }

@@ -21,7 +21,7 @@ module.exports = function(req, res) {
 		const lastLogin = loginDates.sort()[loginDates.length - 1];
 		redisClient.sadd(`users`, email);
 		redisClient.sadd(`user:${email}`, Date.now());
-		return res.json({ name, email, lastLogin: Date(lastLogin) });
+		return res.json({ name, email, lastLogin });
 	});
 
 };

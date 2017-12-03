@@ -17,6 +17,7 @@ var whitelist = require("./whitelist.js"),
   projects = require("./projects.js"),
   fonts = require("./fonts.js"),
   whoami = require("./whoami.js"),
+  messages = require("./messages.js"),
   upload = require("./upload.js"),
   kaldi = require("./kaldi.js"),
   vcs = require("./vcs.js"),
@@ -113,6 +114,9 @@ app.get("/getProject/:id", projects.getProject);
 
 // Get user info
 app.get("/whoami/", whoami);
+
+// Get user messages
+app.get("/messages/:since?", messages);
 
 // Check the status of a current video
 app.get("/status/:id/", status);

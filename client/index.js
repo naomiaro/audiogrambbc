@@ -21,8 +21,9 @@ const submit = require('./submit');
 const vcs = require('./vcs');
 const png = require('./png');
 const webcap = require('./webcap');
+const user = require('./user');
 
-require('./user');
+user.init();
 
 d3.json("/settings/themes.json", function(err, themes){
 
