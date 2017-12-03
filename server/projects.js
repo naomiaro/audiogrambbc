@@ -1,7 +1,7 @@
 var transports = require("../lib/transports");
 
 function getList(req, res) {
-  var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "tracey.pritchard@bbc.co.uk";
+  var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "audiogram-dev@bbc.co.uk";
 
   transports.getProjectList(function(err, projects) {
     if (err) return res.json({ err: err });
@@ -54,7 +54,18 @@ function getProject(req, res) {
   });
 }
 
+function updateProject(req, res) {
+    var user = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "audiogram-dev@bbc.co.uk";
+    const opts = req.query;
+    const id = req.params.id;
+    transports.updateProject(id, user, opts, function (err, project) {
+        if (err) return res.json({ err });
+        return res.json(project);
+    });
+}
+
 module.exports = {
-  getList: getList,
-  getProject: getProject
+    getList,
+    getProject,
+    updateProject
 };

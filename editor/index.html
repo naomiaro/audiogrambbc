@@ -109,10 +109,8 @@
                 Audiogram is a
                 <b>audio &rarr; video, and subtitling tool</b>, built by
                 <a href="http://bbcnewslabs.co.uk/" target="_blank">BBC News Labs</a> off the back of
-                <a href="https://medium.com/@WNYC/socialaudio-e648e8a5f2e9#.7se6rlrt8"
-                    target="_blank">original work by NPR's WNYC</a> in New York. You can read about why we built it, and how, in our
-                <a href="https://medium.com/bbc-news-labs/visualising-audio-bbc-news-labs-audiogram-generator-4ce97ee3da51"
-                    target="_blank">Medium blog</a>.
+                <a href="https://medium.com/@WNYC/socialaudio-e648e8a5f2e9#.7se6rlrt8" target="_blank">original work by NPR's WNYC</a> in New York. You can read about why we built it, and how, in our
+                <a href="https://medium.com/bbc-news-labs/visualising-audio-bbc-news-labs-audiogram-generator-4ce97ee3da51" target="_blank">Medium blog</a>.
             </p>
             <!-- <p style="color: #b60000; font-size: 0.9em">
           <b>This is a prototype.</b> The tool and its infrastructure may present errors or be unavailable at times.
@@ -695,8 +693,7 @@
                         <p>
                             Audiogram is a
                             <a href="http://bbcnewslabs.co.uk/" target="_blank">BBC News Labs</a> prototype, based on
-                            <a href="https://medium.com/@WNYC/socialaudio-e648e8a5f2e9#.7se6rlrt8"
-                                target="_blank">original work by NPR's WNYC</a> in New York, which
+                            <a href="https://medium.com/@WNYC/socialaudio-e648e8a5f2e9#.7se6rlrt8" target="_blank">original work by NPR's WNYC</a> in New York, which
                             <b>converts audio into shareable video</b>.
                         </p>
                         <p>
@@ -886,12 +883,10 @@
                                         </button>
                                         <ul class="dropdown-menu" role="menu">
                                             <li role="presentation">
-                                                <a class="transcript-export-btn" data-format="plain" role="menuitem" target="_blank"
-                                                    href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (script only)</a>
+                                                <a class="transcript-export-btn" data-format="plain" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (script only)</a>
                                             </li>
                                             <li role="presentation">
-                                                <a class="transcript-export-btn" data-format="plain-timecodes" role="menuitem"
-                                                    target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (with timecodes)</a>
+                                                <a class="transcript-export-btn" data-format="plain-timecodes" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (with timecodes)</a>
                                             </li>
                                             <li role="presentation">
                                                 <a class="transcript-export-btn" data-format="srt" role="menuitem" href="#">Facebook Subs (SRT)</a>
@@ -1213,11 +1208,32 @@
             <section class="well">
                 <div class="btn-group">
                     <button id="return" type="button" class="left btn btn-secondary">
-                        <i class="fa fa-edit"></i>Return to editor</button>
+                        <i class="fa fa-edit"></i>Return to editor
+                    </button>
                     <div style="float: right;">
                         <div style="float: left;">
-                            <a id="video-link" type="button" class="btn btn-secondary" target="_blank">
-                                <i class="fa fa-link"></i>Link</a>
+                            <div class="dropdown-button btn-group btn-group">
+                                <button class="btn-primary dropdown-toggle btn" type="button" data-toggle="dropdown" aria-expanded="false">
+                                    More &nbsp;<span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li role="presentation">
+                                        <a id='video-link' target='_blank' href="#" role="menuitem">
+                                            <i class="fa fa-link"></i>Video link
+                                        </a>
+                                    </li>
+                                    <li id='video-makePrivate' role="presentation">
+                                        <a href="#" role="menuitem">
+                                            <i class="fa fa-lock"></i><span>Make private</span>
+                                        </a>
+                                    </li>
+                                    <li id='video-makePublic' role="presentation">
+                                        <a href="#" role="menuitem">
+                                            <i class="fa fa-unlock"></i><span>Allow others to edit</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         <div id="download-btns" class="dropdown-button btn-group btn-group" style="width: auto; margin-left: 10px">
                             <a href="#" class="btn btn-primary download-video">Download</a>

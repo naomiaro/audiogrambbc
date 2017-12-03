@@ -170,7 +170,7 @@ function loadProject(id) {
     // Update trim, and finish load
     q.awaitAll(function(err) {
       minimap.updateTrim([data.start, data.end]);
-      video.update(path.join("/video/", id + ".mp4"), preview.theme());
+      video.update(path.join("/video/", id + ".mp4"), data);
       utils.navigate('edit');
       preview.redraw();
       LOADING = false;

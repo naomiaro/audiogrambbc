@@ -11,11 +11,11 @@ function exit() {
   jQuery(document).trigger('exit-video');
 }
 
-function update(url, theme) {
+function update(url, data) {
   
   var timestamp = d3.timeFormat("%Y-%m-%d-%-I:%M%p")(new Date).toLowerCase(),
   filename = "Audiogram" + timestamp + ".mp4",
-  ratio = theme.height/theme.width;
+  ratio = data.theme.height/data.theme.width;
   
   ratio = (ratio>1) ? 1 : ratio;
   
@@ -36,6 +36,21 @@ function update(url, theme) {
   
   d3.select(video).select("source")
   .attr("src", url);
+
+  console.log('data>>', data);
+  
+  const id = data.id || url.split('/')[2].split('.')[0];
+  const private = data.private != undefined ? data.private : jQuery('#input-private').val();
+  const user = data.user ? data.user : USER.email;
+
+  jQuery('#video-makePrivate, #video-makePublic').hide();
+  if (user == USER.email) {
+      if (+private == 1) {
+          jQuery('#video-makePublic').show();
+      } else {
+          jQuery('#video-makePrivate').show();
+      }
+  }
   
   // d3.select('#return').on('click', function() {
   //     d3.event.preventDefault();

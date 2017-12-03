@@ -154,7 +154,7 @@ function poll(id) {
             dataType: 'json',
             success: function(result) {
                 if (result && result.status && result.status === 'ready' && result.url) {
-                    video.update(result.url, preview.theme());
+                    video.update(result.url, {theme: preview.theme()});
                     utils.setClass('rendered');
                     logger.success(result);
                 } else if (result.status === 'error') {

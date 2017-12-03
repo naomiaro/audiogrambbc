@@ -111,6 +111,7 @@ if (serverSettings.fonts) {
 // Get projects
 app.get("/getProjects/", projects.getList);
 app.get("/getProject/:id", projects.getProject);
+app.get("/updateProject/:id", projects.updateProject);
 
 // Get user info
 app.get("/whoami/", whoami);
