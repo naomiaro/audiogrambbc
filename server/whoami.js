@@ -7,7 +7,7 @@ redisClient.on("error", function(err) {
 	console.log('REDIS ERROR>> ', err);
 });
 	
-module.exports = async function(req, res) {
+module.exports = function(req, res) {
 
 	if (req.header('host').startsWith('localhost')) {
 		var name = "Dev User";
