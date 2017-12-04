@@ -192,6 +192,15 @@ function init() {
     utils.navigate("new");
   });
   jQuery(document).on("change", "#recent-filter", updateFilter);
+  jQuery(document).on("change", "#sharing-private", function(){
+    const private = jQuery(this).val();
+    const id = jQuery(this).attr('data-id');
+    const url = `/updateProject/${id}?private=${private}`;
+    jQuery('#sharing-spinner').show();
+    jQuery.getJSON(url, function(data) {
+        jQuery('#sharing-spinner').hide();
+    });
+  });
 }
 
 module.exports = {

@@ -37,11 +37,15 @@ function update(url, data) {
   d3.select(video).select("source")
   .attr("src", url);
 
-  console.log('data>>', data);
+  jQuery('#sharing-link').attr('href', window.location.origin + url);
+  jQuery('#sharing-link-text').val(window.location.origin + url);
   
   const id = data.id || url.split('/')[2].split('.')[0];
   const private = data.private != undefined ? data.private : jQuery('#input-private').val();
   const user = data.user ? data.user : USER.email;
+
+  jQuery("#sharing-private").val(private);
+  jQuery("#sharing-private").attr('data-id', id);
 
   jQuery('#video-makePrivate, #video-makePublic').hide();
   if (user == USER.email) {
