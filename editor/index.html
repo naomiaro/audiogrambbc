@@ -1259,8 +1259,45 @@
                 </div>
             </section>
         </div>
-    </div>
-    <!-- .wrapper -->
+
+        <div id="sharing" class="modal fade intGEL" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: #b60000; color: #ffffff;">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Sharing Settings</h4>
+                    </div>
+                    <div class="modal-body" style="background: #eee;">
+                        <p style='font-weight: bold;'>
+                            <i class='fa fa-link'></i> Link to video
+                        </p>
+                        <div class="row">
+                            <div class="col-md-11">
+                                <input id="sharing-link" type="text" class="form-control" style='background: #fff;' value="http://localhost.bbc.co.uk:8081/video/908724bf-34ed-40b5-8bc0-3d35da1f6205.mp4">
+                            </div>
+                            <div class="col-md-1" style="text-align: center; line-height: 32px;">
+                                <a href='#'><i class='fa fa-external-link'></i></a>
+                            </div>
+                        </div>
+                        <hr style="border-color: #aaa">
+                        <p style='font-weight: bold;'>
+                            <i class='fa fa-users'></i> Editing rights
+                        </p>
+                        <label class="intGEL-arrow" for="sharing-private" style="background: #fff">
+                            <select id="sharing-private" class="form-control" style="width: 100%;">
+                                <option value="0">Public - all users can see/edit this audiogram</option>
+                                <option value="1">Private - only you can see/edit this audiogram</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- .wrapper -->
 
     <footer class="site-footer-wrap">
         <div class="message-box-wrap">
