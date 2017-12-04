@@ -191,13 +191,15 @@ function poll(job) {
     
     kaldiPoll = setTimeout(function(){
         jQuery.getJSON( "/kaldi/" + job, function( data ) {
-            if (data.status=="SUCCESS") {
-                if (!data.error) {
-                    var transcript = JSON.parse(data.transcript),
-                    segments = JSON.parse(data.segments);
-                    load({transcript: transcript, segments: segments, kaldi: transcript.metadata.version});
-                }
+            if (data.status=="SUCCESS" && !data.error) {
+                var transcript = JSON.parse(data.transcript),
+                segments = JSON.parse(data.segments);
+                load({transcript: transcript, segments: segments, kaldi: transcript.metadata.version});
                 jQuery("#transcript").removeClass("loading");
+            } else if (data.error) {
+                jQuery("#transcript-pane .error span").html("The BBC R&D Kaldi transcription failed<br/><i>Ref: " + job + "</i>");
+                jQuery("#transcript").removeClass("loading").addClass("error");
+                logger.error("Kaldi job failed: " + job);
             } else {
                 poll(job);
             }
