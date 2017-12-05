@@ -3,7 +3,18 @@ const logger = require('./slack');
 global.USER = { name: 'Unknown', email: null };
 
 function displayMessages(messages) {
-
+    let i = 1;
+    messages.forEach(message => {
+        if (i>1) {
+            const div = jQuery("#user-messages .message:last").clone();
+            jQuery("#user-messages .message:last").after(div);
+        }
+        jQuery("#user-messages .message:last .user-messages-title").text(message.title);
+        jQuery("#user-messages .message:last .user-messages-user").text(message.user);
+        jQuery("#user-messages .message:last .user-messages-date").text(message.date);
+        jQuery("#user-messages .message:last .user-messages-text").html(message.text);
+        i++;
+    });
     jQuery("#user-messages").modal("show");
 }
 
@@ -11,7 +22,6 @@ function checkMessages(since) {
     jQuery.getJSON('/messages/' + since, function (data) {
         if (data.messages && data.messages.length) {
             jQuery(function () {
-                // alert(data.messages[0]);
                 displayMessages(data.messages);
             });
         }

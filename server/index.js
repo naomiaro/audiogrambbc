@@ -117,7 +117,8 @@ app.get("/updateProject/:id", projects.updateProject);
 app.get("/whoami/", whoami);
 
 // Get user messages
-app.get("/messages/:since?", messages);
+app.get("/messages/edit", messages.editor);
+app.get("/messages/:since?", messages.getMessages);
 
 // Check the status of a current video
 app.get("/status/:id/", status);

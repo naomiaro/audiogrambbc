@@ -85,13 +85,39 @@
 }
 
 #user-messages .message {
-    cursor: pointer;
     display: block;
     background: #fff;
     width: 100%;
     box-shadow: 0 1px 1px rgba(0,0,0,0.1);
     border-radius: 2px;
-    margin-bottom: 15px;
+    padding: 15px;
+    position: relative;
+}
+#user-messages .message:not(:last-child) {
+  margin-bottom: 15px;
+}
+#user-messages .user-messages-title {
+  font-weight: bold;
+} 
+#user-messages .user-messages-user {
+  font-style: italic;
+  color: #aaa;
+  margin-bottom: 5px;
+} 
+#user-messages .user-messages-date {
+  position: absolute;
+  top: 16px;
+  right: 15px;
+  font-style: italic;
+  color: #aaa;
+}
+#user-messages .user-messages-text ul {
+  list-style: disc;
+  margin: 0;
+  padding: 0 24px;
+}
+#user-messages .user-messages-text li {
+  padding: 2px 0;
 }
 
 #landing {
@@ -182,7 +208,7 @@
   display: inline-block;
   height: calc(1em + 2px);
   line-height: 1em;
-  width: calc(100% - 90px);
+  width: calc(100% - 95px);
   text-overflow: ellipsis;
   overflow: hidden;
   position: relative;
