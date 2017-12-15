@@ -28,6 +28,32 @@
       body:not(.loading) #loading{
         display: none;
       }
+      .message-info {
+        float: right;
+        width: 222px;
+        padding: 5px;
+        font-size: 0.9em;
+        position: relative;
+      }
+      .message-active {
+        color: green;
+        margin-top: 5px;
+      }
+      .message-expired {
+        color: red;
+        margin-top: 5px;
+      }
+      .message-expire-now {
+        margin-top: 5px;
+        font-style: italic;
+        position: absolute;
+        top: 1px;
+        right: 0;
+        display: none;
+      }
+      .message-wrapper:hover .message-expire-now {
+        display: block;
+      }
     </style>
   </head>
   <body class="loading">
@@ -38,6 +64,41 @@
 
       <h1 class="page-title">Audiogram<span class="title-superscript">ALPHA</span></h1>
     </header>
+    <div class="user-messages modal fade intGEL" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" style="background: #b60000; color: #ffffff;">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Audiogram Messages</h4>
+          </div>
+          <div class="modal-body" style="background: #eee;">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="message">
+                  <div class="info-box-content">
+                    <div class="user-messages-title">
+                      Title
+                    </div>
+                    <div class="user-messages-date">
+                      DD MMM YY, HH:MM
+                    </div>
+                    <div class="user-messages-user">
+                      user@bbc.co.uk
+                    </div>
+                    <div class="user-messages-text">
+                      Message
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="wrapper">
       <div id="loading">
         <div id="loading-bars">
@@ -45,7 +106,7 @@
         </div>
         <div id="loading-message">Loading...</div>
       </div><!-- #loading -->
-      <div id="whitelist" class="intGEL">
+      <div id="messages-edit" class="intGEL">
     
           <section id="splash" class="well" style="border: none;">
             <h2>
@@ -58,36 +119,65 @@
               </p>
             </div>
             <form id="new-message-form" action="/whitelist" method="post">
-              <input id="new-message-title" type="text" placeholder="Title" style="margin-bottom: 5px">
-              <textarea id="new-message-text" name="list" rows="5" style="width: 100%" placeholder="HTML Message"></textarea>
+              <input id="new-message-title" type="text" placeholder="Title" class="intGEL-input" style="width: 100%; margin-bottom: 5px">
+              <textarea id="new-message-text" name="list" rows="5" style="width: 100%; min-height: 100px !important" placeholder="HTML Message"></textarea>
               <hr>
-              <div class="btn-group">
-                <input type="submit" value="Save" class="btn btn-primary right">
-              </div> 
+              <div class="row">
+                <div class="col-md-4">
+                  <input id="new-message-date" type="text" placeholder="From Date/Time" class="intGEL-input" style="width: 100%; margin-bottom: 5px">
+                  <i class="fa fa-arrow-right" style="font-size: 15px; position: absolute; top: 9px; right: -13px;"></i>
+                </div>
+                <div class="col-md-4">
+                  <input id="new-message-expire" type="text" placeholder="Expiry Date/Time" class="intGEL-input" style="width: 100%; margin-bottom: 5px">
+                </div>
+                <div class="col-md-4 btn-group">
+                  <input id="new-message-send" type="submit" value="Send" class="btn btn-primary right">
+                  <input id="new-message-preview" type="button" value="Preview" class="btn btn-secondary right" style="margin-right: 10px;">
+                </div> 
+              </div>
             </form>
           </section>
-
-          <section id="user-messages">
-            <div id="messages" style="width: 568px">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="message">
-                    <div class="info-box-content">
-                      <div class="user-messages-title">
-                        Title
-                      </div>
-                      <div class="user-messages-date">
-                        DD MMM YY, HH:MM
-                      </div>
-                      <div class="user-messages-user">
-                        user@bbc.co.uk
-                      </div>
-                      <div class="user-messages-text">
-                        Hello??
+          <hr style="border-color: #aaa;">
+          <section class="user-messages">
+            <div id="messages">
+              <div class="message-wrapper" style="clear: both;">
+                <div class="message-body" style="width: 568px; float: left;">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="message">
+                        <div class="info-box-content">
+                          <div class="user-messages-title" style="text-decoration: strikethrough">
+                            Title
+                          </div>
+                          <div class="user-messages-date">
+                            DD MMM YY, HH:MM
+                          </div>
+                          <div class="user-messages-user">
+                            user@bbc.co.uk
+                          </div>
+                          <div class="user-messages-text">
+                            Hello??
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+                <div class="message-info">
+                  <div class="message-read-count">
+                    <i class="fa fa-eye"></i> <b>Seen by:</b> <span>12</span>
+                  </div>
+                  <div class="message-expire-now">
+                    <a href="#">Expire Now</a>
+                  </div>
+                  <div class="message-active">
+                    <i class="fa fa-hourglass-2"></i> <b>Expires:</b> <span>12:45, 15 Dec 17</span>
+                  </div>
+                  <div class="message-expired">
+                    <i class="fa fa-hourglass-end"></i> <b>Expired:</b> <span>12:45, 15 Dec 17</span>
+                  </div>
+                </div>
+                <hr style="clear: both; border-color: #ddd; position: relative; top: 5px;" />
               </div>
             </div>
           </section>
@@ -103,6 +193,19 @@
 
       $(function() {
 
+
+        var formatDate = function (input) {
+          var d = input ? new Date(input) : new Date();
+          var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          var date = d.getDate() + " " + month[d.getMonth()] + ", " + d.getFullYear();
+          var time = d.toLocaleTimeString().toLowerCase().replace(/([\d]+:[\d]+):[\d]+(\s\w+)/g, "$1$2");
+          return (date + " " + time);
+        };
+
+        jQuery('#new-message-date').val(formatDate());
+        const defaultExpiry = Date.parse(new Date()) + 604800000;
+        jQuery('#new-message-expire').val(formatDate(defaultExpiry));
+
         // Get user
         USER = {"name":"Unknown","email":null};
         jQuery.getJSON( "/whoami", function( data ) {
@@ -113,33 +216,77 @@
         });
 
         // Load messages
-        function get() {
-          $.getJSON( "/messages", function( data ) {
-            if (data.messages) {
-
+        function displayMessages(messages) {
+          console.log(messages);
+          const now = Date.parse(new Date());
+          let i = 1;
+          jQuery('#messages-edit .user-messages').show();
+          messages.forEach(message => {
+            if (i > 1) {
+              const div = jQuery(".user-messages .message-wrapper:last").clone();
+              jQuery(".user-messages .message-wrapper:last").after(div);
             }
-            $("body").removeClass("loading");
+            jQuery(".user-messages .message-wrapper:last .user-messages-title").text(message.title);
+            jQuery(".user-messages .message-wrapper:last .user-messages-user").text(message.user);
+            jQuery(".user-messages .message-wrapper:last .user-messages-date").text(formatDate(message.date));
+            jQuery(".user-messages .message-wrapper:last .user-messages-text").html(message.text);
+            const expires = Date.parse(message.expire);
+            if (expires < now) {
+              jQuery(".user-messages .message-wrapper:last .message-info .message-active").hide();
+              jQuery(".user-messages .message-wrapper:last .message-info .message-expired span").text(formatDate(expires));
+              jQuery(".user-messages .message-wrapper:last .message-info .message-expired").show();
+              jQuery(".user-messages .message-wrapper:last .message-info .message-expire-now").hide();
+            } else {
+              jQuery(".user-messages .message-wrapper:last .message-info .message-expired").hide();
+              jQuery(".user-messages .message-wrapper:last .message-info .message-active span").text(formatDate(expires));
+              jQuery(".user-messages .message-wrapper:last .message-info .message-active").show();
+            }
+            i++;
           });
         }
-        get();
+        function checkMessages() {
+          jQuery.getJSON('/messages/', function (data) {
+              jQuery(function () {
+                if (data.messages && data.messages.length) {
+                  displayMessages(data.messages);
+                } else {
+                  jQuery('.user-messages').hide();
+                }
+                $("body").removeClass("loading");
+              });
+          });
+        }
+        checkMessages();
 
-        // Update whitelist
-        $( "#whitelistForm" ).submit(function( event ) {
+        jQuery(document).on('click', '#new-message-preview', () => {
+          jQuery(".user-messages.modal").find('.message:first .user-messages-title').text(jQuery("#new-message-title").val());
+          jQuery(".user-messages.modal").find('.message:first .user-messages-text').html(jQuery("#new-message-text").val());
+          jQuery(".user-messages.modal").find('.message:first .user-messages-user').text(USER.email);
+          jQuery(".user-messages.modal").find('.message:first .user-messages-date').html(jQuery("#new-message-date").val());
+          jQuery(".user-messages.modal").modal("show");
+        });
+
+        // Update list
+        $( "#new-message-form" ).submit(function( event ) {
           $("body").addClass("loading");
           $("#success").addClass("hidden");
           event.preventDefault();
           var form = $( this ),
-              list = form.find( "#list" ).val(),
-              post = $.post( "/whitelist", { list: list } );
+              title = form.find("#new-message-title").val(),
+              text = form.find("#new-message-text").val(),
+              date = form.find("#new-message-date").val(),
+              expire = form.find("#new-message-expire").val(),
+              post = $.post( "/messages/new", {
+                title,
+                text,
+                date,
+                expire
+              } );
           post.done(function( data ) {
             console.log(data);
-            if (data.error===null && data.diff && (data.diff.added.length || data.diff.removed.length) ) {
-              $("#success-added").text(data.diff.added.join(", "));
-              $("#success-removed").text(data.diff.removed.join(", "));
-              $("#update-success").removeClass("hidden");
-              log(data.diff, USER);
-            }
-            get();
+            jQuery("#new-message-title").val('');
+            jQuery("#new-message-text").val('');
+            checkMessages();
           });
         });
 
@@ -147,17 +294,12 @@
         function log(diff) {
           var user = USER.email ? "<http://ad-lookup.bs.bbc.co.uk/adlookup.php?q=" + USER.email + "|" + USER.name + ">" : USER.name,
               payload = { "attachments": [{
-                            "fallback": USER.name + " updated the whitelist of authorised users.",
-                            "text" : user + " updated the whitelist of authorised users.",
+                            "fallback": USER.name + " sent a messages to users.",
+                            "text" : user + " sent a message users.",
                             "fields": [
                               {
-                                "title": "Added",
-                                "value": diff.added.length ? diff.added.join(", ") : "none",
-                                "short": true
-                              },
-                              {
-                                "title": "Removed",
-                                "value": diff.removed.length ? diff.removed.join(", ") : "none",
+                                "title": data.title,
+                                "value": diff.text,
                                 "short": true
                               }
                             ],
@@ -179,6 +321,10 @@
 
       });
     </script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
 
   </body>
 </html>

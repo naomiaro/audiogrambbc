@@ -84,7 +84,7 @@
   color: white;
 }
 
-#user-messages .message {
+.user-messages .message {
     display: block;
     background: #fff;
     width: 100%;
@@ -93,30 +93,33 @@
     padding: 15px;
     position: relative;
 }
-#user-messages .message:not(:last-child) {
+.user-messages .message:not(:last-child) {
   margin-bottom: 15px;
 }
-#user-messages .user-messages-title {
+.user-messages .user-messages-title {
   font-weight: bold;
 } 
-#user-messages .user-messages-user {
+.user-messages .user-messages-user {
   font-style: italic;
   color: #aaa;
   margin-bottom: 5px;
 } 
-#user-messages .user-messages-date {
+.user-messages .user-messages-date {
   position: absolute;
   top: 16px;
   right: 15px;
   font-style: italic;
   color: #aaa;
 }
-#user-messages .user-messages-text ul {
+.user-messages .user-messages-text {
+  margin-top: 10px;
+}
+.user-messages .user-messages-text ul {
   list-style: disc;
-  margin: 0;
+  margin: 10px 0 0 0;
   padding: 0 24px;
 }
-#user-messages .user-messages-text li {
+.user-messages .user-messages-text li {
   padding: 2px 0;
 }
 
@@ -288,9 +291,14 @@
 }
 
 #unauth,
-#whitelist {
+#whitelist,
+#messages-edit {
   max-width: 800px;
   margin: 0 auto;
+}
+
+.loading #messages-edit {
+  display: none;
 }
 
 #unauth .alert {

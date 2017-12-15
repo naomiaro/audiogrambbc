@@ -2,20 +2,32 @@ const logger = require('./slack');
 
 global.USER = { name: 'Unknown', email: null };
 
+function formatDate(input) {
+    var d = input ? new Date(input) : new Date();
+    var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var date = d.getDate() + " " + month[d.getMonth()];
+    var time = d
+        .toLocaleTimeString()
+        .toLowerCase()
+        .replace(/([\d]+:[\d]+):[\d]+(\s\w+)/g, "$1$2");
+    return date + ", " + time;
+};
+
 function displayMessages(messages) {
+    console.log(messages);
     let i = 1;
     messages.forEach(message => {
         if (i>1) {
-            const div = jQuery("#user-messages .message:last").clone();
-            jQuery("#user-messages .message:last").after(div);
+            const div = jQuery(".user-messages.modal .message:last").clone();
+            jQuery(".user-messages.modal .message:last").after(div);
         }
-        jQuery("#user-messages .message:last .user-messages-title").text(message.title);
-        jQuery("#user-messages .message:last .user-messages-user").text(message.user);
-        jQuery("#user-messages .message:last .user-messages-date").text(message.date);
-        jQuery("#user-messages .message:last .user-messages-text").html(message.text);
+        jQuery(".user-messages.modal .message:last .user-messages-title").text(message.title);
+        jQuery(".user-messages.modal .message:last .user-messages-user").text(message.user);
+        jQuery(".user-messages.modal .message:last .user-messages-date").text(formatDate(message.date));
+        jQuery(".user-messages.modal .message:last .user-messages-text").html(message.text);
         i++;
     });
-    jQuery("#user-messages").modal("show");
+    jQuery(".user-messages.modal").modal("show");
 }
 
 function checkMessages(since) {
