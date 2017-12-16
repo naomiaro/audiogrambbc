@@ -120,6 +120,7 @@ app.get("/whoami/", whoami);
 app.get("/messages/edit", messages.editor);
 app.get("/messages/:since?", messages.getMessages);
 app.post("/messages/new", messages.add);
+app.get("/messages/expire/:id", messages.expire);
 
 // Check the status of a current video
 app.get("/status/:id/", status);

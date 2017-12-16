@@ -51,7 +51,7 @@
         right: 0;
         display: none;
       }
-      .message-wrapper:hover .message-expire-now {
+      .message-wrapper:not(.expired):hover .message-expire-now {
         display: block;
       }
     </style>
@@ -123,14 +123,13 @@
               <textarea id="new-message-text" name="list" rows="5" style="width: 100%; min-height: 100px !important" placeholder="HTML Message"></textarea>
               <hr>
               <div class="row">
-                <div class="col-md-4">
-                  <input id="new-message-date" type="text" placeholder="From Date/Time" class="intGEL-input" style="width: 100%; margin-bottom: 5px">
-                  <i class="fa fa-arrow-right" style="font-size: 15px; position: absolute; top: 9px; right: -13px;"></i>
+                <div class="col-md-1" style="font-size: 15px; line-height: 33px;">
+                    Expires:
                 </div>
                 <div class="col-md-4">
-                  <input id="new-message-expire" type="text" placeholder="Expiry Date/Time" class="intGEL-input" style="width: 100%; margin-bottom: 5px">
+                  <input id="new-message-expire" type="text" placeholder="Expiry Date/Time" class="intGEL-input" style="margin-bottom: 5px">
                 </div>
-                <div class="col-md-4 btn-group">
+                <div class="col-md-7 btn-group">
                   <input id="new-message-send" type="submit" value="Send" class="btn btn-primary right">
                   <input id="new-message-preview" type="button" value="Preview" class="btn btn-secondary right" style="margin-right: 10px;">
                 </div> 
@@ -165,16 +164,16 @@
                 </div>
                 <div class="message-info">
                   <div class="message-read-count">
-                    <i class="fa fa-eye"></i> <b>Seen by:</b> <span>12</span>
+                    <i class="fa fa-eye"></i> <b>Seen by:</b> <span>0</span>
                   </div>
                   <div class="message-expire-now">
                     <a href="#">Expire Now</a>
                   </div>
                   <div class="message-active">
-                    <i class="fa fa-hourglass-2"></i> <b>Expires:</b> <span>12:45, 15 Dec 17</span>
+                    <i class="fa fa-hourglass-2"></i> <b>Expires:</b> <span>DD MMM YY, HH:MM</span>
                   </div>
                   <div class="message-expired">
-                    <i class="fa fa-hourglass-end"></i> <b>Expired:</b> <span>12:45, 15 Dec 17</span>
+                    <i class="fa fa-hourglass-end"></i> <b>Expired:</b> <span>DD MMM YY, HH:MM</span>
                   </div>
                 </div>
                 <hr style="clear: both; border-color: #ddd; position: relative; top: 5px;" />
@@ -190,7 +189,6 @@
     <script>
 
       // This is all standalone so that it's not bundled into bundle.js, and therefore is only exposed to admin users
-
       $(function() {
 
 
@@ -209,7 +207,7 @@
         // Get user
         USER = {"name":"Unknown","email":null};
         jQuery.getJSON( "/whoami", function( data ) {
-          if (data.user) {
+          if (data.email) {
             USER.name = data.name;
             USER.email = data.email;
           }
@@ -220,6 +218,7 @@
           console.log(messages);
           const now = Date.parse(new Date());
           let i = 1;
+          jQuery('#messages-edit .user-messages .message-wrapper:not(:first-child)').remove();
           jQuery('#messages-edit .user-messages').show();
           messages.forEach(message => {
             if (i > 1) {
@@ -230,13 +229,16 @@
             jQuery(".user-messages .message-wrapper:last .user-messages-user").text(message.user);
             jQuery(".user-messages .message-wrapper:last .user-messages-date").text(formatDate(message.date));
             jQuery(".user-messages .message-wrapper:last .user-messages-text").html(message.text);
+            jQuery(".user-messages .message-wrapper:last .message-read-count span").html(message.readCount);
+            jQuery(".user-messages .message-wrapper:last .message-expire-now").attr('data-id', message.id);
             const expires = Date.parse(message.expire);
             if (expires < now) {
+              jQuery(".user-messages .message-wrapper:last").addClass('expired');
               jQuery(".user-messages .message-wrapper:last .message-info .message-active").hide();
               jQuery(".user-messages .message-wrapper:last .message-info .message-expired span").text(formatDate(expires));
               jQuery(".user-messages .message-wrapper:last .message-info .message-expired").show();
-              jQuery(".user-messages .message-wrapper:last .message-info .message-expire-now").hide();
             } else {
+              jQuery(".user-messages .message-wrapper:last").removeClass('expired');
               jQuery(".user-messages .message-wrapper:last .message-info .message-expired").hide();
               jQuery(".user-messages .message-wrapper:last .message-info .message-active span").text(formatDate(expires));
               jQuery(".user-messages .message-wrapper:last .message-info .message-active").show();
@@ -258,11 +260,20 @@
         }
         checkMessages();
 
+        jQuery(document).on('click', '.message-expire-now', (e) => {
+            jQuery("body").addClass("loading");
+            const id = jQuery(e.currentTarget).attr('data-id');
+            console.log(id);
+            jQuery.getJSON(`/messages/expire/${id}`, function (data) {
+                checkMessages();
+            });
+        });
+            
         jQuery(document).on('click', '#new-message-preview', () => {
           jQuery(".user-messages.modal").find('.message:first .user-messages-title').text(jQuery("#new-message-title").val());
           jQuery(".user-messages.modal").find('.message:first .user-messages-text').html(jQuery("#new-message-text").val());
           jQuery(".user-messages.modal").find('.message:first .user-messages-user').text(USER.email);
-          jQuery(".user-messages.modal").find('.message:first .user-messages-date').html(jQuery("#new-message-date").val());
+          jQuery(".user-messages.modal").find('.message:first .user-messages-date').html(formatDate());
           jQuery(".user-messages.modal").modal("show");
         });
 
@@ -274,7 +285,7 @@
           var form = $( this ),
               title = form.find("#new-message-title").val(),
               text = form.find("#new-message-text").val(),
-              date = form.find("#new-message-date").val(),
+              date = formatDate(),
               expire = form.find("#new-message-expire").val(),
               post = $.post( "/messages/new", {
                 title,

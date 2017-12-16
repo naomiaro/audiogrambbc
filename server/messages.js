@@ -28,15 +28,16 @@ function getMessages(req, res) {
             const ids = messages.map((message) => message.id);
             async.map(ids, fetchReadCount, (err, readCounts) => {
               messsages = messages.map((message, i) => {
-                message.readCount = readCounts[i];
+                message.readCount = readCounts[i] || 0;
               });
               return res.json({ messages });
             });
         } else {
             // User view
             messages = messages.filter((message) => {
+                const date = Date.parse(message.date);
                 const expires = Date.parse(message.expire);
-                if (expires < now) return false;
+                if (expires < now || date < since) return false;
                 redisClient.incr(`audiogram:messages:readcount:${message.id}`);
                 return true;
             });
@@ -62,6 +63,28 @@ function getMessages(req, res) {
 
 };
 
+function expire(req, res) {
+    const id = req.params.id;
+    const expire = Date.parse(new Date()) - 1000;
+    redisClient.smembers(`audiogram:messages`, (err, messages) => {
+        messages = messages.map((message) => {
+            return JSON.parse(message);
+        });
+        messages.forEach(message => {
+            if (message.id == id) {
+                updatedMessage = Object.assign({}, message);
+                updatedMessage.expire = new Date(expire);;
+                redisClient.multi()
+                    .srem('audiogram:messages', JSON.stringify(message))
+                    .sadd('audiogram:messages', JSON.stringify(updatedMessage))
+                    .exec((err, msg) => {
+                        return res.json(msg);
+                    });
+            }
+        });
+
+    });
+}
 
 function editor(req, res) {
     const path = require("path")
@@ -82,5 +105,6 @@ function add(req, res) {
 module.exports = {
     getMessages,
     editor,
-    add
+    add,
+    expire
 }
