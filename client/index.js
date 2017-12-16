@@ -25,6 +25,8 @@ const user = require('./user');
 
 user.init();
 
+jQuery('#version').text('Version: __VERSION__');
+
 d3.json("/settings/themes.json", function(err, themes){
 
   console.log('Parsing themes...');
