@@ -181,7 +181,8 @@
   min-height: 90px;
 }
 
-#landing .saved [data-id='template'] {
+#landing .saved [data-id='template'],
+#landing .saved [data-finished='false'] {
   display: none;
 }
 

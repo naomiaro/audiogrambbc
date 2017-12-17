@@ -62,7 +62,6 @@ function getProjects() {
       console.log(projects);
       jQuery("#version-history-body").html("");
       jQuery("#landing .saved [data-id][data-id!='template']").remove();
-      if (projects.length) jQuery("#landing .saved .empty").hide();
       // Loop through each project
       for (var i = projects.length - 1; i >= 0; i--) {
         // Add new project
@@ -79,6 +78,7 @@ function getProjects() {
         if (projects[i].private) el.find(".private").removeClass('hidden');
         el.attr("data-id", projects[i].id);
         el.attr("data-audioId", projects[i].audioId);
+        el.attr("data-finished", projects[i].finished);
         el.find(".name").text( projects[i].title );
         var date = new Date(projects[i].date);
         el.find(".date").text(dateFormat(date, "dd mmm, HH:MM"));
@@ -90,6 +90,9 @@ function getProjects() {
         el.find('.box-icon').css('width', imageWidth + "px");
         el.find('.info-box-content').css('width', "calc(100% - " + imageWidth + "px - 20px)");
     }
+      if (jQuery("#landing .saved [data-id]:visible").length) {
+          jQuery("#landing .saved .empty").hide();
+      }
       utils.tooltips();
     }
   });

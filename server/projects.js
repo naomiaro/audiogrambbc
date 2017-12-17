@@ -1,4 +1,6 @@
-var transports = require("../lib/transports");
+var transports = require("../lib/transports"),
+    fs = require("fs"),
+    path = require("path");
 
 function getList(req, res) {
   var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "audiogram-dev@bbc.co.uk";
@@ -17,7 +19,9 @@ function getList(req, res) {
           user = projects[i].user,
           date = +projects[i].created,
           duration = +projects[i].duration,
-          orientation = projects[i].theme.orientation;
+          orientation = projects[i].theme.orientation,
+          mediaPath = path.join(__dirname, "../media/video", id + ".mp4"),
+          finished = fs.existsSync(mediaPath);
         // Don't returned expired projects (>3 days)
         var diffDays = Math.round(
           Math.abs((now - date) / (24 * 60 * 60 * 1000))
@@ -31,7 +35,8 @@ function getList(req, res) {
             date,
             duration,
             private,
-            orientation
+            orientation,
+            finished
           });
         }
       }
