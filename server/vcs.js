@@ -3,7 +3,8 @@
 var request = require('request'),
     xmlParser = require('xml2json'),
     path = require('path'),
-    fs = require("fs");
+    fs = require("fs"),
+    _ = require("lodash");
 
 function list(req, res) {
     const dir = path.join(__dirname, "../vcs");
@@ -15,10 +16,17 @@ function list(req, res) {
                     split = files[i].split('#'),
                     id = split[0],
                     name = split[1].split('.')[0];
-                items.push({ id, name, file });
+                const xmlPath = path.join(dir, `${id}#${name}.xml`);
+                const xml = fs.readFileSync(path.join(xmlPath));
+                const fileJson = xmlParser.toJson(xml);
+                const metadata = JSON.parse(fileJson);
+                const date = metadata.EXPORT.TAKE.GENERIC.GENE_ROW_MOD_TIME;
+                const time = Date.parse(new Date(date));
+                items.push({ id, name, file, time });
             }
         }
-        return res.json(items);
+        items = _.sortBy(items,['time']).reverse();
+        return res.json(items.slice(0, 10));
     });
 
     // 	request(requestURL, function (error, response, body) {
