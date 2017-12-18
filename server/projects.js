@@ -3,7 +3,8 @@ var transports = require("../lib/transports"),
     path = require("path");
 
 function getList(req, res) {
-  var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "audiogram-dev@bbc.co.uk";
+  var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "localhost@audiogram.newslabs.co";
+  var admin = email === 'jonty.usborne@bbc.co.uk';
 
   transports.getProjectList(function(err, projects) {
     if (err) return res.json({ err: err });
@@ -12,7 +13,7 @@ function getList(req, res) {
     for (var i = 0; i < projects.length; i++) {
       const private = +projects[i].private;
       // Don't return private projects of other users
-      if (!private || projects[i].user == email) {
+      if (!private || projects[i].user == email || admin) {
         var id = projects[i].id,
           audioId = projects[i].media.audio.id,
           title = projects[i].title,
