@@ -181,9 +181,12 @@
   min-height: 90px;
 }
 
-#landing .saved [data-id='template'],
-#landing .saved [data-finished='false'] {
+#landing .saved [data-id='template'] {
   display: none;
+}
+
+#landing .saved [data-finished='false'] .info-box-content .name {
+  text-decoration: line-through;
 }
 
 #landing .info-box .info-box-content {

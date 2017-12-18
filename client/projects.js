@@ -80,6 +80,7 @@ function getProjects() {
         el.attr("data-id", projects[i].id);
         el.attr("data-audioId", projects[i].audioId);
         el.attr("data-finished", projects[i].finished);
+        if (!projects[i].finished) el.addClass('hidden');
         el.find(".name").text( projects[i].title );
         var date = new Date(projects[i].date);
         el.find(".date").text(dateFormat(date, "dd mmm, HH:MM"));
@@ -94,7 +95,7 @@ function getProjects() {
       if (jQuery("#landing .saved [data-id]:visible").length) {
           jQuery("#landing .saved .empty").hide();
       }
-      if (jQuery("#landing .saved [data-id][data-admin]").length) {
+      if (jQuery("#landing .saved [data-id][data-admin]").length || jQuery("#landing .saved [data-id][data-finished='false']").length) {
         jQuery("#recent-filter option:last").after('<option value="admin">Admin View</option>');
       }
       utils.tooltips();
@@ -105,12 +106,17 @@ function getProjects() {
 function updateFilter() {
   const filter = jQuery("#recent-filter").val();
   jQuery("#landing .saved [data-id]").addClass("hidden");
+  jQuery("#landing .saved .empty").show();
   if (filter=="all") {
-    jQuery("#landing .saved [data-id][data-admin!='true']").removeClass("hidden");
+    jQuery("#landing .saved [data-id][data-admin!='true'][data-finished!='false']").removeClass("hidden");
   } else if (filter=='admin') {
     jQuery("#landing .saved [data-id]").removeClass("hidden");
   } else {
-    jQuery("#landing .saved [data-user][data-user='" + USER.email + "']").removeClass("hidden");
+    jQuery("#landing .saved [data-user][data-user='" + USER.email + "'][data-finished!='false']").removeClass("hidden");
+  }
+  jQuery("#landing .saved [data-id='template']").addClass("hidden");
+  if (jQuery("#landing .saved [data-id]:visible").length) {
+    jQuery("#landing .saved .empty").hide();
   }
 }
 
