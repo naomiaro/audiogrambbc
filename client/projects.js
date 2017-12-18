@@ -99,6 +99,7 @@ function getProjects() {
         jQuery("#recent-filter option:last").after('<option value="admin">Admin View</option>');
       }
       utils.tooltips();
+      updateFilter();
     }
   });
 }
