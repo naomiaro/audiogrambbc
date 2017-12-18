@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const uuidv4 = require("uuid/v4");
 const async = require('async');
+const auth = require('./auth');
 
 const redisHost = require("../settings/").redisHost;
 const redis = require("redis");
@@ -87,9 +88,15 @@ function expire(req, res) {
 }
 
 function editor(req, res) {
-    const path = require("path")
-    const messagesPage = path.join(__dirname, "../editor/messages.html");
-    return res.sendFile(messagesPage);
+    const email = req.header('BBC_IDOK') ? req.header('BBC_EMAIL') : 'localhost@audiogram.newslabs.co';
+    auth.isAdmin(email, function(err, isAdmin){
+        if (!isAdmin) {
+            return res.status(401).send("HTTP/1.1 401 Unauthorized");
+        }
+        const path = require("path");
+        const messagesPage = path.join(__dirname, "../editor/messages.html");
+        return res.sendFile(messagesPage);
+    });
 }
 
 function add(req, res) {
