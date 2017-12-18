@@ -76,6 +76,7 @@ function getProjects() {
           el.attr("data-hideVersion", true);
         }
         if (projects[i].private) el.find(".private").removeClass('hidden');
+        if (projects[i].private && projects[i].user!=USER.email) el.attr("data-admin", true);
         el.attr("data-id", projects[i].id);
         el.attr("data-audioId", projects[i].audioId);
         el.attr("data-finished", projects[i].finished);
@@ -89,9 +90,12 @@ function getProjects() {
         const imageWidth = orientation_map[projects[i].orientation];
         el.find('.box-icon').css('width', imageWidth + "px");
         el.find('.info-box-content').css('width', "calc(100% - " + imageWidth + "px - 20px)");
-    }
+      }
       if (jQuery("#landing .saved [data-id]:visible").length) {
           jQuery("#landing .saved .empty").hide();
+      }
+      if (jQuery("#landing .saved [data-id][data-admin]").length) {
+        jQuery("#recent-filter option:last").after('<option value="admin">Admin View</option>');
       }
       utils.tooltips();
     }
@@ -100,10 +104,13 @@ function getProjects() {
 
 function updateFilter() {
   const filter = jQuery("#recent-filter").val();
+  jQuery("#landing .saved [data-id]").addClass("hidden");
   if (filter=="all") {
-    jQuery("#landing .saved [data-user]").removeClass("hidden");
+    jQuery("#landing .saved [data-id][data-admin!='true']").removeClass("hidden");
+  } else if (filter=='admin') {
+    jQuery("#landing .saved [data-id]").removeClass("hidden");
   } else {
-    jQuery("#landing .saved [data-user][data-user!='" + USER.email + "']").addClass("hidden");
+    jQuery("#landing .saved [data-user][data-user='" + USER.email + "']").removeClass("hidden");
   }
 }
 

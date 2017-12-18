@@ -1,11 +1,20 @@
 var transports = require("../lib/transports"),
     fs = require("fs"),
-    path = require("path");
+    path = require("path"),
+    request = require('request');
 
-function getList(req, res) {
-  var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "localhost@audiogram.newslabs.co";
-  var admin = email === 'jonty.usborne@bbc.co.uk';
+function adminMiddleware(req, res) {
+  const adminGroup = "CN=BBC News Labs Team,OU=B,OU=Distribution Groups,OU=Users and Desktops,OU=London,OU=MTS,DC=national,DC=core,DC=bbc,DC=co,DC=uk";
+  const email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "localhost@audiogram.newslabs.co";
+  const url = `http://apis.labs.jupiter.bbc.co.uk/whois/${email}`;
+  request(url, function (err, adRes, adBody) {
+    const userData = JSON.parse(adBody);
+    const isAdmin = userData.retval.groups ? userData.retval.groups.includes(adminGroup) : false;
+    return projectList(req, res, isAdmin);
+  });
+}
 
+function projectList(req, res, admin) {
   transports.getProjectList(function(err, projects) {
     if (err) return res.json({ err: err });
     var list = [],
@@ -71,7 +80,7 @@ function updateProject(req, res) {
 }
 
 module.exports = {
-    getList,
-    getProject,
-    updateProject
+  getList: adminMiddleware,
+  getProject,
+  updateProject
 };
