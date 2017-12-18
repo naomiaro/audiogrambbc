@@ -1,4 +1,5 @@
 var d3 = require("d3");
+const utils = require('./utils');
 
 var minimap = d3.select("#minimap"),
     svg = minimap.select("svg"),
@@ -67,7 +68,9 @@ function time(t) {
 }
 
 function drawBrush(extent) {
-  brush.move(d3.select(".brush"), [t.invert(extent.start), t.invert(extent.end)]);
+  if (!isNaN(extent.start) && !isNaN(extent.end)) {
+    brush.move(d3.select(".brush"), [t.invert(extent.start), t.invert(extent.end)]);
+  }
 }
 
 function brushed() {
@@ -108,11 +111,38 @@ function _onBrushEnd(_) {
   onBrushEnd = _;
 }
 
+function updateTrim(extent) {
+    extent = extent || [];
+    var start = extent[0] || parseFloat(d3.select('#start').property('value'));
+    var end = extent[1] || parseFloat(d3.select('#end').property('value'));
+    if (!isNaN(start) && !isNaN(end)) {
+        if (start > end) {
+            end = extent[0] || parseFloat(d3.select('#start').property('value'));
+            start = extent[1] || parseFloat(d3.select('#end').property('value'));
+        }
+        const audio = require('./audio');
+        var duration = Math.round(100 * audio.duration()) / 100;
+        if (start < 0.1) start = 0;
+        if (end > (duration-0.1)) end = duration;
+        start = start / duration;
+        end = end / duration;
+        if (start!=0 || end!=1) {
+          drawBrush({ start: start, end: end });
+        }
+    }
+}
+
+function init() {
+    d3.selectAll("#start, #end").on("change", updateTrim);
+}
+
 module.exports = {
   time: time,
   redraw: redraw,
   drawBrush: drawBrush,
   width: _width,
   onBrush: _onBrush,
-  onBrushEnd: _onBrushEnd
+  onBrushEnd: _onBrushEnd,
+  updateTrim,
+  init
 };

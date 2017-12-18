@@ -113,7 +113,13 @@ minimap.onBrush(function(extent){
 // Resize video and preview canvas to maintain aspect ratio
 function resize(width, height) {
 
+  width = width || theme.width;
+  height = height || theme.height;
+
+  const bodyClass = jQuery("body").attr("class");
+  jQuery("body").attr("class",null);
   var wrapperWidth = d3.select("#canvas").node().getBoundingClientRect().width;
+  jQuery("body").attr("class", bodyClass);
   if (!wrapperWidth) return;
 
   var widthFactor = wrapperWidth / width,
@@ -136,7 +142,10 @@ function resize(width, height) {
 
 function redraw() {
 
-  video.kill(); //'ed the radio star...
+  jQuery("#submit").removeClass("hidden");
+  jQuery("#view").addClass("hidden");
+
+  // video.kill(); //'ed the radio star...
 
   resize(theme.width, theme.height);
   theme.orientation = (theme.width==theme.height) ? "square" : (theme.width>theme.height) ? "landscape" : "portrait";
@@ -147,8 +156,10 @@ function redraw() {
   renderer.bbcDog(bbcDog || null);
 
   // Render images
-  renderer.foregroundImage(img.foreground ? img.foreground : theme.foregroundImageFile ? theme.foregroundImageFile[theme.orientation] : null);
-  renderer.backgroundImage(img.background ? img.background : theme.backgroundImageFile ? theme.backgroundImageFile[theme.orientation] : null);
+  var foreground = img.foreground ? img.foreground : theme.foregroundImageFile ? theme.foregroundImageFile[theme.orientation] : null;
+  var background = img.background ? img.background : theme.backgroundImageFile ? theme.backgroundImageFile[theme.orientation] : null;
+  renderer.foregroundImage(jQuery.isEmptyObject(foreground) ? null : foreground);
+  renderer.backgroundImage(jQuery.isEmptyObject(background) ? null : background);
 
   renderer.drawFrame(context, {
     caption: theme.caption.text,
@@ -168,15 +179,15 @@ function loadAudio(audioFile, cb) {
     .defer(getWaveform, audioFile)
     .defer(audio.src, audioFile)
     .await(function(err, data){
-
       if (err) {
-        return cb(err);
+        return cb ? cb(err) : err;
       }
 
       file = audioFile;
       minimap.redraw(data.peaks);
 
-      cb(err);
+      if (cb) cb(err);
+      return;
 
     });
 
@@ -191,5 +202,6 @@ module.exports = {
   imgInfo: _imgInfo,
   loadAudio: loadAudio,
   redraw: redraw,
+  resize,
   selection: _selection
 };

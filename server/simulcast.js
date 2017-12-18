@@ -2,6 +2,7 @@ var request = require('request'),
 	reith = "http://www-cache.reith.bbc.co.uk:80",
 	concat = require('concat-files'),
     fs = require("fs"),
+		rimraf = require("rimraf"),
     uuid = require('uuid/v4'),
     xmlParser = require('xml2json'),
     mkdirp = require("mkdirp"),
@@ -10,10 +11,43 @@ var request = require('request'),
 
 var q,
 	job,
+	tmpRoot,
 	tmpPath,
+	destPath,
 	mpd,
 	segmentDuration,
 	mediaURL;
+
+const PROCESSES = {};
+
+function purge(req, res) {
+    const id = req ? req.params.id : job;
+
+    const mp3 = path.join(__dirname, "../tmp/mediaselector", id + ".mp3");
+		if (fs.existsSync(mp3)) {
+      fs.unlinkSync(mp3);
+    }
+    const mp4 = path.join(__dirname, "../tmp/mediaselector", id + ".mp4");
+    if (fs.existsSync(mp4)) {
+      fs.unlinkSync(mp4);
+    }
+    const log = path.join(__dirname, "../tmp/mediaselector", id + ".log");
+    if (fs.existsSync(log)) {
+      fs.unlinkSync(log);
+    }
+
+    const workingDir = path.join(__dirname, "../tmp/mediaselector", id);
+    if (fs.existsSync(workingDir)) {
+			if (PROCESSES[id] && PROCESSES[id].length){
+				PROCESSES[id].forEach(pid => {
+					process.kill(pid);
+				});
+			}
+      rimraf.sync(workingDir);
+    }
+
+    if (res) res.json({ deleted: id });
+  };
 
 function getMpd(vpid,cb) {
 	// Query MS for a MPD url
@@ -66,6 +100,10 @@ function mpdParse(cb) {
 }
 
 function fetchSegment(url, filename, cb) {
+	if (!fs.existsSync(tmpPath)) {
+		// Don't start if process killed externally
+		return purge();
+	}
 	var ws = fs.createWriteStream(filename);
 	ws.on('finish', function(err) {
 		cb(err);
@@ -88,11 +126,11 @@ function generateMedia(type, start, end, cb) {
 	if (type==='video' && 'undefined' === typeof mediaURL.template.video) {
 		return cb(null);
 	}
-
+	
 	var q = queue(1),
 		segments = [],
 		ext = ((type==="video") ? "mp4" : "mp3");
-
+	
 	// Leap-second offset
 	start = +start + 37;
 	end = +end + 37;
@@ -115,6 +153,10 @@ function generateMedia(type, start, end, cb) {
 
 	q.await(function(err){
 		if (err) return cb(err);
+		if (!fs.existsSync(tmpPath)) {
+			// Don't start if process killed externally
+			return purge();
+		}
 		// Build ffmpeg arguments
 		var args = ['-loglevel', 'fatal'];
 		args.push('-i', tmpPath + 'audio.m4s');
@@ -124,13 +166,23 @@ function generateMedia(type, start, end, cb) {
 		var spawn = require("child_process").spawn,
 			command = spawn("ffmpeg", args),
 			err = "";
+		PROCESSES[job] = PROCESSES[job] || [];
+		PROCESSES[job].push(command.pid);
+		console.log('SIMULCAST PROCESS ADDED:', command.pid)
 		command.stderr.on('data', function(data) {
 			err += data;
 		});
 		command.on('exit', function() {
+			var pidIndex = PROCESSES[job].indexOf(command.pid);
+			PROCESSES[job].splice(pidIndex, 1);
+			console.log("SIMULCAST EXIT...", command.pid);
 			if (err!=="") return cb(err);
 			// Rename file, ready for collection
-			fs.rename(tmpPath + type + '.' + ext, tmpPath + job + '.' + ext, function(err){cb(err)});
+			const moveFrom = tmpPath + type + '.' + ext;
+			const moveTo = destPath + job + '.' + ext;
+			if (fs.existsSync(moveFrom)) {
+				fs.rename(moveFrom, moveTo, function(err){cb(err)});
+			}
 		});
 	});
 
@@ -157,24 +209,31 @@ function startJob(req, res) {
 		return res.json({ error: "Too far in the past. Clip must be from the last 12 hours." });
 	}
 
-	// Job ID
-	job = uuid();
-	tmpPath = path.join(__dirname, "../tmp/", job, "/");
-
-	// Make temp dir
-	q.defer(mkdirp, tmpPath);
-
 	// Get MPD from Media Selector
 	q.defer(getMpd, req.body.vpid);
+
+	// Job ID
+	job = uuid();
+
+	// Make temp dir
+	tmpRoot = path.join(__dirname, "../tmp/");
+	tmpPath = path.join(tmpRoot, "mediaselector", job + "/");
+	destPath = path.join(tmpRoot, "mediaselector/");
+	q.defer(mkdirp, tmpPath);
+	
+	tmpRoot = path.join(__dirname, "../tmp/");
 
 	// Parse useful bits out of MPD
 	q.defer(mpdParse);
 
 	// Return expected filenames
 	q.defer(function(cb){
-		fileAudio = "/simulcast/status/" + job + ".mp3";
-		fileVideo = mediaURL.template.video ? "/simulcast/status/" + job + ".mp4" : null;
-		res.json({ audio: fileAudio, video: fileVideo });
+		fileAudio = job;
+		fileVideo = mediaURL.template.video ? job : null;
+		res.json({
+			audio: fileAudio, 
+			video: fileVideo
+		});
 		cb(null);
 	})
 
@@ -187,26 +246,28 @@ function startJob(req, res) {
 	q.await(function(err){
 		if (err) {
 			console.log("SIMULCAST ERROR: " + err);
-			fs.writeFile(tmpPath + job + ".log", err);
+			fs.writeFile(destPath + job + ".log", err);
 			if (fileAudio==null && fileVideo==null) return res.json({ err: err });
 		}
 		// Delete tmp media files
-		if (fs.existsSync(tmpPath + "audio.m4s")) fs.unlinkSync(tmpPath + "audio.m4s");
-		if (fs.existsSync(tmpPath + "video.m4s")) fs.unlinkSync(tmpPath + "video.m4s");
+		rimraf.sync(tmpPath);
+		// if (fs.existsSync(tmpPath + "audio.m4s")) fs.unlinkSync(tmpPath + "audio.m4s");
+		// if (fs.existsSync(tmpPath + "video.m4s")) fs.unlinkSync(tmpPath + "video.m4s");
 	});
 
 }
 
-
 function poll(req, res) {
+	console.log("POLL >> ", req.params.id);
 	var file = req.params.id.split("."),
 		job = file[0],
 		ext = file[1],
 		type = (ext==="mp3") ? "audio" : (ext==="mp4") ? "video" : null;
-		logPath = path.join(__dirname, "../tmp/", job, "/", job + ".log"),
+		logPath = path.join(__dirname, "../tmp/mediaselector", job + ".log"),
 		logExists = fs.existsSync(logPath),
-		mediaPath = path.join(__dirname, "../tmp/", job, "/", job + "." + ext),
+		mediaPath = path.join(__dirname, "../tmp/mediaselector", job + "." + ext),
 		mediaExists = fs.existsSync(mediaPath);
+		console.log(mediaPath);
 	if (logExists) {
 		fs.readFile(logPath, 'utf8', function(err, data) {
 			if (err) {
@@ -217,15 +278,16 @@ function poll(req, res) {
 			return res.json({ ready: false, err: error, src: "/simulcast/media/" + job + "." + ext, type: type });
 		});
 	} else {
-		return res.json({ ready: mediaExists, err: null, src: "/simulcast/media/" + job + "." + ext, type: type });
+		return res.json({ ready: mediaExists, err: null, src: "/simulcast/media/" + job + "." + ext, id: job + "." + ext, type: type });
 	}
 }
 
 function pipeMedia(req, res){
 	var file = req.params.id.split("."),
-		job = file[0],
-		ext = file[1],
-		mediaPath = path.join(__dirname, "../tmp/", job, "/", job + "." + ext);
+    job = file[0],
+    ext = file[1],
+    type = ext === "mp3" ? "audio" : ext === "mp4" ? "video" : null,
+		mediaPath = path.join(__dirname, "../tmp/mediaselector", job + "." + ext);
 	if (fs.existsSync(mediaPath)) {
 		res.sendFile(mediaPath);
 	} else {
@@ -235,11 +297,12 @@ function pipeMedia(req, res){
 
 function readme(req, res){
 	return res.redirect(301, "https://github.com/BBC-News-Labs/audiogram/blob/master/SIMULCAST.md");
-;}
+}
 
 module.exports = {
   post: startJob,
   poll: poll,
   pipe: pipeMedia,
-  readme: readme
+	readme: readme,
+	delete: purge
 };

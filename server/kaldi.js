@@ -8,13 +8,13 @@ var request = require('request'),
 
 function fetchTranscript(job, cb) {
 	var requestURL = kaldiBaseURL + '/transcript/' + job;
-	request(requestURL, function (error, response, body) {
+	request({url: requestURL, proxy: null}, function (error, response, body) {
 		cb(error,body);
 	});
 }
 function fetchSegments(job, cb) {
 	var requestURL = kaldiBaseURL + '/segments/' + job;
-	request(requestURL, function (error, response, body) {
+	request({url: requestURL, proxy: null}, function (error, response, body) {
 		cb(error,body);
 	});
 }
@@ -34,7 +34,7 @@ function fetch(job, cb) {
 
 function poll(job, cb) {
 	var requestURL = kaldiBaseURL + '/status/' + job;
-	request(requestURL, function (error, response, body) {
+	request({url: requestURL, proxy: null}, function (error, response, body) {
 		var bodyJson = JSON.parse(body);
 		kaldiPoll = {status: bodyJson.status, error: (error || bodyJson.error)}
 		cb(error);
@@ -62,10 +62,11 @@ function post(req, res) {
 	var formData = {
 		file: fs.createReadStream(req.files['audio'][0].path)
 	};
-	request.post({url: kaldiBaseURL, formData: formData}, function (error, response, body) {
+	request.post({url: kaldiBaseURL, proxy: null, formData: formData}, function (error, response, body) {
 		rimraf(req.files['audio'][0].destination, function(err){
-			console.log("Error deleting tmp dir: " + err);
+			if (err) console.log("Error deleting tmp dir: " + err);
 		})
+		console.log(body);
 		try {
 			var bodyJson = JSON.parse(body);
 		} catch(e) {

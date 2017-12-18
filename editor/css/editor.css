@@ -1,9 +1,305 @@
+.landing .breadcrumbs,
+.loading:not(.generating) .breadcrumbs {
+  display: none;
+}
+.breadcrumbs {
+    border: none !important;
+    padding: 10px 15px !important;
+    margin: -10px 0 10px 0 !important;
+    background: #ffffff !important;
+}
+.rendered .breadcrumbs {
+  width: 664px;
+  margin: -10px auto 10px auto !important;
+}
+.breadcrumbs a {
+  text-decoration: underline;
+}
+.breadcrumbs > span:not(:first-child)::before {
+  content: " > ";
+  padding: 0 5px;
+}
+#breadcumb_home {
+  font-weight: bold;
+}
+.breadcrumbs > span.active a {
+  color: #000000 !important;
+  cursor: default !important;
+  text-decoration: none !important;
+}
 
 
-#unauth,
-#whitelist {
+#progressbar {
+  margin-bottom: 30px;
+  overflow: hidden;
+  /*CSS counters to number the steps*/
+  counter-reset: step;
+}
+#progressbar li {
+  list-style-type: none;
+  color: #b60000;
+  text-transform: uppercase;
+  font-size: 9px;
+  width: 25%;
+  float: left;
+  position: relative;
+  text-align: center;
+}
+#progressbar li.complete {
+  text-decoration: underline;
+  cursor: pointer;
+}
+#progressbar li:before {
+  content: counter(step);
+  counter-increment: step;
+  width: 20px;
+  line-height: 20px;
+  display: block;
+  font-size: 10px;
+  color: #333;
+  background: white;
+  border-radius: 3px;
+  margin: 0 auto 5px auto;
+}
+/*progressbar connectors*/
+#progressbar li:after {
+  content: '';
+  width: 100%;
+  height: 2px;
+  background: white;
+  position: absolute;
+  left: -50%;
+  top: 9px;
+  z-index: -1; /*put it behind the numbers*/
+}
+#progressbar li:first-child:after {
+  /*connector not needed before the first step*/
+  content: none; 
+}
+/*marking active/completed steps green*/
+/*The number of the step and the connector before it = green*/
+#progressbar li.complete:before,  #progressbar li.complete:after,
+#progressbar li.active:before,  #progressbar li.active:after{
+  background: #b60000;
+  color: white;
+}
+
+.user-messages .message {
+    display: block;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    border-radius: 2px;
+    padding: 15px;
+    position: relative;
+}
+.user-messages .message:not(:last-child) {
+  margin-bottom: 15px;
+}
+.user-messages .user-messages-title {
+  font-weight: bold;
+} 
+.user-messages .user-messages-user {
+  font-style: italic;
+  color: #aaa;
+  margin-bottom: 5px;
+} 
+.user-messages .user-messages-date {
+  position: absolute;
+  top: 16px;
+  right: 15px;
+  font-style: italic;
+  color: #aaa;
+}
+.user-messages .user-messages-text {
+  margin-top: 10px;
+}
+.user-messages .user-messages-text ul {
+  list-style: disc;
+  margin: 10px 0 0 0;
+  padding: 0 24px;
+}
+.user-messages .user-messages-text li {
+  padding: 2px 0;
+}
+
+#landing {
+  margin-top: -30px;
+}
+
+#landing h2 {
+  max-width: 800px;
+  margin: 14px auto;
+  padding: 5px 0;
+  border-bottom: 1px solid #aaa;
+  font-size: 25px;
+}
+
+#landing > p {
   max-width: 800px;
   margin: 0 auto;
+  padding: 3px 15px;
+}
+
+#landing .row {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+#landing .info-box {
+  cursor: pointer;
+  display: block;
+  background: #fff;
+  width: 100%;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  border-radius: 2px;
+  margin-bottom: 15px;
+}
+#landing .info-box:hover {
+  box-shadow: 0 0px 5px rgba(0, 0, 0, 0.4);
+}
+#landing .new .info-box {
+  min-height: 60px;
+}
+
+#landing #recent-filter-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: right;
+  height: 0;
+  position: relative;
+  top: -53px;
+}
+#landing #recent-filter-wrapper label {
+  width: auto;
+}
+#landing #recent-filter-wrapper select {
+  background: #fff;
+}
+
+#landing .saved .info-box {
+  min-height: 90px;
+}
+
+#landing .saved [data-id='template'],
+#landing .saved [data-finished='false'] {
+  display: none;
+}
+
+#landing .info-box .info-box-content {
+    float: left;
+    width: calc(100% - 90px - 20px);
+}
+
+#landing .info-box .info-box-content i:not(:first-child) {
+  margin-left: 10px;
+}
+
+#landing .info-box .info-box-content .name {
+  font-style: italic;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: calc(100% - 40px);
+  display: inline-block;
+  height: 1em;
+  line-height: 1em;
+  position: relative;
+  top: 3px;
+}
+
+#landing .info-box .info-box-content .user {
+  display: inline-block;
+  height: calc(1em + 2px);
+  line-height: 1em;
+  width: calc(100% - 95px);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  position: relative;
+  top: 4px;
+}
+
+#landing .box-icon {
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 2px;
+  margin-right: 20px;
+  display: block;
+  float: left;
+  text-align: center;
+  font-size: 45px;
+  background: rgba(0,0,0,0.2);
+}
+#landing .new .box-icon {
+  background-size: 40px !important;
+  height: 60px;
+  width: 60px;
+  line-height: 60px;
+}
+
+#new-vcs table tbody tr td:first-child,
+#new-png table tbody tr td:first-child {
+    text-align: center;
+}
+#new-vcs table tbody input,
+#new-png table tbody input {
+    margin: 0
+}
+#new-vcs table tbody tr,
+#new-png table tbody tr {
+    cursor: pointer;
+}
+
+#landing .saved [data-hideVersion=true] {
+  display: none;
+}
+
+#landing .saved .box-icon {
+  background-color: #e6e6e6 !important;
+  background-size: auto 90px !important;
+  height: 90px;
+  width: 90px;
+  line-height: 90px;
+}
+
+#landing .new .info-box-content {
+  line-height: 60px;
+}
+#landing .saved .info-box-content {
+  line-height: 37px;
+}
+#landing .saved .info-box-content div:nth-child(2) {
+  margin: -12px 0;
+}
+
+#landing .saved .info-box-content .version-count {
+  display: inline-block;
+  padding-left: 10px;
+}
+
+#landing .saved .info-box-content .private {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding-left: 5px;
+}
+#landing .saved .info-box-content .private:before {
+    position: relative;
+    top: -10px;
+}
+
+#unauth,
+#whitelist,
+#messages-edit {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.loading #messages-edit {
+  display: none;
 }
 
 #unauth .alert {
@@ -182,7 +478,13 @@ select.transcript-speaker {
     margin: 7px 0 3px 0;
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+}
+
 div.wrapper {
+  flex: 1 0 auto;
   width: 100%;
   max-width: 1500px;
   padding: 20px;
@@ -527,15 +829,18 @@ g.time line {
   margin: auto;
 }
 
+#landing,
 #loading,
 #error,
 #success,
 #generated,
+.landing #loaded,
 .loading #loaded,
 .rendered #loaded {
   display: none;
 }
 
+.landing #landing,
 .loading #loading,
 .error #error,
 .success #success,

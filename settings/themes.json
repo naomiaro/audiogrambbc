@@ -2,7 +2,7 @@
 	"default": {
 		"width": 1280,
 		"height": 720,
-		"framesPerSecond": 20,
+		"framesPerSecond": 15,
 		"maxDuration": 300,
 		"samplesPerFrame": 128,
 		"pattern": "wave",
@@ -72,6 +72,151 @@
 		"backgroundColor": "#eee"
 	},
 	"Custom": {},
+	"5 live Ops": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "bars",
+		"wave": {
+			"color": "#00aed6",
+			"height": 0.35,
+			"width": 1,
+			"y": 0.705,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.5",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000",
+				"#ffffff",
+				"#ffffff"
+			],
+			"stroke": {
+				"color": "#ffffff",
+				"width": "1"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "5 live Ops",
+		"orientation": "landscape",
+		"waveColor": "#00aed6",
+		"captionColor": "#AE0003",
+		"waveTop": 381.59999999999997,
+		"waveBottom": 633.5999999999999,
+		"waveLeft": 0,
+		"waveRight": 1280,
+		"author": "craig.boardman@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "7d997b969e403dce331a87b5626673e4",
+			"portrait": "7d997b969e403dce331a87b5626673e4",
+			"square": "7d997b969e403dce331a87b5626673e4"
+		},
+		"foregroundImage": {
+			"landscape": "33384ce1a02fb96ba12b8d3474b9da2d",
+			"portrait": "33384ce1a02fb96ba12b8d3474b9da2d",
+			"square": "33384ce1a02fb96ba12b8d3474b9da2d"
+		}
+	},
+	"AQ": {
+		"width": 1080,
+		"height": 1080,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "wave",
+		"wave": {
+			"color": "#ffffff",
+			"height": 0.25,
+			"width": 1,
+			"y": 0.695,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "AQ",
+		"orientation": "square",
+		"waveColor": "#ffffff",
+		"captionColor": "#AE0003",
+		"waveTop": 615.5999999999999,
+		"waveBottom": 885.5999999999999,
+		"waveLeft": 0,
+		"waveRight": 1080,
+		"author": "Camellia.Sinclair@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "010c6daa2bb8574f48634bc220f25a91",
+			"portrait": "010c6daa2bb8574f48634bc220f25a91",
+			"square": "010c6daa2bb8574f48634bc220f25a91"
+		}
+	},
 	"BBC Academy - Quote": {
 		"width": 1280,
 		"height": 720,
@@ -588,33 +733,37 @@
 			"square": "bbcnews_uppernarrative_overlay_2lines.png"
 		}
 	},
-	"Subtitles Only - box - 1 line": {
-		"width": 1280,
-		"height": 720,
-		"framesPerSecond": 20,
+	"BBC News NI - Audio Clip with aston": {
+		"width": 1080,
+		"height": 1080,
+		"framesPerSecond": 15,
 		"maxDuration": 300,
 		"samplesPerFrame": 128,
-		"pattern": "none",
+		"pattern": "bars",
 		"wave": {
 			"color": "#AE0003",
-			"height": 0.28,
+			"height": 0.3,
 			"width": 1,
-			"y": 0.5,
+			"y": 0.3,
 			"x": 0.5
 		},
 		"foregroundColor": "#AE0003",
 		"subtitles": {
 			"enabled": true,
-			"lineWidth": "45",
+			"lineWidth": "40",
 			"align": "center",
 			"valign": "middle",
 			"margin": {
-				"vertical": 0.81,
-				"horizontal": 0.5
+				"vertical": 0.67,
+				"horizontal": 0.51
+			},
+			"box": {
+				"opacity": "0.3",
+				"color": "#000000"
 			},
 			"font": "HelveticaNeue",
 			"fontSize": "45",
-			"fontWeight": "",
+			"fontWeight": "Medium",
 			"color": [
 				"#ffffff",
 				"#ebec00",
@@ -622,13 +771,165 @@
 			],
 			"stroke": {
 				"color": "#000000",
-				"width": 0
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"caption": {
+			"margin": {
+				"vertical": 0.84,
+				"horizontal": 0.5
+			},
+			"top": 0.5,
+			"left": 0,
+			"right": 1,
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Bold",
+			"color": "#3f3f3f",
+			"align": "center",
+			"valign": "middle",
+			"lineHeight": 52,
+			"lineSpacing": 7,
+			"text": "Pauline McKenna, BBC Spokesperson"
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "BBC News NI - Audio Clip with aston",
+		"orientation": "square",
+		"waveColor": "#AE0003",
+		"captionColor": "#AE0003",
+		"waveTop": 162,
+		"waveBottom": 486,
+		"waveLeft": 0,
+		"waveRight": 1080,
+		"author": "peter.hamill@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "7938cf5d30043f6783b6effcefe05e8a",
+			"portrait": "7938cf5d30043f6783b6effcefe05e8a",
+			"square": "7938cf5d30043f6783b6effcefe05e8a"
+		}
+	},
+	"BBC Sport Scotland": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "wave",
+		"wave": {
+			"color": "#ffff00",
+			"height": 0.37,
+			"width": 1,
+			"y": 0.455,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
 			},
 			"box": {
-				"opacity": 0.6,
+				"opacity": "0.6",
 				"color": "#000000"
 			},
-			"linesMax": 1,
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "top",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "BBC Sport Scotland",
+		"orientation": "landscape",
+		"waveColor": "#ffff00",
+		"captionColor": "#AE0003",
+		"waveTop": 194.40000000000003,
+		"waveBottom": 460.8,
+		"waveLeft": 0,
+		"waveRight": 1280,
+		"author": "LAURA.MCGHIE@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "b212a7dc709b5bf9667a167bfa23a74e",
+			"portrait": "b212a7dc709b5bf9667a167bfa23a74e",
+			"square": "b212a7dc709b5bf9667a167bfa23a74e"
+		}
+	},
+	"BBC WS SPORT ": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "wave",
+		"wave": {
+			"color": "#AE0003",
+			"height": 0.16,
+			"width": 1,
+			"y": 0.92,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.75,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
 			"lineSpacing": 10
 		},
 		"backgroundPosition": {
@@ -642,28 +943,490 @@
 			}
 		},
 		"backgroundColor": "#eee",
-		"name": "Subtitles Only - box - 1 line",
-		"author": null,
+		"name": "BBC WS SPORT ",
 		"orientation": "landscape",
 		"waveColor": "#AE0003",
+		"captionColor": "#AE0003",
+		"waveTop": 604.8,
+		"waveBottom": 720,
+		"waveLeft": 0,
+		"waveRight": 1280,
+		"author": "matt.davies@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "40c4e36369cc1c383404336cb1a5eabc",
+			"portrait": "40c4e36369cc1c383404336cb1a5eabc",
+			"square": "40c4e36369cc1c383404336cb1a5eabc"
+		}
+	},
+	"bbcle_thai": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "wave",
+		"wave": {
+			"color": "#118481",
+			"height": 0.19,
+			"width": 0.64,
+			"y": 0.885,
+			"x": 0.55
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "bbcle_thai",
+		"orientation": "landscape",
+		"waveColor": "#118481",
+		"captionColor": "#AE0003",
+		"waveTop": 568.8000000000001,
+		"waveBottom": 705.6000000000001,
+		"waveLeft": 294.4,
+		"waveRight": 1113.6,
+		"author": "paul.scott2@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "b9872519b6c660e31eb5fd54e575a879",
+			"portrait": "b9872519b6c660e31eb5fd54e575a879",
+			"square": "b9872519b6c660e31eb5fd54e575a879"
+		}
+	},
+	"BBCSportsound ": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "wave",
+		"wave": {
+			"color": "#ffffff",
+			"height": 0.28,
+			"width": 1,
+			"y": 0.5,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "BBCSportsound ",
+		"orientation": "landscape",
+		"waveColor": "#ffffff",
 		"captionColor": "#AE0003",
 		"waveTop": 259.2,
 		"waveBottom": 460.8,
 		"waveLeft": 0,
-		"waveRight": 1280
+		"waveRight": 1280,
+		"author": "Lewis.McKenzie@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "d11ecc855feb841054b1c3668a590c6f",
+			"portrait": "d11ecc855feb841054b1c3668a590c6f",
+			"square": "d11ecc855feb841054b1c3668a590c6f"
+		}
 	},
-	"Subtitles Only - box - 2 lines": {
+	"Blue on white -  Square": {
+		"width": 1080,
+		"height": 1080,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "bars",
+		"wave": {
+			"color": "#000053",
+			"height": 0.44,
+			"width": 1,
+			"y": 0.49,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": false,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000",
+				"#ffffff"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Blue on white -  Square",
+		"orientation": "square",
+		"waveColor": "#000053",
+		"captionColor": "#AE0003",
+		"waveTop": 291.6,
+		"waveBottom": 766.8,
+		"waveLeft": 0,
+		"waveRight": 1080,
+		"author": "sam.grist@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "b3447f5b560688c6439909c5720fa951",
+			"portrait": "b3447f5b560688c6439909c5720fa951",
+			"square": "b3447f5b560688c6439909c5720fa951"
+		}
+	},
+	"Farming Today": {
+		"width": 1080,
+		"height": 1080,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "wave",
+		"wave": {
+			"color": "#ffffff",
+			"height": 0.25,
+			"width": 1,
+			"y": 0.695,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Farming Today",
+		"orientation": "square",
+		"waveColor": "#ffffff",
+		"captionColor": "#AE0003",
+		"waveTop": 615.5999999999999,
+		"waveBottom": 885.5999999999999,
+		"waveLeft": 0,
+		"waveRight": 1080,
+		"author": "sam.grist@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "9d8acb350a39948d29e2564a2c234d9d",
+			"portrait": "9d8acb350a39948d29e2564a2c234d9d",
+			"square": "9d8acb350a39948d29e2564a2c234d9d"
+		},
+		"foregroundImage": {
+			"landscape": "fe67d4e453cfc350d14f599e9f8583b2",
+			"portrait": "fe67d4e453cfc350d14f599e9f8583b2",
+			"square": "fe67d4e453cfc350d14f599e9f8583b2"
+		}
+	},
+	"Lancs Cricket": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "bars",
+		"wave": {
+			"color": "#000000",
+			"height": 0.5,
+			"width": 1,
+			"y": 0.32,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "50",
+			"align": "center",
+			"valign": "bottom",
+			"margin": {
+				"vertical": 0.72,
+				"horizontal": 0.49
+			},
+			"box": {
+				"opacity": "0",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#000000",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "0"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"caption": {
+			"margin": {
+				"vertical": 0.79,
+				"horizontal": 0.48
+			},
+			"top": 0.5,
+			"left": 0,
+			"right": 1,
+			"font": "HelveticaNeue",
+			"fontSize": "35",
+			"fontWeight": "",
+			"color": "#ffffff",
+			"align": "center",
+			"valign": "middle",
+			"lineHeight": 52,
+			"lineSpacing": 7,
+			"text": "Ryan McLaren"
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Lancs Cricket",
+		"orientation": "landscape",
+		"waveColor": "#000000",
+		"captionColor": "#AE0003",
+		"waveTop": 50.400000000000006,
+		"waveBottom": 410.4,
+		"waveLeft": 0,
+		"waveRight": 1280,
+		"author": "gareth.fletcher@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "00c2af3deb1851811a94176dcac24dfb",
+			"portrait": "00c2af3deb1851811a94176dcac24dfb",
+			"square": "00c2af3deb1851811a94176dcac24dfb"
+		}
+	},
+	"Newsday - Test": {
+		"width": 1080,
+		"height": 1080,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "bars",
+		"wave": {
+			"color": "#ffffff",
+			"height": 0.31,
+			"width": 1,
+			"y": 0.665,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": false,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000",
+				"#ffffff"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"caption": {
+			"margin": {
+				"vertical": 0.09,
+				"horizontal": 0.96
+			},
+			"top": 0.5,
+			"left": 0,
+			"right": 1,
+			"font": "HelveticaNeue",
+			"fontSize": 50,
+			"fontWeight": "Medium",
+			"color": "#ffffff",
+			"align": "right",
+			"valign": "middle",
+			"lineHeight": 52,
+			"lineSpacing": 7,
+			"text": "Voice of Tim Vickery\nBrazilian football expert"
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Newsday - Test",
+		"orientation": "square",
+		"waveColor": "#ffffff",
+		"captionColor": "#AE0003",
+		"waveTop": 550.8000000000001,
+		"waveBottom": 885.6000000000001,
+		"waveLeft": 0,
+		"waveRight": 1080,
+		"author": "Marco.Silva@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "aff2cbb804ae9ba84e7c2d269024ebc7",
+			"portrait": "aff2cbb804ae9ba84e7c2d269024ebc7",
+			"square": "aff2cbb804ae9ba84e7c2d269024ebc7"
+		}
+	},
+	"NEWSHOUR - CHINA DESK - PLEASE DON'T DELETE": {
 		"width": 1280,
 		"height": 720,
 		"framesPerSecond": 20,
 		"maxDuration": 300,
 		"samplesPerFrame": 128,
-		"pattern": "none",
+		"pattern": "bars",
 		"wave": {
-			"color": "#AE0003",
-			"height": 0.28,
+			"color": "#ffffff",
+			"height": 0.36,
 			"width": 1,
-			"y": 0.5,
+			"y": 0.59,
 			"x": 0.5
 		},
 		"foregroundColor": "#AE0003",
@@ -678,10 +1441,10 @@
 			},
 			"font": "HelveticaNeue",
 			"fontSize": "45",
-			"fontWeight": "",
+			"fontWeight": "Medium",
 			"color": [
 				"#ffffff",
-				"#ebec00",
+				"#00ff00",
 				"#ff0000"
 			],
 			"stroke": {
@@ -695,6 +1458,24 @@
 			"linesMax": "2",
 			"lineSpacing": 10
 		},
+		"caption": {
+			"margin": {
+				"vertical": 0.21,
+				"horizontal": 0.53
+			},
+			"top": 0.5,
+			"left": 0,
+			"right": 1,
+			"font": "HelveticaNeue",
+			"fontSize": "80",
+			"fontWeight": "Bold",
+			"color": "#ffffff",
+			"align": "left",
+			"valign": "middle",
+			"lineHeight": 52,
+			"lineSpacing": 7,
+			"text": "NEWSHOUR \nCHINA DESK"
+		},
 		"backgroundPosition": {
 			"width": 1,
 			"height": 1,
@@ -706,15 +1487,273 @@
 			}
 		},
 		"backgroundColor": "#eee",
-		"name": "Subtitles Only - box - 2 lines",
-		"author": null,
+		"name": "NEWSHOUR - CHINA DESK - PLEASE DON'T DELETE",
+		"author": "Daniel.Avis@bbc.co.uk",
 		"orientation": "landscape",
-		"waveColor": "#AE0003",
+		"waveColor": "#ffffff",
 		"captionColor": "#AE0003",
-		"waveTop": 259.2,
-		"waveBottom": 460.8,
+		"waveTop": 295.19999999999993,
+		"waveBottom": 554.3999999999999,
 		"waveLeft": 0,
-		"waveRight": 1280
+		"waveRight": 1280,
+		"backgroundImage": {
+			"landscape": "b92b219f3d502249ba6b6b236c6aa655",
+			"portrait": "b92b219f3d502249ba6b6b236c6aa655",
+			"square": "b92b219f3d502249ba6b6b236c6aa655"
+		},
+		"foregroundImage": {
+			"landscape": "b3ec84048cbe1cfcbbd6a29d5b90f0d9",
+			"portrait": "b3ec84048cbe1cfcbbd6a29d5b90f0d9",
+			"square": "b3ec84048cbe1cfcbbd6a29d5b90f0d9"
+		}
+	},
+	"NEWSHOUR - Please don't delete": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 20,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "bars",
+		"wave": {
+			"color": "#ffffff",
+			"height": 0.47,
+			"width": 1,
+			"y": 0.465,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "45",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.81,
+				"horizontal": 0.5
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#00ff00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": 0
+			},
+			"box": {
+				"opacity": 0.6,
+				"color": "#000000"
+			},
+			"linesMax": "2",
+			"lineSpacing": 10
+		},
+		"caption": {
+			"margin": {
+				"vertical": 0.11,
+				"horizontal": 0.38
+			},
+			"top": 0.5,
+			"left": 0,
+			"right": 1,
+			"font": "HelveticaNeue",
+			"fontSize": 50,
+			"fontWeight": "Medium",
+			"color": "#ffffff",
+			"align": "left",
+			"valign": "middle",
+			"lineHeight": 52,
+			"lineSpacing": 7,
+			"text": "BEVERLEY HUGHES \nDEPUTY MAYOR, MANCHESTER"
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "NEWSHOUR - Please don't delete",
+		"author": "Daniel.Avis@bbc.co.uk",
+		"orientation": "landscape",
+		"waveColor": "#ffffff",
+		"captionColor": "#AE0003",
+		"waveTop": 165.60000000000002,
+		"waveBottom": 504,
+		"waveLeft": 0,
+		"waveRight": 1280,
+		"backgroundImage": {
+			"landscape": "90851c6aabdb63e675e54bfc17cfb6b9",
+			"portrait": "90851c6aabdb63e675e54bfc17cfb6b9",
+			"square": "90851c6aabdb63e675e54bfc17cfb6b9"
+		},
+		"foregroundImage": {
+			"landscape": "37a7de3ca55d76d275b27c1e2bc29e5b",
+			"portrait": "37a7de3ca55d76d275b27c1e2bc29e5b",
+			"square": "37a7de3ca55d76d275b27c1e2bc29e5b"
+		}
+	},
+	"Pashto": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 20,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "bars",
+		"wave": {
+			"color": "#a2282c",
+			"height": 0.31,
+			"width": 1,
+			"y": 0.555,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"caption": {
+			"margin": {
+				"vertical": 0.2,
+				"horizontal": 0.51
+			},
+			"top": 0.5,
+			"left": 0,
+			"right": 1,
+			"font": "HelveticaNeue",
+			"fontSize": "60",
+			"fontWeight": "Medium",
+			"color": "#ffffff",
+			"align": "center",
+			"valign": "middle",
+			"lineHeight": 52,
+			"lineSpacing": 7,
+			"text": "د ناټو ډېر پوځیان به د افغانستان ستونزه هواره کړي؟"
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Pashto",
+		"orientation": "landscape",
+		"waveColor": "#a2282c",
+		"captionColor": "#AE0003",
+		"waveTop": 288,
+		"waveBottom": 511.2,
+		"waveLeft": 0,
+		"waveRight": 1280,
+		"author": "Gorbat.Nangyal@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "3fe64e12007008c4309782197b82f607",
+			"portrait": "3fe64e12007008c4309782197b82f607",
+			"square": "3fe64e12007008c4309782197b82f607"
+		}
+	},
+	"Radio 3 test CK": {
+		"width": 1080,
+		"height": 1080,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "curve",
+		"wave": {
+			"color": "#1e4fe1",
+			"height": 0.28,
+			"width": 1,
+			"y": 0.5,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Radio 3 test CK",
+		"orientation": "square",
+		"waveColor": "#1e4fe1",
+		"captionColor": "#AE0003",
+		"waveTop": 388.79999999999995,
+		"waveBottom": 691.2,
+		"waveLeft": 0,
+		"waveRight": 1080,
+		"author": "Christina.Kenny@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "d8ba67f9e651215448106e9caa59abc2",
+			"portrait": "d8ba67f9e651215448106e9caa59abc2",
+			"square": "d8ba67f9e651215448106e9caa59abc2"
+		}
 	},
 	"Radio 4 - Today - Background w/ Overlay": {
 		"width": 1280,
@@ -795,5 +1834,1053 @@
 		"wave": {
 			"color": "#dcac2a"
 		}
+	},
+	"Radio Cymru, test theme": {
+		"width": 640,
+		"height": 640,
+		"framesPerSecond": 20,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "wave",
+		"wave": {
+			"color": "#00ccdd",
+			"height": 0.21,
+			"width": 1,
+			"y": 0.105,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "45",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.81,
+				"horizontal": 0.5
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": 0
+			},
+			"box": {
+				"opacity": "0.4",
+				"color": "#000000"
+			},
+			"linesMax": "2",
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Radio Cymru, test theme",
+		"author": "gruffudd.pritchard@bbc.co.uk",
+		"orientation": "square",
+		"waveColor": "#00ccdd",
+		"captionColor": "#AE0003",
+		"waveTop": 0,
+		"waveBottom": 134.4,
+		"waveLeft": 0,
+		"waveRight": 640,
+		"backgroundImage": {
+			"landscape": "84a006da6079f2b1eff366f9948019c7",
+			"portrait": "84a006da6079f2b1eff366f9948019c7",
+			"square": "84a006da6079f2b1eff366f9948019c7"
+		}
+	},
+	"Radio nan Gaidheal": {
+		"width": 640,
+		"height": 640,
+		"framesPerSecond": 20,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "wave",
+		"wave": {
+			"color": "#ff0000",
+			"height": 0.13,
+			"width": 1,
+			"y": 0.145,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "45",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.81,
+				"horizontal": 0.5
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": 0
+			},
+			"box": {
+				"opacity": "0.4",
+				"color": "#000000"
+			},
+			"linesMax": "2",
+			"lineSpacing": 10
+		},
+		"caption": {
+			"margin": {
+				"vertical": 0.5,
+				"horizontal": 0.5
+			},
+			"top": 0.5,
+			"left": 0,
+			"right": 1,
+			"font": "HelveticaNeue",
+			"fontSize": 50,
+			"fontWeight": "Medium",
+			"color": "#ffffff",
+			"align": "left",
+			"valign": "middle",
+			"lineHeight": 52,
+			"lineSpacing": 7,
+			"text": "An Comh Ailig Greumach\nInbhir Nis an Iar"
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 0.51,
+			"x": 0,
+			"y": 0.24,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Radio nan Gaidheal",
+		"author": "reamonn.lenkas@bbc.co.uk",
+		"orientation": "square",
+		"waveColor": "#ff0000",
+		"captionColor": "#AE0003",
+		"waveTop": 51.199999999999996,
+		"waveBottom": 134.4,
+		"waveLeft": 0,
+		"waveRight": 640,
+		"backgroundImage": {
+			"landscape": "4a7cc21504390a852d2747ca0f16991f",
+			"portrait": "4a7cc21504390a852d2747ca0f16991f",
+			"square": "4a7cc21504390a852d2747ca0f16991f"
+		}
+	},
+	"Radio4": {
+		"width": 1080,
+		"height": 1080,
+		"framesPerSecond": 20,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "bars",
+		"wave": {
+			"color": "#AE0003",
+			"height": 0.28,
+			"width": 1,
+			"y": 0.5,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Radio4",
+		"orientation": "square",
+		"waveColor": "#AE0003",
+		"captionColor": "#AE0003",
+		"waveTop": 388.79999999999995,
+		"waveBottom": 691.2,
+		"waveLeft": 0,
+		"waveRight": 1080,
+		"author": "greg.smith@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "4f8a76a82d7f8c94b45171995b60d83a",
+			"portrait": "4f8a76a82d7f8c94b45171995b60d83a",
+			"square": "4f8a76a82d7f8c94b45171995b60d83a"
+		},
+		"foregroundImage": {
+			"landscape": "8e09ec264222e598538a13b19d71d9c2",
+			"portrait": "8e09ec264222e598538a13b19d71d9c2",
+			"square": "8e09ec264222e598538a13b19d71d9c2"
+		}
+	},
+	"Scotland - GMS": {
+		"width": 1080,
+		"height": 1080,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "wave",
+		"wave": {
+			"color": "#004080",
+			"height": 0.12,
+			"width": 1,
+			"y": 0.5,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "20",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.69,
+				"horizontal": 0.52
+			},
+			"box": {
+				"opacity": "0",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "90",
+			"fontWeight": "Bold",
+			"color": [
+				"#757575",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "0"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"caption": {
+			"margin": {
+				"vertical": 0.71,
+				"horizontal": 0.5
+			},
+			"top": 0.5,
+			"left": 0,
+			"right": 1,
+			"font": "HelveticaNeue",
+			"fontSize": "50",
+			"fontWeight": "Medium",
+			"color": "#c0c0c0",
+			"align": "center",
+			"valign": "middle",
+			"lineHeight": 52,
+			"lineSpacing": 7,
+			"text": "Name, title"
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Scotland - GMS",
+		"orientation": "square",
+		"waveColor": "#004080",
+		"captionColor": "#AE0003",
+		"waveTop": 475.2,
+		"waveBottom": 604.8,
+		"waveLeft": 0,
+		"waveRight": 1080,
+		"author": "doug.kennedy@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "d2ace5f17d1c80cdd4fc3535c374692f",
+			"portrait": "d2ace5f17d1c80cdd4fc3535c374692f",
+			"square": "d2ace5f17d1c80cdd4fc3535c374692f"
+		}
+	},
+	"Scotland - GMSv2": {
+		"width": 1080,
+		"height": 1080,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "bars",
+		"wave": {
+			"color": "#ff6f6f",
+			"height": 0.09,
+			"width": 1,
+			"y": 0.755,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "18",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.48,
+				"horizontal": 0.49
+			},
+			"box": {
+				"opacity": "0",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "110",
+			"fontWeight": "Bold",
+			"color": [
+				"#030303",
+				"#71160d",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "0"
+			},
+			"linesMax": "3",
+			"lineSpacing": "20"
+		},
+		"caption": {
+			"margin": {
+				"vertical": 0.2,
+				"horizontal": 0.48
+			},
+			"top": 0.5,
+			"left": 0,
+			"right": 1,
+			"font": "HelveticaNeue",
+			"fontSize": "80",
+			"fontWeight": "",
+			"color": "#3c3c3c",
+			"align": "center",
+			"valign": "top",
+			"lineHeight": 52,
+			"lineSpacing": 7,
+			"text": "Name here, title here"
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Scotland - GMSv2",
+		"orientation": "square",
+		"waveColor": "#ff6f6f",
+		"captionColor": "#AE0003",
+		"waveTop": 766.8,
+		"waveBottom": 864,
+		"waveLeft": 0,
+		"waveRight": 1080,
+		"author": "paul.hastie@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "47b0a2c43a35023a286a160dcf4f6a6d",
+			"portrait": "47b0a2c43a35023a286a160dcf4f6a6d",
+			"square": "47b0a2c43a35023a286a160dcf4f6a6d"
+		}
+	},
+	"Subtitles Only - box - 1 line": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 20,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "none",
+		"wave": {
+			"color": "#AE0003",
+			"height": 0.28,
+			"width": 1,
+			"y": 0.5,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "45",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.81,
+				"horizontal": 0.5
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": 0
+			},
+			"box": {
+				"opacity": 0.6,
+				"color": "#000000"
+			},
+			"linesMax": 1,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Subtitles Only - box - 1 line",
+		"author": null,
+		"orientation": "landscape",
+		"waveColor": "#AE0003",
+		"captionColor": "#AE0003",
+		"waveTop": 259.2,
+		"waveBottom": 460.8,
+		"waveLeft": 0,
+		"waveRight": 1280
+	},
+	"Subtitles Only - box - 2 lines": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 20,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "none",
+		"wave": {
+			"color": "#AE0003",
+			"height": 0.28,
+			"width": 1,
+			"y": 0.5,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "45",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.81,
+				"horizontal": 0.5
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": 0
+			},
+			"box": {
+				"opacity": 0.6,
+				"color": "#000000"
+			},
+			"linesMax": "2",
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Subtitles Only - box - 2 lines",
+		"author": null,
+		"orientation": "landscape",
+		"waveColor": "#AE0003",
+		"captionColor": "#AE0003",
+		"waveTop": 259.2,
+		"waveBottom": 460.8,
+		"waveLeft": 0,
+		"waveRight": 1280
+	},
+	"Subtitles Only - gradient - 1 line": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 20,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "none",
+		"wave": {
+			"color": "#AE0003",
+			"height": 0.28,
+			"width": 1,
+			"y": 0.5,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "bottom",
+			"margin": {
+				"vertical": 0.93,
+				"horizontal": 0.5
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "50",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"box": {
+				"opacity": "0",
+				"color": "#000000"
+			},
+			"linesMax": "1",
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Subtitles Only - gradient - 1 line",
+		"author": "jonty.usborne@bbc.co.uk",
+		"orientation": "landscape",
+		"waveColor": "#AE0003",
+		"captionColor": "#AE0003",
+		"waveTop": 259.2,
+		"waveBottom": 460.8,
+		"waveLeft": 0,
+		"waveRight": 1280,
+		"foregroundImage": {
+			"landscape": "ccc40ac79dbb8aba357439c7e1181195",
+			"portrait": "ccc40ac79dbb8aba357439c7e1181195",
+			"square": "ccc40ac79dbb8aba357439c7e1181195"
+		}
+	},
+	"Subtitles Only - gradient - 2 lines": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 20,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "none",
+		"wave": {
+			"color": "#AE0003",
+			"height": 0.28,
+			"width": 1,
+			"y": 0.5,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "bottom",
+			"margin": {
+				"vertical": 0.93,
+				"horizontal": 0.5
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "50",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"box": {
+				"opacity": "0",
+				"color": "#000000"
+			},
+			"linesMax": "2",
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Subtitles Only - gradient - 2 lines",
+		"author": "jonty.usborne@bbc.co.uk",
+		"orientation": "landscape",
+		"waveColor": "#AE0003",
+		"captionColor": "#AE0003",
+		"waveTop": 259.2,
+		"waveBottom": 460.8,
+		"waveLeft": 0,
+		"waveRight": 1280,
+		"foregroundImage": {
+			"landscape": "d038b7ea353e83b4c0c95c8657a9c28e",
+			"portrait": "d038b7ea353e83b4c0c95c8657a9c28e",
+			"square": "d038b7ea353e83b4c0c95c8657a9c28e"
+		}
+	},
+	"TEWS TEST": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 20,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "none",
+		"wave": {
+			"color": "#AE0003",
+			"height": 0.28,
+			"width": 1,
+			"y": 0.5,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "45",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.81,
+				"horizontal": 0.5
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000",
+				"#ffffff",
+				"#ffffff"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": 0
+			},
+			"box": {
+				"opacity": 0.6,
+				"color": "#000000"
+			},
+			"linesMax": 1,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "TEWS TEST",
+		"author": "neil.edgeller@bbc.co.uk",
+		"orientation": "landscape",
+		"waveColor": "#AE0003",
+		"captionColor": "#AE0003",
+		"waveTop": 259.2,
+		"waveBottom": 460.8,
+		"waveLeft": 0,
+		"waveRight": 1280
+	},
+	"The Conversation WS": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "bars",
+		"wave": {
+			"color": "#ffffff",
+			"height": 0.15,
+			"width": 1,
+			"y": 0.865,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.47
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"caption": {
+			"margin": {
+				"vertical": 0.4,
+				"horizontal": 0.81
+			},
+			"top": 0.5,
+			"left": 0,
+			"right": 1,
+			"font": "HelveticaNeue",
+			"fontSize": 50,
+			"fontWeight": "Medium",
+			"color": "#ffffff",
+			"align": "center",
+			"valign": "middle",
+			"lineHeight": 52,
+			"lineSpacing": 7,
+			"text": "Anoushka Shankar\nSitar Player"
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "The Conversation WS",
+		"orientation": "landscape",
+		"waveColor": "#ffffff",
+		"captionColor": "#AE0003",
+		"waveTop": 568.8,
+		"waveBottom": 676.8,
+		"waveLeft": 0,
+		"waveRight": 1280,
+		"author": "Sarah.Crawley@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "a59c694deef6f89527f8f7920a701f72",
+			"portrait": "a59c694deef6f89527f8f7920a701f72",
+			"square": "a59c694deef6f89527f8f7920a701f72"
+		}
+	},
+	"The Kaye Adams Programme": {
+		"width": 1080,
+		"height": 1080,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "wave",
+		"wave": {
+			"color": "#7301af",
+			"height": 0.12,
+			"width": 1,
+			"y": 0.5,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "20",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.34,
+				"horizontal": 0.52
+			},
+			"box": {
+				"opacity": "0",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "90",
+			"fontWeight": "Bold",
+			"color": [
+				"#757575",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "0"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "The Kaye Adams Programme",
+		"orientation": "square",
+		"waveColor": "#7301af",
+		"captionColor": "#AE0003",
+		"waveTop": 475.2,
+		"waveBottom": 604.8,
+		"waveLeft": 0,
+		"waveRight": 1080,
+		"author": "james.christie@bbc.co.uk",
+		"backgroundImage": {
+			"landscape": "24f420010f55b8b6a3980f10e934c730",
+			"portrait": "24f420010f55b8b6a3980f10e934c730",
+			"square": "24f420010f55b8b6a3980f10e934c730"
+		}
+	},
+	"Wales Subtitles Test": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 20,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "wave",
+		"wave": {
+			"color": "#00ff00",
+			"height": 0.3,
+			"width": 1,
+			"y": 0.49,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": true,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "bottom",
+			"margin": {
+				"vertical": 0.93,
+				"horizontal": 0.49
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "50",
+			"fontWeight": "",
+			"color": [
+				"#ffffff",
+				"#ffff00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"box": {
+				"opacity": "0",
+				"color": "#000000"
+			},
+			"linesMax": "1",
+			"lineSpacing": 10
+		},
+		"caption": {
+			"margin": {
+				"vertical": 0.09,
+				"horizontal": 0.83
+			},
+			"top": 0.5,
+			"left": 0,
+			"right": 1,
+			"font": "HelveticaNeue",
+			"fontSize": 50,
+			"fontWeight": "Bold",
+			"color": "#ffffff",
+			"align": "center",
+			"valign": "middle",
+			"lineHeight": 52,
+			"lineSpacing": 7,
+			"text": "#thisisatest"
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "Wales Subtitles Test",
+		"author": "guto.thomas@bbc.co.uk",
+		"orientation": "landscape",
+		"waveColor": "#00ff00",
+		"captionColor": "#AE0003",
+		"waveTop": 244.8,
+		"waveBottom": 460.8,
+		"waveLeft": 0,
+		"waveRight": 1280,
+		"foregroundImage": {
+			"landscape": "ccc40ac79dbb8aba357439c7e1181195",
+			"portrait": "ccc40ac79dbb8aba357439c7e1181195",
+			"square": "ccc40ac79dbb8aba357439c7e1181195"
+		},
+		"backgroundImage": {
+			"landscape": "54f3f2a55906ebe4fc756d1e2bd88d28",
+			"portrait": "54f3f2a55906ebe4fc756d1e2bd88d28",
+			"square": "54f3f2a55906ebe4fc756d1e2bd88d28"
+		}
+	},
+	"zz Test 01": {
+		"width": 1280,
+		"height": 720,
+		"framesPerSecond": 15,
+		"maxDuration": 300,
+		"samplesPerFrame": 128,
+		"pattern": "bars",
+		"wave": {
+			"color": "#AE0003",
+			"height": 0.39,
+			"width": 1,
+			"y": 0.465,
+			"x": 0.5
+		},
+		"foregroundColor": "#AE0003",
+		"subtitles": {
+			"enabled": false,
+			"lineWidth": "40",
+			"align": "center",
+			"valign": "middle",
+			"margin": {
+				"vertical": 0.8,
+				"horizontal": 0.5
+			},
+			"box": {
+				"opacity": "0.6",
+				"color": "#000000"
+			},
+			"font": "HelveticaNeue",
+			"fontSize": "45",
+			"fontWeight": "Medium",
+			"color": [
+				"#ffffff",
+				"#ebec00",
+				"#ff0000"
+			],
+			"stroke": {
+				"color": "#000000",
+				"width": "5"
+			},
+			"linesMax": 2,
+			"lineSpacing": 10
+		},
+		"backgroundPosition": {
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0,
+			"align": {
+				"y": "middle",
+				"x": "center"
+			}
+		},
+		"backgroundColor": "#eee",
+		"name": "zz Test 01",
+		"orientation": "landscape",
+		"waveColor": "#AE0003",
+		"captionColor": "#AE0003",
+		"waveTop": 194.4,
+		"waveBottom": 475.20000000000005,
+		"waveLeft": 0,
+		"waveRight": 1280,
+		"author": "rob.kennedy@bbc.co.uk"
 	}
 }

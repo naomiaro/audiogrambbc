@@ -10,19 +10,22 @@ var express = require("express"),
 
 // Routes and middleware
 var whitelist = require("./whitelist.js"),
-    themes = require("./themes.js"),
-    logger = require("../lib/logger/"),
-    render = require("./render.js"),
-    status = require("./status.js"),
-    fonts = require("./fonts.js"),
-    whoami = require("./whoami.js"),
-    upload = require("./upload.js"),
-    kaldi = require("./kaldi.js"),
-    vcs = require("./vcs.js"),
-    ichef = require("./ichef.js"),
-    webcap = require("./webcap.js"),
-    simulcast = require("./simulcast.js"),
-    errorHandlers = require("./error.js");
+  themes = require("./themes.js"),
+  logger = require("../lib/logger/"),
+  render = require("./render.js"),
+  status = require("./status.js"),
+  projects = require("./projects.js"),
+  fonts = require("./fonts.js"),
+  whoami = require("./whoami.js"),
+  messages = require("./messages.js"),
+  upload = require("./upload.js"),
+  kaldi = require("./kaldi.js"),
+  vcs = require("./vcs.js"),
+  png = require("./png.js"),
+  ichef = require("./ichef.js"),
+  webcap = require("./webcap.js"),
+  simulcast = require("./simulcast.js"),
+  errorHandlers = require("./error.js");
 
 // Settings
 var serverSettings = require("../lib/settings/");
@@ -76,8 +79,9 @@ if (serverSettings.maxUploadSize) {
   };
 }
 
-// Upload media
-app.post("/upload/", [multer(fileOptions).fields([{ name: 'file', maxCount: 1 }]), upload]);
+// Upload/delete media
+app.post("/upload/", [multer(fileOptions).fields([{ name: 'file', maxCount: 1 }]), upload.post]);
+app.get("/delete/:type/:id", upload.delete);
 
 // On submission, check upload, validate input, and start generating a video
 // app.post("/submit/", render.validate);
@@ -93,6 +97,7 @@ app.post("/themes/add", [multer({ dest: "./settings/backgrounds" }).fields(files
 // If not using S3, serve videos locally
 if (!serverSettings.s3Bucket) {
   app.use("/video/", express.static(path.join(serverSettings.storagePath, "video")));
+  app.use('/media', express.static(serverSettings.storagePath));
 }
 
 // Serve custom fonts
@@ -103,8 +108,19 @@ if (serverSettings.fonts) {
   app.get("/fonts/:font", fonts.font);
 }
 
+// Get projects
+app.get("/getProjects/", projects.getList);
+app.get("/getProject/:id", projects.getProject);
+app.get("/updateProject/:id", projects.updateProject);
+
 // Get user info
 app.get("/whoami/", whoami);
+
+// User messages
+app.get("/messages/edit", messages.editor);
+app.get("/messages/:since?", messages.getMessages);
+app.post("/messages/new", messages.add);
+app.get("/messages/expire/:id", messages.expire);
 
 // Check the status of a current video
 app.get("/status/:id/", status);
@@ -121,14 +137,19 @@ app.get("/webcap/:file?", webcap);
 
 // VCS
 app.get("/vcs/search/:id/", vcs.search);
-app.get("/vcs/transcript/:id/", vcs.transcript);
-app.get("/vcs/media/:id/", vcs.media);
+app.get("/vcs/list", vcs.list);
+app.get("/vcs/media/:file/", vcs.media);
+
+// PNG
+app.get("/png/list", png.list);
+app.get("/png/media/:file/", png.media);
 
 // Get simulcast media
 app.post("/simulcast/", simulcast.post);
 app.get("/simulcast/status/:id/", simulcast.poll);
 app.get("/simulcast/media/:id/", simulcast.pipe);
 app.get("/simulcast", simulcast.readme);
+app.get("/simulcast/delete/:id/", simulcast.delete);
 
 // Serve background images and themes JSON statically
 app.use("/settings/", function(req, res, next) {

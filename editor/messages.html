@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Audiogram</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://bbc.github.io/internalGEL/dist/internalgel-bootstrap.css">
+    <link rel="stylesheet" href="https://bbc.github.io/internalGEL/dist/internalgel-fonts.css">
+    <link rel="stylesheet" href="https://bbc.github.io/internalGEL/dist/internalgel.css" id="intGEL-stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,600" rel="stylesheet" type="text/css">
+    <link href="/css/base.css" rel="stylesheet" type="text/css">
+    <link href="/css/editor.css" rel="stylesheet" type="text/css">
+    <link href="/fonts/fonts.css" rel="stylesheet" type="text/css">
+    <link href="/css/main.css" rel="stylesheet" type="text/css">
+    <!-- Icons -->
+    <!-- 16x16 -->
+    <link rel="shortcut icon" href="/favicon.ico">
+    <!-- 32x32 -->
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <!-- 48x48 -->
+    <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48">
+    <!-- 96x96 -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <style>
+      body.loading #whitelist,
+      body:not(.loading) #loading{
+        display: none;
+      }
+      .message-info {
+        float: right;
+        width: 222px;
+        padding: 5px;
+        font-size: 0.9em;
+        position: relative;
+      }
+      .message-active {
+        color: green;
+        margin-top: 5px;
+      }
+      .message-expired {
+        color: red;
+        margin-top: 5px;
+      }
+      .message-expire-now {
+        margin-top: 5px;
+        font-style: italic;
+        position: absolute;
+        top: 1px;
+        right: 0;
+        display: none;
+      }
+      .message-wrapper:not(.expired):hover .message-expire-now {
+        display: block;
+      }
+    </style>
+  </head>
+  <body class="loading">
+    <header>
+      <svg class="labs-logo" width="62" height="80">
+        <image class="labs-logo-image" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/images/labs-logo.svg" src="/images/labs-logo.png" width="62" height="80"></image>
+      </svg>
+
+      <h1 class="page-title">Audiogram<span class="title-superscript">ALPHA</span></h1>
+    </header>
+    <div class="user-messages modal fade intGEL" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" style="background: #b60000; color: #ffffff;">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Audiogram Messages</h4>
+          </div>
+          <div class="modal-body" style="background: #eee;">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="message">
+                  <div class="info-box-content">
+                    <div class="user-messages-title">
+                      Title
+                    </div>
+                    <div class="user-messages-date">
+                      DD MMM YY, HH:MM
+                    </div>
+                    <div class="user-messages-user">
+                      user@bbc.co.uk
+                    </div>
+                    <div class="user-messages-text">
+                      Message
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wrapper">
+      <div id="loading">
+        <div id="loading-bars">
+          <div class="r1"></div><div class="r2"></div><div class="r3"></div><div class="r4"></div><div class="r5"></div>
+        </div>
+        <div id="loading-message">Loading...</div>
+      </div><!-- #loading -->
+      <div id="messages-edit" class="intGEL">
+    
+          <section id="splash" class="well" style="border: none;">
+            <h2>
+              Send New Message
+            </h>
+            <hr>
+            <div id="update-success" class="alert alert-success hidden" role="alert" style="margin-bottom: 10px; padding-left: 36px;">
+              <p>
+                <i class="fa fa-check" style="margin-left: -24px;"></i> <b>Added:</b> <span id="success-added"></span><br/><b>Removed:</b> <span id="success-removed"></span><br/>
+              </p>
+            </div>
+            <form id="new-message-form" action="/whitelist" method="post">
+              <input id="new-message-title" type="text" placeholder="Title" class="intGEL-input" style="width: 100%; margin-bottom: 5px">
+              <textarea id="new-message-text" name="list" rows="5" style="width: 100%; min-height: 100px !important" placeholder="HTML Message"></textarea>
+              <hr>
+              <div class="row">
+                <div class="col-md-1" style="font-size: 15px; line-height: 33px;">
+                    Expires:
+                </div>
+                <div class="col-md-4">
+                  <input id="new-message-expire" type="text" placeholder="Expiry Date/Time" class="intGEL-input" style="margin-bottom: 5px">
+                </div>
+                <div class="col-md-7 btn-group">
+                  <input id="new-message-send" type="submit" value="Send" class="btn btn-primary right">
+                  <input id="new-message-preview" type="button" value="Preview" class="btn btn-secondary right" style="margin-right: 10px;">
+                </div> 
+              </div>
+            </form>
+          </section>
+          <hr style="border-color: #aaa;">
+          <section class="user-messages">
+            <div id="messages">
+              <div class="message-wrapper" style="clear: both;">
+                <div class="message-body" style="width: 568px; float: left;">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="message">
+                        <div class="info-box-content">
+                          <div class="user-messages-title" style="text-decoration: strikethrough">
+                            Title
+                          </div>
+                          <div class="user-messages-date">
+                            DD MMM YY, HH:MM
+                          </div>
+                          <div class="user-messages-user">
+                            user@bbc.co.uk
+                          </div>
+                          <div class="user-messages-text">
+                            Hello??
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="message-info">
+                  <div class="message-read-count">
+                    <i class="fa fa-eye"></i> <b>Seen by:</b> <span>0</span>
+                  </div>
+                  <div class="message-expire-now">
+                    <a href="#">Expire Now</a>
+                  </div>
+                  <div class="message-active">
+                    <i class="fa fa-hourglass-2"></i> <b>Expires:</b> <span>DD MMM YY, HH:MM</span>
+                  </div>
+                  <div class="message-expired">
+                    <i class="fa fa-hourglass-end"></i> <b>Expired:</b> <span>DD MMM YY, HH:MM</span>
+                  </div>
+                </div>
+                <hr style="clear: both; border-color: #ddd; position: relative; top: 5px;" />
+              </div>
+            </div>
+          </section>
+
+      </div><!-- #loaded -->
+
+    </div><!-- .wrapper -->
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script>
+
+      // This is all standalone so that it's not bundled into bundle.js, and therefore is only exposed to admin users
+      $(function() {
+
+
+        var formatDate = function (input) {
+          var d = input ? new Date(input) : new Date();
+          var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          var date = d.getDate() + " " + month[d.getMonth()] + ", " + d.getFullYear();
+          var time = d.toLocaleTimeString().toLowerCase().replace(/([\d]+:[\d]+):[\d]+(\s\w+)/g, "$1$2");
+          return (date + " " + time);
+        };
+
+        jQuery('#new-message-date').val(formatDate());
+        const defaultExpiry = Date.parse(new Date()) + 604800000;
+        jQuery('#new-message-expire').val(formatDate(defaultExpiry));
+
+        // Get user
+        USER = {"name":"Unknown","email":null};
+        jQuery.getJSON( "/whoami", function( data ) {
+          if (data.email) {
+            USER.name = data.name;
+            USER.email = data.email;
+          }
+        });
+
+        // Load messages
+        function displayMessages(messages) {
+          console.log(messages);
+          const now = Date.parse(new Date());
+          let i = 1;
+          jQuery('#messages-edit .user-messages .message-wrapper:not(:first-child)').remove();
+          jQuery('#messages-edit .user-messages').show();
+          messages.forEach(message => {
+            if (i > 1) {
+              const div = jQuery(".user-messages .message-wrapper:last").clone();
+              jQuery(".user-messages .message-wrapper:last").after(div);
+            }
+            jQuery(".user-messages .message-wrapper:last .user-messages-title").text(message.title);
+            jQuery(".user-messages .message-wrapper:last .user-messages-user").text(message.user);
+            jQuery(".user-messages .message-wrapper:last .user-messages-date").text(formatDate(message.date));
+            jQuery(".user-messages .message-wrapper:last .user-messages-text").html(message.text);
+            jQuery(".user-messages .message-wrapper:last .message-read-count span").html(message.readCount);
+            jQuery(".user-messages .message-wrapper:last .message-expire-now").attr('data-id', message.id);
+            const expires = Date.parse(message.expire);
+            if (expires < now) {
+              jQuery(".user-messages .message-wrapper:last").addClass('expired');
+              jQuery(".user-messages .message-wrapper:last .message-info .message-active").hide();
+              jQuery(".user-messages .message-wrapper:last .message-info .message-expired span").text(formatDate(expires));
+              jQuery(".user-messages .message-wrapper:last .message-info .message-expired").show();
+            } else {
+              jQuery(".user-messages .message-wrapper:last").removeClass('expired');
+              jQuery(".user-messages .message-wrapper:last .message-info .message-expired").hide();
+              jQuery(".user-messages .message-wrapper:last .message-info .message-active span").text(formatDate(expires));
+              jQuery(".user-messages .message-wrapper:last .message-info .message-active").show();
+            }
+            i++;
+          });
+        }
+        function checkMessages() {
+          jQuery.getJSON('/messages/', function (data) {
+              jQuery(function () {
+                if (data.messages && data.messages.length) {
+                  displayMessages(data.messages);
+                } else {
+                  jQuery('.user-messages').hide();
+                }
+                $("body").removeClass("loading");
+              });
+          });
+        }
+        checkMessages();
+
+        jQuery(document).on('click', '.message-expire-now', (e) => {
+            jQuery("body").addClass("loading");
+            const id = jQuery(e.currentTarget).attr('data-id');
+            console.log(id);
+            jQuery.getJSON(`/messages/expire/${id}`, function (data) {
+                checkMessages();
+            });
+        });
+            
+        jQuery(document).on('click', '#new-message-preview', () => {
+          jQuery(".user-messages.modal").find('.message:first .user-messages-title').text(jQuery("#new-message-title").val());
+          jQuery(".user-messages.modal").find('.message:first .user-messages-text').html(jQuery("#new-message-text").val());
+          jQuery(".user-messages.modal").find('.message:first .user-messages-user').text(USER.email);
+          jQuery(".user-messages.modal").find('.message:first .user-messages-date').html(formatDate());
+          jQuery(".user-messages.modal").modal("show");
+        });
+
+        // Update list
+        $( "#new-message-form" ).submit(function( event ) {
+          $("body").addClass("loading");
+          $("#success").addClass("hidden");
+          event.preventDefault();
+          var form = $( this ),
+              title = form.find("#new-message-title").val(),
+              text = form.find("#new-message-text").val(),
+              date = formatDate(),
+              expire = form.find("#new-message-expire").val(),
+              post = $.post( "/messages/new", {
+                title,
+                text,
+                date,
+                expire
+              } );
+          post.done(function( data ) {
+            console.log(data);
+            jQuery("#new-message-title").val('');
+            jQuery("#new-message-text").val('');
+            checkMessages();
+          });
+        });
+
+        // Log changes
+        function log(diff) {
+          var user = USER.email ? "<http://ad-lookup.bs.bbc.co.uk/adlookup.php?q=" + USER.email + "|" + USER.name + ">" : USER.name,
+              payload = { "attachments": [{
+                            "fallback": USER.name + " sent a messages to users.",
+                            "text" : user + " sent a message users.",
+                            "fields": [
+                              {
+                                "title": data.title,
+                                "value": diff.text,
+                                "short": true
+                              }
+                            ],
+                            "color": "#007ab8",
+                            "mrkdwn_in": ["text", "pretext"]
+                          }]};
+          jQuery.ajax({
+            url: "https://hooks.slack.com/services/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",
+            data: JSON.stringify(payload),
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data){
+              // console.log(data);
+            }
+          });
+        }
+
+      });
+    </script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+  </body>
+</html>

@@ -35,7 +35,7 @@ function info(msg,fields,fallback) {
 }
 
 function error(msg,err) {
-	var stack = err.stack,
+	var stack = err ? err.stack : null,
 		trace = stack ? stack.replace(/    at /g, '').replace(/    at /g, '').split("\n")[2].replace(err.path,"") : null,
 		user = USER.email ? "<http://ad-lookup.bs.bbc.co.uk/adlookup.php?q=" + USER.email + "|" + USER.name + ">" : USER.name,
 		payload = { "attachments": [{
@@ -105,14 +105,15 @@ function warn(msg,err) {
 }
 
 function success(result) {
-	var url = window.location.href.slice(0,-1) + result.url,
+	var path = require("path"),
+		url = path.join(window.location.href.slice(0,-1), result.url),
 		user = USER.email ? "<http://ad-lookup.bs.bbc.co.uk/adlookup.php?q=" + USER.email + "|" + USER.name + ">" : USER.name,
 		payload = { "attachments": [{
 	                "fallback": USER.name + "'s video is ready.",
 	                "fields": [
 	                	{
 	                		"title": "Audiogram Finished",
-	                		"value": "<" + url + "|..." + result.id.split("-").pop() +">",
+	                		"value": "<" + url + "|..." + result.id.split("-").shift() +">",
 	                		"short": true
 	                	},
 	                	{

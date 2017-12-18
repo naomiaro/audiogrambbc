@@ -109,7 +109,8 @@ Audiogram.prototype.backgroundVideo = function(cb) {
 
   this.status("video");
 
-  backgroundVideo({
+  backgroundVideo.splitFrames({
+    id: this.settings.media.background.id,
     origin: path.join(serverSettings.storagePath, this.settings.theme.customBackgroundPath),
     destination: this.backgroundFrameDir,
     duration: this.settings.duration
@@ -237,7 +238,7 @@ Audiogram.prototype.render = function(cb) {
   q.defer(mkdirp, this.frameDir);
 
   // Download the stored audio file
-  q.defer(transports.downloadAudio, "audio/" + this.id, this.audioPath);
+  q.defer(transports.downloadAudio, this.settings.theme.audioPath, this.audioPath);
 
   // If the audio needs to be clipped, clip it first and update the path
   if (this.settings.start || this.settings.end) {

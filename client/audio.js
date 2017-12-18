@@ -1,5 +1,7 @@
-var minimap = require("./minimap.js"),
-    d3 = require("d3");
+var minimap = require('./minimap.js'),
+    utils = require('./utils'),
+    minimap = require('./minimap'),
+    d3 = require('d3');
 
 var audio = document.querySelector("audio"),
     extent = [0, 1],
@@ -133,6 +135,82 @@ function _currentTime(_) {
   return arguments.length ? audio.currentTime = _ : audio.currentTime;
 }
 
+function init() {
+    d3.select(document).on('keydown', function() {
+        if (!d3.select('body').classed('rendered') && !d3.matcher("input, textarea, button, select, [contenteditable='true']").call(d3.event.target)) {
+            var start = extent[0] * audio.duration,
+                end = extent[1] * audio.duration,
+                duration = audio.duration;
+            current = audio.currentTime;
+            switch (d3.event.key) {
+                case ' ':
+                    toggle();
+                    utils.stopIt(d3.event);
+                    break;
+                case 'ArrowLeft':
+                    if (d3.event.shiftKey) {
+                        _currentTime(current - 10);
+                    } else if (d3.event.ctrlKey || d3.event.metaKey) {
+                        _currentTime(current - 1);
+                    } else {
+                        _currentTime(current - 0.1);
+                    }
+                    utils.stopIt(d3.event);
+                    break;
+                case 'ArrowRight':
+                    if (d3.event.shiftKey) {
+                        _currentTime(current + 10);
+                    } else if (d3.event.ctrlKey || d3.event.metaKey) {
+                        _currentTime(current + 1);
+                    } else {
+                        _currentTime(current + 0.1);
+                    }
+                    utils.stopIt(d3.event);
+                    break;
+                case 'q':
+                    _currentTime(start);
+                    utils.stopIt(d3.event);
+                    break;
+                case 'w':
+                    pause();
+                    _currentTime(end);
+                    utils.stopIt(d3.event);
+                    break;
+                case 'i':
+                    minimap.updateTrim([current, null]);
+                    utils.stopIt(d3.event);
+                    break;
+                case 'o':
+                    minimap.updateTrim([null, current]);
+                    utils.stopIt(d3.event);
+                    break;
+                case '5':
+                    play(start, start + 1, start);
+                    utils.stopIt(d3.event);
+                    break;
+                case '6':
+                    play(end - 1, end);
+                    utils.stopIt(d3.event);
+                    break;
+            }
+        }
+    });
+    d3.selectAll('#play, #pause').on('click', function() {
+        d3.event.preventDefault();
+        toggle();
+    });
+
+    d3.select('#restart').on('click', function() {
+        d3.event.preventDefault();
+        restart();
+    });
+    
+    d3.select('#controls .tip a').on('click', function() {
+        jQuery('#shortcuts').toggleClass('hidden');
+        utils.stopIt(d3.event);
+    });
+}
+
 module.exports = {
   play: play,
   pause: pause,
@@ -142,5 +220,6 @@ module.exports = {
   isPlaying: isPlaying,
   extent: _extent,
   currentTime: _currentTime,
-  duration: _duration
+  duration: _duration,
+  init
 };
