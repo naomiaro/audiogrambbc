@@ -47,13 +47,14 @@ function update(url, data) {
   jQuery("#sharing-private").val(private);
   jQuery("#sharing-private").attr('data-id', id);
 
-  jQuery('#video-makePrivate, #video-makePublic').hide();
   if (user == USER.email) {
-      if (+private == 1) {
-          jQuery('#video-makePublic').show();
-      } else {
-          jQuery('#video-makePrivate').show();
-      }
+    jQuery("#sharing-private").attr("disabled", false);
+    jQuery("#sharing-private").parent().attr("title", null);
+    jQuery("#sharing-private").parent().addClass("tooltip-info");
+  } else {
+    jQuery("#sharing-private").attr("disabled", true);
+    jQuery("#sharing-private").parent().attr("title", 'Only the owner can change these settings');
+    jQuery("#sharing-private").parent().addClass('tooltip-info');
   }
   
   // d3.select('#return').on('click', function() {
