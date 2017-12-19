@@ -1,4 +1,5 @@
 const themeHelper = require('./themeHelper');
+const utils = require('./utils');
 
 function load() {
     var pid = prompt('Enter a valid image pid:', 'p04zwtlb');
