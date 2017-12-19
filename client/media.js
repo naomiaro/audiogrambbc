@@ -38,7 +38,7 @@ function loadFromURL(type, url, cb) {
     xhr.send();
 }
 
-async function update(blob, cb) {
+function update(blob, cb) {
     if (!(blob instanceof Blob)) blob = false;
 
     jQuery('#row-audio').removeClass('error');
