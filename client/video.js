@@ -39,6 +39,8 @@ function update(url, data) {
 
   jQuery('#sharing-link').attr('href', window.location.origin + url);
   jQuery('#sharing-link-text').val(window.location.origin + url);
+  jQuery("#sharing-link-project").attr("href", window.location.origin + url.replace(".mp4","").replace("video/", "ag/"));
+  jQuery("#sharing-link-project-text").val(window.location.origin + url.replace(".mp4","").replace("video/", "ag/"));
   
   const id = data.id || url.split('/')[2].split('.')[0];
   const private = data.private != undefined ? data.private : jQuery('#input-private').val();

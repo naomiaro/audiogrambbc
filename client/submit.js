@@ -156,6 +156,7 @@ function poll(id) {
                 if (result && result.status && result.status === 'ready' && result.url) {
                     video.update(result.url, {theme: preview.theme()});
                     utils.setClass('rendered');
+                    history.replaceState(null, null, `/ag/${id}`);
                     logger.success(result);
                 } else if (result.status === 'error') {
                     console.log('RLW status error');

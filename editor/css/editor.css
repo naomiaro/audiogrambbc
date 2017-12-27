@@ -123,6 +123,11 @@
   padding: 2px 0;
 }
 
+body.landing #error {
+  max-width: 800px;
+  margin: 0 auto 50px auto;
+}
+
 #landing {
   margin-top: -30px;
 }

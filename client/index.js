@@ -111,7 +111,13 @@ function initialize(err, themesWithImages) {
   });
 
   jQuery(function() {
-    utils.setClass("landing");
+    const path = window.location.pathname.split('/');
+    if (path[1]=='ag') {
+      const id = path[2];
+      projects.load(id);
+    } else {
+      utils.setClass("landing");
+    }
   });
 
 }

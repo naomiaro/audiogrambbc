@@ -149,6 +149,7 @@ function loadProject(id) {
   var id = id || jQuery(this).attr("data-id");
   if (!id) return false;
   LOADING = true;
+  utils.setClass('loading');
   function fetchProject(id, cb) {
     jQuery.getJSON("/getProject/" + id, function(data) {
       cb(data);
@@ -156,6 +157,10 @@ function loadProject(id) {
   }
   fetchProject(id, function(data) {
     console.log(data);
+    if (data.err) {
+      utils.error(data.err);
+      return;
+    }
     var q = d3.queue(1);
     // Set title
     _title(data.title);
@@ -192,6 +197,7 @@ function loadProject(id) {
       preview.redraw();
       LOADING = false;
       utils.navigate("view");
+      history.replaceState(null, null, `/ag/${id}`);
     });
   });
 }
@@ -222,6 +228,7 @@ function init() {
 
 module.exports = {
   getProjects,
+  load: loadProject,
   title: _title,
   init
 };

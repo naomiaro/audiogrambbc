@@ -163,6 +163,9 @@ app.use("/settings/", function(req, res, next) {
 
 }, express.static(path.join(__dirname, "..", "settings")));
 
+// Load projects
+app.use("/ag/:id", express.static(path.join(__dirname, "..", "editor")));
+
 // Serve editor files statically
 app.use(express.static(path.join(__dirname, "..", "editor")));
 

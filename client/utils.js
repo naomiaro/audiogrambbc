@@ -28,12 +28,19 @@ function navigate(state, msg, log) {
 }
 
 function setClass(cl, msg, log) {
-  cl = LOADING ? 'loading' : cl;
+  const error = cl=='error';
+  cl = LOADING ? error ? 'landing' : 'loading' : cl;
   if (jQuery('.modal').hasClass('in') && msg) {
     alert(msg);
   } else {
-    jQuery('body').attr('class', cl || null);
+    let bodyClass = cl || '';
+    if (error) bodyClass += ' error';
+    jQuery("body").attr("class", bodyClass || null);
     jQuery('#error, #success').text(msg || '');
+  }
+  if (cl=='landing') {
+    const projects = require('./projects');
+    projects.getProjects();
   }
   // Log warning
   if ((log || (log === undefined && cl == 'error')) && msg) {
@@ -44,6 +51,10 @@ function setClass(cl, msg, log) {
     console.log(err.stack);
     // Log
     logger.warn(msg, err, USER);
+  }
+  if (cl=='landing') {
+    // console.log(LOADING);
+    history.replaceState(null, null, "/");
   }
   jQuery('html,body').scrollTop(0);
 }
