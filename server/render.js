@@ -82,10 +82,11 @@ function route(req, res) {
   if (!req.body.media.audio.dest) {
     var audioSrc = req.body.media.audio.path,
       audioId = req.body.media.audio.id,
-      audioExt = req.body.media.audio.mimetype.split("/").pop(),
+      audioType = req.body.media.audio.mimetype,
+      audioExt = audioType.split("/").pop(),
       audioExt = audioExt == "mpeg" ? "mp3" : audioExt,
-      audioExt = audioExt.includes('wav') ? "wav" : audioExt;
-    if (audioExt !== 'mp3' && audioExt !== 'wav') {
+      audioExt = audioExt.includes("wav") ? "wav" : audioExt;
+    if (audioExt !== "mp3" && audioExt !== "wav" && audioExt !== "mp4" && audioExt !== "mov") {
       return res.json({ error: `Audio file type ${audioExt} invalid` });
     }
     var audioPath = "audio/" + jobId + "." + audioExt;
