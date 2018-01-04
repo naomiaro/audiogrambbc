@@ -1,5 +1,6 @@
 var jQuery = require("jquery"),
 logger = require("./slack.js"),
+utils = require('./utils'),
 ReactDOM = require('react-dom'),
 React = require('react'),
 TranscriptEditor = require('transcript-editor').default,
@@ -404,10 +405,29 @@ function init() {
     });
     
     // Format text to simulate line/page breaks
+    jQuery(document).on('keyup', '.transcript-editor-block__word', function(e){
+        console.log(e);
+        if (e.keyCode == 32) {
+
+        }
+    });
     jQuery(document).on('keydown', '.transcript-editor', function(e) {
         if (e.metaKey || e.ctrlKey) reformat = true;
     });
     jQuery(document).on('keyup', '.transcript-editor', function(e) {
+        if (e.keyCode == 32) {
+            var selectedObj = window.getSelection();
+            var node = selectedObj.anchorNode.parentNode;
+            var text = jQuery(node).text();
+            var words = text.split(' ');
+            var existingWord = jQuery(node).parents('[id]:first');
+            var space = jQuery(existingWord).prev().clone();
+            var newWord = jQuery(existingWord).clone().text(words[0]).attr('id', null);
+            newWord.insertBefore(existingWord);
+            space.insertBefore(existingWord);
+            existingWord.find('[data-text]').text('blah');
+            // utils.stopIt(e);
+        }
         if (reformat) {
             format();
             var preview = require('./preview.js');
