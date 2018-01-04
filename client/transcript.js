@@ -1,12 +1,13 @@
 var jQuery = require("jquery"),
-logger = require("./slack.js"),
-utils = require('./utils'),
-ReactDOM = require('react-dom'),
-React = require('react'),
-TranscriptEditor = require('transcript-editor').default,
-Transcript = require('transcript-model').Transcript,
-currentTranscript,
-kaldiPoll;
+  logger = require("./slack.js"),
+  utils = require("./utils"),
+  ReactDOM = require("react-dom"),
+  React = require("react"),
+  uuid = require("uuid/v4"),
+  TranscriptEditor = require("transcript-editor").default,
+  Transcript = require("transcript-model").Transcript,
+  currentTranscript,
+  kaldiPoll;
 var reformat = false;
 
 // Highlight selected words 
@@ -389,6 +390,11 @@ function importFromFile() {
     reader.readAsText(this.files[0]);
 }
 
+function generateWord(text, start, end) {
+    var id = 'word-' + uuid();
+    var html = `<span title="${start} - ${end}" id="${id}" data-start="${start}" data-end="${end}" class="transcript-editor-block__word"><span data-offset-key="0-14-0"><span data-text="true">hdelp ing</span></span></span>`;
+}
+
 function init() {
     // Attach listener to hightlight words during playback
     jQuery('audio').on('timeupdate', function() {
@@ -416,17 +422,47 @@ function init() {
     });
     jQuery(document).on('keyup', '.transcript-editor', function(e) {
         if (e.keyCode == 32) {
+            var script = toJSON();
+            console.log(script);
+
             var selectedObj = window.getSelection();
             var node = selectedObj.anchorNode.parentNode;
             var text = jQuery(node).text();
-            var words = text.split(' ');
-            var existingWord = jQuery(node).parents('[id]:first');
-            var space = jQuery(existingWord).prev().clone();
-            var newWord = jQuery(existingWord).clone().text(words[0]).attr('id', null);
-            newWord.insertBefore(existingWord);
-            space.insertBefore(existingWord);
-            existingWord.find('[data-text]').text('blah');
-            // utils.stopIt(e);
+            var segment = jQuery(node).parents("[data-offset-key]:first")
+              .attr("data-offset-key")
+              .split("-")[0];
+            var word = jQuery(node)
+              .parents("[id]:first")
+              .prevAll(".transcript-editor-block__word").length;
+
+
+            console.log(segment, word); 
+            console.log(script.segments[segment].words[word]);
+            
+            // var existingId = existingWord.attr('id');
+            // var newId = 'word-' + uuid();
+            // var space = jQuery(existingWord).prev().clone();
+            // var newWord = jQuery(existingWord).clone().attr('id', newId);
+            // newWord.find('[data-text]').text(words[0]);
+            // newWord.insertBefore(existingWord);
+            // space.insertBefore(existingWord);
+            // existingWord.find('[data-text]').text('yas');
+            // console.log(existingId);
+            // // utils.stopIt(e);
+            // var block = existingWord.parent().attr('data-offset-key');
+
+            // var i = pos;
+            // console.log(i);
+            // existingWord.parent().find('[class^="transcript-editor-block__"]').each( function(index) {
+            //     var offset = jQuery(this).find('[data-offset-key]').attr('data-offset-key').split('-');
+            //     if (offset[1] >= pos) {
+            //         offset[1] = i;
+            //         var newOffset = offset.join('-');
+            //         jQuery(this).find('[data-offset-key]').attr('data-offset-key', newOffset);
+            //         i++;
+            //     }
+            // });
+
         }
         if (reformat) {
             format();
