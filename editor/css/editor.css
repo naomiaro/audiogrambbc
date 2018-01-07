@@ -356,6 +356,41 @@ select.transcript-speaker {
   cursor: text;
 }
 
+.transcript-content {
+    outline: none;
+}
+
+.transcript-block {
+    clear: both;
+}
+.transcript-block:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.transcript-block:not(:first-child) {
+    margin-top: 4px;
+    padding-top: 5px;
+    border-top: 1px dashed #ccc;
+}
+
+.transcript-speaker {
+    float: left;
+    width: 120px;
+}
+
+.same-speaker .transcript-speaker select {
+    opacity: 0;
+}
+.same-speaker:hover .transcript-speaker select {
+    opacity: 1;
+}
+
+.transcript-segment {
+    float: left;
+    width: calc(100% - 120px);
+}
+
 .transcript-editor-block {
   display: flex;
   margin-bottom: 10px;
@@ -376,10 +411,22 @@ select.transcript-speaker {
   margin-left: -10px;
 }
 
-.transcript-editor-block__word {
-  background-color: #d4eaff;
-  border: 1px solid #ddd;
-  padding: 1px 2px;
+.transcript-word {
+    display: inline-block;
+    background-color: #d4eaff;
+    border: 1px solid #ddd;
+    padding: 0px 3px;
+    border-radius: 3px;
+    margin: 1px;
+}
+
+.transcript-word.added {
+    background-color: #ECECEB;
+}
+
+.transcript-line {
+    display: block;
+    height: 0;
 }
 
 .transcript-editor-block__word.unused {

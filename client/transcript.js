@@ -7,7 +7,9 @@ var jQuery = require("jquery"),
   TranscriptEditor = require("transcript-editor").default,
   Transcript = require("transcript-model").Transcript,
   currentTranscript,
-  kaldiPoll;
+  kaldiPoll,
+  formatTimeout;
+
 var reformat = false;
 
 // Highlight selected words 
@@ -24,6 +26,86 @@ function highlight(start, end) {
 }
 
 function format() {
+    if (!jQuery(".transcript-block").length) return;
+    var maxChar = +jQuery("input[name='subtitles.lineWidth']").val();
+    var maxLines = +jQuery("input[name='subtitles.linesMax']").val();
+    // Get selection pos
+    var sel = window.getSelection();
+    if (sel.focusNode) {
+        var selNode = sel.focusNode.parentElement;
+        var selPos = sel.focusOffset;
+    }
+    // Clear lines/breaks
+    jQuery('.transcript-line, .transcript-break').remove();
+    // Merge segments
+    jQuery(".transcript-block.same-speaker").each(function () {
+        var words = jQuery(this).find('.transcript-word');
+        jQuery(this).prev().find('.transcript-segment').append(words);
+        jQuery(this).remove();
+    });
+    // Split words
+    jQuery(".transcript-word").each(function () {
+        var text = jQuery(this).text();
+        if (text.includes(' ')) {
+            console.log(text);
+            var words = text.split(' ').reverse();
+            for (let i = 0; i < words.length - 1; i++) {
+                var newWord = jQuery(this).clone();
+                newWord.text(words[i]);
+                newWord.addClass('added');
+                jQuery(this).after(newWord);
+            }
+            jQuery(this).text(words[words.length - 1]);
+            if (selNode && jQuery(this).is(jQuery(selNode))) {
+                var posWords = text.slice(0, selPos).split(' ');
+                var wordOffset = posWords.length - 1;
+                var wordIndex = jQuery(this).index() + wordOffset;
+                selNode = jQuery(this).parent().find(`:eq(${wordIndex})`).get()[0];
+                selPos = posWords[posWords.length - 1].length;
+            }
+        }
+    });
+    // Insert new lines
+    jQuery(".transcript-block").each(function () {
+        var charCount = 0;
+        var lineCount = 1;
+        jQuery(this).find(".transcript-word").each(function () {
+            var text = jQuery(this).text();
+            if (charCount > 0) {
+                charCount++;
+            }
+            charCount += text.length;
+            if (charCount > maxChar) {
+                charCount = text.length;
+                lineCount++;
+                if (lineCount > maxLines) {
+                    var cl = 'transcript-break';
+                    lineCount = 1;
+                } else {
+                    var cl = 'transcript-line';
+                }
+                var lineSpan = document.createElement('span');
+                lineSpan.setAttribute('class', cl);
+                jQuery(this).before(lineSpan);
+            }
+        });
+    });
+    // Insert new blocks
+    jQuery('.transcript-break').each(function() {
+        var newBlock = jQuery(this).parentsUntil('.transcript-content').last().clone();
+        newBlock.addClass('same-speaker');
+        newBlock.find('.transcript-segment').html('').append(jQuery(this).nextAll());
+        jQuery(this).parentsUntil('.transcript-content').last().after(newBlock);
+    });
+    // Reset selection
+    if (selNode) {
+        sel.collapse(selNode.firstChild, selPos);
+    }
+
+    return;
+}
+
+function OLDformat() {
     var currentJSON = toJSON();
     var maxChar = +jQuery("input[name='subtitles.lineWidth']").val(),
     maxLines = +jQuery("input[name='subtitles.linesMax']").val(),
@@ -129,60 +211,105 @@ function speakerCount() {
 
 function toJSON() {
     if (!currentTranscript) return null;
-    var json = currentTranscript.toJSON(),
-    count = speakerCount(),
-    speakers = [];
-    // Add speakers
-    for (var i = 0; i < count; i++) {
-        speakers.push({name: null});
-    }
-    json.speakers = speakers;
-    // Update block speakers
-    var i = 0
-    jQuery( "select.transcript-speaker" ).each(function( index ) {
-        var value = +jQuery(this).val().split(" ").pop();
-        if (json.segments[i]) json.segments[i].speaker = value - 1;
-        i++;
-    });
+    var speakers = [];
+    var segments = [];
+    var speakerMax = 0;
+    var json = {speakers, segments};
+    // Segments
+        if (!jQuery(".transcript-word").length) {
+            json = currentTranscript.toJSON();
+        } else {
+            jQuery(".transcript-block").each(function () {
+                var speaker = +jQuery(this).find('.transcript-speaker select').val();
+                if (speaker > speakerMax) speakerMax = speaker;
+                var segment = {speaker, words: []};
+                jQuery(this).find(".transcript-word").each(function () {
+                    var text = jQuery(this).text();
+                    var start = +jQuery(this).attr('data-start');
+                    var end = +jQuery(this).attr('data-end');
+                    var word = {text, start, end};
+                    segment.words.push(word);
+                });
+                json.segments.push(segment);
+            });
+        }
+
+    // Speakers
+        for (var i = 0; i <= speakerMax; i++) {
+            speakers.push({name: null});
+        }
     return json;
 }
 
 function load(json) {
     clear();
-    if (!json) {
-        return;
-    }
-    
+    if (!json) return;
+
     if (json.hasOwnProperty("commaSegments")) {
         currentTranscript = Transcript.fromComma(json);
     } else if (json.hasOwnProperty("kaldi")) {
         currentTranscript = Transcript.fromKaldi(json.transcript, json.segments);
     } else {
         currentTranscript = Transcript.fromJSON(json);
-    }
-    
-    var props = {
-        transcript: currentTranscript,
-        showSpeakers: true,
-        onTranscriptUpdate: function(data){
-            format();
-            currentTranscript = data;
-            var preview = require("./preview.js");
-            preview.redraw();
+    }    
+    var script = toJSON();
+
+    console.log('>>>>>', script);
+
+    // Generate speaker dropdown
+        var speakerDiv = document.createElement('div');
+        speakerDiv.setAttribute('class', 'transcript-speaker');
+        var speakerSel = document.createElement('select');
+        speakerDiv.appendChild(speakerSel);
+        var speakerCount = 1;
+        script.segments.forEach(function(segment){
+            var speakerId = segment.speaker + 1;
+            if (speakerId>speakerCount) speakerCount = speakerId;
+        });
+        for (let i = 0; i <= speakerCount; i++) {
+            var speakerOpt = document.createElement('option');
+            speakerOpt.value = i;
+            speakerOpt.text = `Speaker ${i + 1}`;
+            speakerSel.appendChild(speakerOpt);
         }
-    };
-    var TS = function() {
-        return React.createElement(TranscriptEditor, props);
-    };
-    var transcriptElement = document.querySelector("transcript");
-    ReactDOM.render(React.createElement(TS), transcriptElement, function(){
-        setTimeout(format,1000);
-    });
+    
+    // Add segments
+        script.segments.forEach(function(segment) {
+            if (segment.words.length) {
+                // Make block
+                var blockDiv = document.createElement('div');
+                blockDiv.setAttribute('class', 'transcript-block');
+                jQuery('.transcript-content').append(blockDiv);
+                // Insert speaker
+                jQuery(speakerDiv).find('[value=' + segment.speaker + ']').attr('selected', true);
+                blockDiv.appendChild(speakerDiv.cloneNode(true));
+                // Insert segment
+                var segmentDiv = document.createElement('div');
+                segmentDiv.setAttribute('class', 'transcript-segment');
+                blockDiv.appendChild(segmentDiv);
+                // Insert words
+                segment.words.forEach(word => {
+                    var wordSpan = document.createElement('span');
+                    wordSpan.setAttribute('class', 'transcript-word');
+                    wordSpan.setAttribute('data-start', word.start);
+                    wordSpan.setAttribute('data-end', word.end);
+                    wordSpan.textContent = word.text;
+                    segmentDiv.appendChild(wordSpan);
+                });
+            }
+        });
+
+    format();
     
 }
 
+function buildTranscript() {
+    return data;
+
+};
+
 function clear() {
-    jQuery("transcript").text("");
+    jQuery(".transcript-content").text("");
     jQuery("#transcript").removeClass("loading");
     currentTranscript = null;
     clearTimeout(kaldiPoll);
@@ -390,11 +517,6 @@ function importFromFile() {
     reader.readAsText(this.files[0]);
 }
 
-function generateWord(text, start, end) {
-    var id = 'word-' + uuid();
-    var html = `<span title="${start} - ${end}" id="${id}" data-start="${start}" data-end="${end}" class="transcript-editor-block__word"><span data-offset-key="0-14-0"><span data-text="true">hdelp ing</span></span></span>`;
-}
-
 function init() {
     // Attach listener to hightlight words during playback
     jQuery('audio').on('timeupdate', function() {
@@ -411,65 +533,19 @@ function init() {
     });
     
     // Format text to simulate line/page breaks
-    jQuery(document).on('keyup', '.transcript-editor-block__word', function(e){
-        console.log(e);
-        if (e.keyCode == 32) {
-
-        }
-    });
     jQuery(document).on('keydown', '.transcript-editor', function(e) {
         if (e.metaKey || e.ctrlKey) reformat = true;
+        clearTimeout(formatTimeout);
     });
-    jQuery(document).on('keyup', '.transcript-editor', function(e) {
-        if (e.keyCode == 32) {
-            var script = toJSON();
-            console.log(script);
-
-            var selectedObj = window.getSelection();
-            var node = selectedObj.anchorNode.parentNode;
-            var text = jQuery(node).text();
-            var segment = jQuery(node).parents("[data-offset-key]:first")
-              .attr("data-offset-key")
-              .split("-")[0];
-            var word = jQuery(node)
-              .parents("[id]:first")
-              .prevAll(".transcript-editor-block__word").length;
-
-
-            console.log(segment, word); 
-            console.log(script.segments[segment].words[word]);
-            
-            // var existingId = existingWord.attr('id');
-            // var newId = 'word-' + uuid();
-            // var space = jQuery(existingWord).prev().clone();
-            // var newWord = jQuery(existingWord).clone().attr('id', newId);
-            // newWord.find('[data-text]').text(words[0]);
-            // newWord.insertBefore(existingWord);
-            // space.insertBefore(existingWord);
-            // existingWord.find('[data-text]').text('yas');
-            // console.log(existingId);
-            // // utils.stopIt(e);
-            // var block = existingWord.parent().attr('data-offset-key');
-
-            // var i = pos;
-            // console.log(i);
-            // existingWord.parent().find('[class^="transcript-editor-block__"]').each( function(index) {
-            //     var offset = jQuery(this).find('[data-offset-key]').attr('data-offset-key').split('-');
-            //     if (offset[1] >= pos) {
-            //         offset[1] = i;
-            //         var newOffset = offset.join('-');
-            //         jQuery(this).find('[data-offset-key]').attr('data-offset-key', newOffset);
-            //         i++;
-            //     }
-            // });
-
-        }
-        if (reformat) {
+    jQuery(document).on('keyup', '.transcript-editor', function (e) {
+        clearTimeout(formatTimeout);
+        var sel = window.getSelection();
+        console.log(sel.focusNode.nodeValue);
+        if (sel.focusNode && sel.focusNode.nodeValue.includes(' ')) {
             format();
-            var preview = require('./preview.js');
-            preview.redraw();
+        } else {
+            formatTimeout = setTimeout(function(){ format() }, 500);
         }
-        reformat = false;
     });
     
     // Move playhead when clicking on a word
@@ -563,6 +639,11 @@ function init() {
             jQuery('#transcript .subFormatToggle, #transcript-settings').removeClass('hidden');
             jQuery('#transcript .subFormatToggle').addClass('hidden');
         }
+    });
+
+    jQuery(document).on('click', '#transcript-pane > div.tip', function(){
+        format();
+        console.log(toJSON());
     });
     
 }
