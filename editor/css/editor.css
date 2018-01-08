@@ -424,7 +424,12 @@ body.landing #error {
 }
 
 .transcript-word.added {
-    background-color: #ECECEB;
+    background-color: rgb(255, 230, 230);
+}
+
+.transcript-word.unused {
+  opacity: 0.5;
+  background-color: #eee;
 }
 
 .transcript-space {
@@ -434,11 +439,6 @@ body.landing #error {
 .transcript-line {
     display: block;
     height: 0;
-}
-
-.transcript-editor-block__word.unused {
-  opacity: 0.5;
-  background-color: #eee;
 }
 
 .transcript-editor-block__word.played:not(.unused) {
