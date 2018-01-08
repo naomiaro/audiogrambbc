@@ -34,10 +34,19 @@ function format() {
     if (sel.focusNode) {
         var selNode = sel.focusNode.parentElement;
         var selPos = sel.focusOffset;
+        if (selNode.className.includes('transcript-space')) {
+            selNode = jQuery(selNode).nextAll('.transcript-word')[0];
+            selPos = 0;
+        }
     }
     // Clear lines/breaks
-    jQuery('.transcript-line, .transcript-break').remove();
+    jQuery('.transcript-space, .transcript-line, .transcript-break').remove();
     // Merge segments
+    jQuery('.transcript-block').each(function () {
+        var speaker = jQuery(this).attr('data-speaker');
+        var prevSpeaker = jQuery(this).prev().attr('data-speaker');
+        if (speaker != prevSpeaker) jQuery(this).removeClass('same-speaker');
+    });
     jQuery(".transcript-block.same-speaker").each(function () {
         var words = jQuery(this).find('.transcript-word');
         jQuery(this).prev().find('.transcript-segment').append(words);
@@ -52,10 +61,18 @@ function format() {
             for (let i = 0; i < words.length - 1; i++) {
                 var newWord = jQuery(this).clone();
                 newWord.text(words[i]);
-                newWord.addClass('added');
+                if ( words[i] != newWord.attr('data-text') ) {
+                    newWord.addClass('added');
+                    newWord.attr('data-text', null);
+                }
                 jQuery(this).after(newWord);
             }
-            jQuery(this).text(words[words.length - 1]);
+            var word0 = words[words.length - 1];
+            jQuery(this).text(word0);
+            if (word0 != jQuery(this).attr('data-text')) {
+                jQuery(this).attr('data-text', null);
+                jQuery(this).addClass('added');
+            }
             if (selNode && jQuery(this).is(jQuery(selNode))) {
                 var posWords = text.slice(0, selPos).split(' ');
                 var wordOffset = posWords.length - 1;
@@ -92,15 +109,51 @@ function format() {
     });
     // Insert new blocks
     jQuery('.transcript-break').each(function() {
-        var newBlock = jQuery(this).parentsUntil('.transcript-content').last().clone();
+        var block = jQuery(this).parentsUntil('.transcript-content').last();
+        var newBlock = block.clone();
         newBlock.addClass('same-speaker');
         newBlock.find('.transcript-segment').html('').append(jQuery(this).nextAll());
         jQuery(this).parentsUntil('.transcript-content').last().after(newBlock);
     });
+    // Insert spaces
+    jQuery(".transcript-word:not(:last-child)").each(function () {
+        var spaceSpan = document.createElement('span');
+        spaceSpan.setAttribute('class', 'transcript-space');
+        spaceSpan.textContent = " ";
+        jQuery(this).after(spaceSpan);
+    });
     // Reset selection
     if (selNode) {
+        selPos = Math.min(selPos, selNode.firstChild.length);
         sel.collapse(selNode.firstChild, selPos);
     }
+    // Set speaker colours
+    jQuery('.transcript-block').each(function () {
+        var speaker = jQuery(this).attr('data-speaker');
+        var prevSpeaker = jQuery(this).prev().attr('data-speaker');
+        jQuery(this).find('.transcript-speaker select').val(speaker);
+        if (speaker === prevSpeaker) {
+            jQuery(this).addClass('same-speaker');
+        } else {
+            jQuery(this).removeClass('same-speaker');
+        }
+        if (jQuery("input[name='subtitles.color." + speaker + "']").length) {
+            var color = jQuery("input[name='subtitles.color." + speaker + "']").val();
+        } else {
+            var preview = require("./preview.js"),
+                theme = preview.theme();
+            if (theme.subtitles.color[speaker]) {
+                color = theme.subtitles.color[speaker];
+            } else {
+                color = theme.subtitles.color[0];
+                preview.themeConfig("subtitles.color." + speaker, color);
+            }
+            var el = jQuery("input[name^='subtitles.color']:last").parent();
+            el.after(el.clone());
+            jQuery("input[name^='subtitles.color']:last").attr("name", "subtitles.color." + speaker).val(color);
+        }
+        jQuery(this).find('.transcript-segment').css("border-color", color);
+    });
 
     return;
 }
@@ -254,11 +307,10 @@ function load(json) {
     }    
     var script = toJSON();
 
-    console.log('>>>>>', script);
-
     // Generate speaker dropdown
         var speakerDiv = document.createElement('div');
         speakerDiv.setAttribute('class', 'transcript-speaker');
+        speakerDiv.setAttribute('contenteditable', 'false');
         var speakerSel = document.createElement('select');
         speakerDiv.appendChild(speakerSel);
         var speakerCount = 1;
@@ -281,18 +333,19 @@ function load(json) {
                 blockDiv.setAttribute('class', 'transcript-block');
                 jQuery('.transcript-content').append(blockDiv);
                 // Insert speaker
-                jQuery(speakerDiv).find('[value=' + segment.speaker + ']').attr('selected', true);
+                blockDiv.setAttribute('data-speaker', segment.speaker);
                 blockDiv.appendChild(speakerDiv.cloneNode(true));
                 // Insert segment
                 var segmentDiv = document.createElement('div');
                 segmentDiv.setAttribute('class', 'transcript-segment');
                 blockDiv.appendChild(segmentDiv);
                 // Insert words
-                segment.words.forEach(word => {
+                segment.words.forEach(function(word) {
                     var wordSpan = document.createElement('span');
                     wordSpan.setAttribute('class', 'transcript-word');
                     wordSpan.setAttribute('data-start', word.start);
                     wordSpan.setAttribute('data-end', word.end);
+                    wordSpan.setAttribute('data-text', word.text);
                     wordSpan.textContent = word.text;
                     segmentDiv.appendChild(wordSpan);
                 });
@@ -533,23 +586,95 @@ function init() {
     });
     
     // Format text to simulate line/page breaks
-    jQuery(document).on('keydown', '.transcript-editor', function(e) {
-        if (e.metaKey || e.ctrlKey) reformat = true;
+    jQuery(document).on('keydown', '.transcript-editor', function (e) {
         clearTimeout(formatTimeout);
+        // Backspace
+        if (e.keyCode === 8) {
+            var sel = window.getSelection();
+            var selNode = sel.focusNode.parentElement;
+            var selPos = sel.focusOffset;
+            // Merge with previous block
+            if (jQuery(selNode).is(':first-child')) {
+                var block = jQuery(selNode).parents('.transcript-block')[0];
+                if (jQuery(block).index() > 0) {
+                    var words = jQuery(block).find('.transcript-segment').children();
+                    var prevBlock = jQuery(block).prev();
+                    var prevBlockIndex = prevBlock.index();
+                    prevBlock.find('.transcript-segment').append(words);
+                    jQuery(block).remove();
+                    selNode.normalize();
+                    format();
+                    var lastWord = jQuery(`.transcript-block:eq(${prevBlockIndex}) .transcript-word:last`).get()[0];
+                    sel.collapse(lastWord.firstChild, lastWord.firstChild.length);
+                }
+                utils.stopIt(e);
+                console.log('merge block');
+            // Merge with previous word
+            } else if (selNode.className.includes('transcript-space')) {
+                var prev = jQuery(selNode).prev();
+                var newPos = prev.text().length;
+                var next = jQuery(selNode).next();
+                prev.append(next.text());
+                next.remove();
+                selNode.normalize();
+                format();
+                sel.collapse(prev.get()[0].firstChild, newPos);
+                utils.stopIt(e);
+            } else if (selNode.className.includes('transcript-word') && selPos === 0) {
+                var prev = jQuery(selNode).prevAll('.transcript-word')[0];
+                var newPos = prev.firstChild.length;
+                prev.append(selNode.firstChild);
+                selNode.remove();
+                selNode.normalize();
+                sel.collapse(prev.firstChild, newPos);
+                format();
+                utils.stopIt(e);
+            }
+        // Delete
+        } else if (e.keyCode === 46) {
+            var sel = window.getSelection();
+            var selNode = sel.focusNode.parentElement;
+            var selPos = sel.focusOffset;
+            if (selNode.className.includes('transcript-word') && selPos === sel.focusNode.length) {
+                var newPos = sel.focusNode.length;
+                var next = jQuery(selNode).nextAll('.transcript-word')[0];
+                jQuery(selNode).append(next.firstChild);
+                next.remove();
+                selNode.normalize();
+                format();
+                sel.collapse(selNode.firstChild, newPos);
+                utils.stopIt(e);
+            }
+        }
     });
     jQuery(document).on('keyup', '.transcript-editor', function (e) {
         clearTimeout(formatTimeout);
         var sel = window.getSelection();
-        console.log(sel.focusNode.nodeValue);
-        if (sel.focusNode && sel.focusNode.nodeValue.includes(' ')) {
-            format();
-        } else {
-            formatTimeout = setTimeout(function(){ format() }, 500);
+        if (sel.focusNode){
+            var selNode = sel.focusNode.parentElement;
+            if (selNode.className == '') {
+                selNode = selNode.parentElement;
+            }
+            if (selNode.className.includes('transcript-space')) {
+                var spaceText = sel.focusNode.textContent.trim();
+                if (spaceText.length > 0) {
+                    jQuery(selNode).nextAll('.transcript-word')[0].prepend(spaceText);
+                    selNode = jQuery(selNode).nextAll('.transcript-word')[0];
+                    sel.collapse(selNode.firstChild, spaceText.length);
+                    format();
+                    return;
+                }
+            }
+            if (jQuery(sel.focusNode.parentNode).hasClass('transcript-word') && sel.focusNode.nodeValue.includes(' ')) {
+                format();
+                return;
+            } 
         }
+        // formatTimeout = setTimeout(function(){ format() }, 500);
     });
     
     // Move playhead when clicking on a word
-    jQuery(document).on('click', '.transcript-editor-block__word', function() {
+    jQuery(document).on('click', '.transcript-word', function() {
         var time = jQuery(this).attr('data-start');
         jQuery('audio').get(0).currentTime = time;
     });
@@ -620,10 +745,10 @@ function init() {
     d3.selectAll('.transcript-export-btn').on('click', exportTranscript);
     d3.selectAll('#input-transcript').on('change', importFromFile);
     // Reformate line-breaks and speakers
-    jQuery(document).on('change', 'select.transcript-speaker', function() {
+    jQuery(document).on('change', '.transcript-speaker select', function() {
+        var speaker = jQuery(this).val();
+        jQuery(this).parentsUntil('.transcript-content').last().attr('data-speaker', speaker);
         format();
-        var preview = require('./preview.js');
-        preview.redraw();
     });
     
     d3.selectAll('.subFormatToggle').on('click', function() {

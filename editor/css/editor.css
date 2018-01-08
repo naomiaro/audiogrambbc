@@ -334,7 +334,7 @@ body.landing #error {
   width: calc(100% + 30px);
 }
 
-select.transcript-speaker {
+.transcript-speaker select {
   width: 100px;
   margin: -2px 0 !important;
   height: 20px;
@@ -348,6 +348,7 @@ select.transcript-speaker {
   -moz-appearance: none;
   text-indent: 1px;
   text-overflow: '';
+  outline: none;
 }
 
 .transcript-editor {
@@ -376,7 +377,7 @@ select.transcript-speaker {
 
 .transcript-speaker {
     float: left;
-    width: 120px;
+    width: 100px;
 }
 
 .same-speaker .transcript-speaker select {
@@ -388,7 +389,9 @@ select.transcript-speaker {
 
 .transcript-segment {
     float: left;
-    width: calc(100% - 120px);
+    width: calc(100% - 100px);
+    border-left: 3px solid;
+    padding-left: 10px;
 }
 
 .transcript-editor-block {
@@ -422,6 +425,10 @@ select.transcript-speaker {
 
 .transcript-word.added {
     background-color: #ECECEB;
+}
+
+.transcript-space {
+    margin: 0 -2px;
 }
 
 .transcript-line {
