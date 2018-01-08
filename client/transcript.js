@@ -47,7 +47,7 @@ function format() {
         var prevSpeaker = jQuery(this).prev().attr('data-speaker');
         if (speaker != prevSpeaker) jQuery(this).removeClass('same-speaker');
     });
-    jQuery(".transcript-block.same-speaker").each(function () {
+    jQuery(".transcript-block.same-speaker:not(.break)").each(function () {
         var words = jQuery(this).find('.transcript-word');
         jQuery(this).prev().find('.transcript-segment').append(words);
         jQuery(this).remove();
@@ -59,13 +59,15 @@ function format() {
             console.log(text);
             var words = text.split(' ').reverse();
             for (let i = 0; i < words.length - 1; i++) {
-                var newWord = jQuery(this).clone();
-                newWord.text(words[i]);
-                if ( words[i] != newWord.attr('data-text') ) {
-                    newWord.addClass('added');
-                    newWord.attr('data-text', null);
+                if (words[i].length) {
+                    var newWord = jQuery(this).clone();
+                    newWord.text(words[i]);
+                    if ( words[i] != newWord.attr('data-text') ) {
+                        newWord.addClass('added');
+                        newWord.attr('data-text', null);
+                    }
+                    jQuery(this).after(newWord);
                 }
-                jQuery(this).after(newWord);
             }
             var word0 = words[words.length - 1];
             jQuery(this).text(word0);
@@ -80,6 +82,8 @@ function format() {
                 selNode = jQuery(this).parent().find(`:eq(${wordIndex})`).get()[0];
                 selPos = posWords[posWords.length - 1].length;
             }
+        } else if (text == '') {
+            jQuery(this).remove();
         }
     });
     // Insert new lines
@@ -123,10 +127,21 @@ function format() {
         jQuery(this).after(spaceSpan);
     });
     // Reset selection
-    if (selNode) {
-        selPos = Math.min(selPos, selNode.firstChild.length);
-        sel.collapse(selNode.firstChild, selPos);
+    if (selNode && selNode.firstChild) {
+      selPos = Math.min(selPos, selNode.firstChild.length);
+      sel.collapse(selNode.firstChild, selPos);
     }
+    // Set added word timings
+    jQuery('.transcript-word.added').attr('data-start', null).attr('data-end', null);
+    jQuery('.transcript-word.added').each(function() {
+        if (!jQuery(this).attr('data-start')) {
+            var start = +jQuery(this).prevAll('.transcript-word:not(.added)').first().attr('data-end');
+            var end = +jQuery(this).nextAll('.transcript-word:not(.added)').first().attr('data-start');
+            var nextWords = jQuery(this).nextUntil('.transcript-word:not(.added)').filter('.transcript-word');
+
+            console.log('added word');
+        }
+    });
     // Set speaker colours
     jQuery('.transcript-block').each(function () {
         var speaker = jQuery(this).attr('data-speaker');
@@ -297,6 +312,8 @@ function toJSON() {
 function load(json) {
     clear();
     if (!json) return;
+
+    console.log('TRANSCRIPT LOAD >>>', json);
 
     if (json.hasOwnProperty("commaSegments")) {
         currentTranscript = Transcript.fromComma(json);
@@ -584,6 +601,12 @@ function init() {
             .addClass('played');
         }
     });
+
+    jQuery(document).on('paste', '.transcript-editor', function(e){
+        utils.stopIt(e);
+        var text = ' ' + e.originalEvent.clipboardData.getData("text/plain") + ' ';
+        document.execCommand("insertHTML", false, text);
+    });
     
     // Format text to simulate line/page breaks
     jQuery(document).on('keydown', '.transcript-editor', function (e) {
@@ -593,6 +616,10 @@ function init() {
             var sel = window.getSelection();
             var selNode = sel.focusNode.parentElement;
             var selPos = sel.focusOffset;
+            if (jQuery(selNode).is('.transcript-segment')) {
+                selNode = jQuery(selNode).find('.transcript-word:first').get()[0];
+                selPos = 0;
+            }
             // Merge with previous block
             if (jQuery(selNode).is(':first-child')) {
                 var block = jQuery(selNode).parents('.transcript-block')[0];
@@ -600,12 +627,13 @@ function init() {
                     var words = jQuery(block).find('.transcript-segment').children();
                     var prevBlock = jQuery(block).prev();
                     var prevBlockIndex = prevBlock.index();
+                    var prevBlockWordIndex = prevBlock.find('.transcript-word').length;
                     prevBlock.find('.transcript-segment').append(words);
                     jQuery(block).remove();
                     selNode.normalize();
                     format();
-                    var lastWord = jQuery(`.transcript-block:eq(${prevBlockIndex}) .transcript-word:last`).get()[0];
-                    sel.collapse(lastWord.firstChild, lastWord.firstChild.length);
+                    var selWord = jQuery(`.transcript-block:eq(${prevBlockIndex}) .transcript-word:eq(${prevBlockWordIndex})`).get()[0];
+                    sel.collapse(selWord.firstChild, 0);
                 }
                 utils.stopIt(e);
                 console.log('merge block');
@@ -645,6 +673,27 @@ function init() {
                 sel.collapse(selNode.firstChild, newPos);
                 utils.stopIt(e);
             }
+        // New line
+        } else if (e.keyCode === 13) {
+            var sel = window.getSelection();
+            var selNode = sel.focusNode.parentElement;
+            var selPos = sel.focusOffset;
+            if (selPos != sel.focusNode.length) {
+                var word = sel.focusNode.textContent.slice(0, selPos) + ' ';
+                word += sel.focusNode.textContent.slice(3, sel.focusNode.textContent.length);
+                jQuery(selNode).text(word);
+                format();
+                console.log('break word first');
+            }
+            var block = jQuery(selNode).parentsUntil('.transcript-content').last();
+            var words = jQuery(selNode).nextAll();
+            var newBlock = block.clone();
+            newBlock.find('.transcript-segment').html('').append(words);
+            newBlock.addClass('break');
+            block.after(newBlock);
+            format();
+            sel.collapse(jQuery(newBlock).find('.transcript-word:first').get()[0], 0);
+            utils.stopIt(e);
         }
     });
     jQuery(document).on('keyup', '.transcript-editor', function (e) {
