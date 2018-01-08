@@ -173,7 +173,7 @@ function format() {
         if (!jQuery(this).is(':first-child, :last-child')) {
             var block = jQuery(this).parentsUntil('.transcript-content').last();
             var newBlock = block.clone();
-            newBlock.addClass('same-speaker');
+            newBlock.addClass('same-speaker').removeClass('break');
             newBlock.find('.transcript-segment').html('').append(jQuery(this).nextAll());
             jQuery(this).parentsUntil('.transcript-content').last().after(newBlock);
         }
