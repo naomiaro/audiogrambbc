@@ -42,16 +42,18 @@ function format() {
     // Clear lines/breaks
     jQuery('.transcript-space, .transcript-line, .transcript-break').remove();
     // Merge segments
-    jQuery('.transcript-block').each(function () {
-        var speaker = jQuery(this).attr('data-speaker');
-        var prevSpeaker = jQuery(this).prev().attr('data-speaker');
-        if (speaker != prevSpeaker) jQuery(this).removeClass('same-speaker');
-    });
-    jQuery(".transcript-block.same-speaker:not(.break)").each(function () {
-        var words = jQuery(this).find('.transcript-word');
-        jQuery(this).prev().find('.transcript-segment').append(words);
-        jQuery(this).remove();
-    });
+    if (!LOADING) {
+        jQuery('.transcript-block').each(function () {
+            var speaker = jQuery(this).attr('data-speaker');
+            var prevSpeaker = jQuery(this).prev().attr('data-speaker');
+            if (speaker != prevSpeaker) jQuery(this).removeClass('same-speaker');
+        });
+        jQuery(".transcript-block.same-speaker:not(.break)").each(function () {
+            var words = jQuery(this).find('.transcript-word');
+            jQuery(this).prev().find('.transcript-segment').append(words);
+            jQuery(this).remove();
+        });
+    }
     // Split words
     jQuery(".transcript-word").each(function () {
         var text = jQuery(this).text();
@@ -364,7 +366,11 @@ function toJSON() {
     var json = {speakers, segments};
     // Segments
         if (!jQuery(".transcript-word").length) {
-            json = currentTranscript.toJSON();
+            if (currentTranscript.toJSON) {
+                json = currentTranscript.toJSON();
+            } else {
+                json = currentTranscript;
+            }
         } else {
             jQuery(".transcript-block").each(function () {
                 var speaker = +jQuery(this).find('.transcript-speaker select').val();
@@ -375,6 +381,9 @@ function toJSON() {
                     var start = +jQuery(this).attr('data-start');
                     var end = +jQuery(this).attr('data-end');
                     var word = {text, start, end};
+                    if (jQuery(this).hasClass('added')) {
+                        word.added = true;
+                    }
                     segment.words.push(word);
                 });
                 json.segments.push(segment);
@@ -397,7 +406,8 @@ function load(json) {
     } else if (json.hasOwnProperty("kaldi")) {
         currentTranscript = Transcript.fromKaldi(json.transcript, json.segments);
     } else {
-        currentTranscript = Transcript.fromJSON(json);
+        // currentTranscript = Transcript.fromJSON(json);
+        currentTranscript = json;
     }    
     var script = toJSON();
 
@@ -436,7 +446,9 @@ function load(json) {
                 // Insert words
                 segment.words.forEach(function(word) {
                     var wordSpan = document.createElement('span');
-                    wordSpan.setAttribute('class', 'transcript-word');
+                    var cl = 'transcript-word';
+                    if (word.added) cl += ' added';
+                    wordSpan.setAttribute('class', cl);
                     wordSpan.setAttribute('data-start', word.start);
                     wordSpan.setAttribute('data-end', word.end);
                     wordSpan.setAttribute('data-text', word.text);
@@ -685,8 +697,88 @@ function init() {
     // Format text to simulate line/page breaks
     jQuery(document).on('keydown', '.transcript-editor', function (e) {
         clearTimeout(formatTimeout);
+        // Arrow - down
+        if (e.keyCode === 40) {
+            var sel = window.getSelection();
+            var selNode = sel.focusNode.parentElement;
+            var offset = sel.focusOffset;
+            jQuery(selNode).prevAll(".transcript-word, .transcript-space, .transcript-line").each(function() {
+                if (jQuery(this).is('.transcript-line')) return false;
+                if (jQuery(this).is(".transcript-space")) offset++;
+                offset += jQuery(this).text().length;
+            });
+            var nextLine = jQuery(selNode).nextAll('.transcript-line').first();
+            if (nextLine.length) {
+                var firstWord = jQuery(nextLine).nextAll('.transcript-word').first();
+            } else {
+                var firstWord = jQuery(selNode).parentsUntil('.transcript-content').next().find('.transcript-word:first');
+            }
+            if (firstWord) {
+                var charCount = firstWord.text().length;
+                if (charCount >= offset) {
+                    var newSel = firstWord.get()[0];
+                } else {
+                    var newSel = null;
+                    jQuery(firstWord).nextAll('.transcript-word').each(function() {
+                        charCount += jQuery(this).text().length + 1;
+                        console.log("TEST", charCount);
+                        if (!newSel && charCount >= offset) {
+                            newSel = jQuery(this).get()[0];
+                            return false;
+                        }
+                    });
+                    if (!newSel) {
+                        var lastWord = jQuery(firstWord).nextAll(".transcript-word:last");
+                        newSel = lastWord.length ? jQuery(lastWord).get()[0] : jQuery(firstWord).get()[0];
+                    }
+                }
+            }
+            sel.collapse(newSel.firstChild, Math.round(newSel.firstChild.length / 2));
+            utils.stopIt(e);
+        // Arrow - up
+        } else if (e.keyCode === 38) {
+            var sel = window.getSelection();
+            var selNode = sel.focusNode.parentElement;
+            var offset = sel.focusOffset;
+            jQuery(selNode).prevAll(".transcript-word, .transcript-space, .transcript-line").each(function() {
+                if (jQuery(this).is('.transcript-line')) return false;
+                if (jQuery(this).is(".transcript-space")) offset++;
+                offset += jQuery(this).text().length;
+            });
+            var prevLines = jQuery(selNode).prevAll('.transcript-line');
+            if (prevLines.length == 1) {
+                var firstWord = jQuery(selNode).parentsUntil(".transcript-content").find('.transcript-word:first');
+            } else if (prevLines.length > 1) {
+                var firstWord = jQuery(prevLines[1]).nextAll('.transript-word').first();
+            } else {
+                var prevBlock = jQuery(selNode).parentsUntil('.transcript-content').prev();
+                var prevBlockLines = prevBlock.find('.transcript-line');
+                if (prevBlockLines.length) {
+                    var firstWord = prevBlockLines.last().nextAll('.transcript-word:first');
+                } else {
+                    var firstWord = prevBlock.find('.transcript-word');
+                }
+            }
+            if (firstWord) {
+                var charCount = firstWord.text().length;
+                if (charCount >= offset) {
+                    var newSel = firstWord.get()[0];
+                } else {
+                    var newSel = null;
+                    jQuery(firstWord).nextAll('.transcript-word').each(function() {
+                        charCount += jQuery(this).text().length + 1;
+                        console.log("TEST", charCount);
+                        if (!newSel && charCount >= offset) {
+                            newSel = jQuery(this).get()[0];
+                            return false;
+                        }
+                    });
+                }
+            }
+            sel.collapse(newSel.firstChild, Math.round(newSel.firstChild.length / 2));
+            utils.stopIt(e);
         // Backspace
-        if (e.keyCode === 8) {
+        } else if (e.keyCode === 8) {
             var sel = window.getSelection();
             var selNode = sel.focusNode.parentElement;
             var selPos = sel.focusOffset;
@@ -831,6 +923,8 @@ function init() {
                     start: start / dur, 
                     end: end / dur
                 });
+            }
+            if (selAnchor != selFocus ) {
                 sel.collapse(sel.anchorNode, 0);
             }
         }

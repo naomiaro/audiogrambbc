@@ -434,6 +434,12 @@ body.landing #error {
 
 .transcript-space {
     margin: 0 -2px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .transcript-line {
