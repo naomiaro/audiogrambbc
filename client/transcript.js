@@ -42,18 +42,16 @@ function format() {
     // Clear lines/breaks
     jQuery('.transcript-space, .transcript-line, .transcript-break').remove();
     // Merge segments
-    if (!LOADING) {
-        jQuery('.transcript-block').each(function () {
-            var speaker = jQuery(this).attr('data-speaker');
-            var prevSpeaker = jQuery(this).prev().attr('data-speaker');
-            if (speaker != prevSpeaker) jQuery(this).removeClass('same-speaker');
-        });
-        jQuery(".transcript-block.same-speaker:not(.break)").each(function () {
-            var words = jQuery(this).find('.transcript-word');
-            jQuery(this).prev().find('.transcript-segment').append(words);
-            jQuery(this).remove();
-        });
-    }
+    jQuery('.transcript-block').each(function () {
+        var speaker = jQuery(this).attr('data-speaker');
+        var prevSpeaker = jQuery(this).prev().attr('data-speaker');
+        if (speaker != prevSpeaker) jQuery(this).removeClass('same-speaker');
+    });
+    jQuery(".transcript-block.same-speaker:not(.break)").each(function () {
+        var words = jQuery(this).find('.transcript-word');
+        jQuery(this).prev().find('.transcript-segment').append(words);
+        jQuery(this).remove();
+    });
     // Split words
     jQuery(".transcript-word").each(function () {
         var text = jQuery(this).text();
@@ -358,6 +356,32 @@ function speakerCount() {
     return speakerCount;
 }
 
+function toSubs() {
+    var subs = [];
+    jQuery('.transcript-block').each(function() {
+        var wordCount = jQuery(this).find('.transcript-word:not(.unused)').length;
+        if (wordCount) {
+            var speaker = +jQuery(this).attr('data-speaker');
+            var lines = [];
+            var start = +jQuery(this).find('.transcript-word:not(.unused):first').attr('data-start');
+            var end = +jQuery(this).find('.transcript-word:not(.unused):last').attr('data-end');
+            var str = '';
+            jQuery(this).find('.transcript-word, .transcript-space, .transcript-line').each(function() {
+                if ( jQuery(this).is('.transcript-line') ) {
+                    lines.push(str);
+                    str = '';
+                } else {
+                    str += jQuery(this).text();
+                }
+            });
+            lines.push(str);
+            subs.push({speaker, start, end, lines});
+        }
+    });
+    return subs;
+    console.log(subs);
+}
+
 function toJSON() {
     if (!currentTranscript) return null;
     var speakers = [];
@@ -375,7 +399,10 @@ function toJSON() {
             jQuery(".transcript-block").each(function () {
                 var speaker = +jQuery(this).find('.transcript-speaker select').val();
                 if (speaker > speakerMax) speakerMax = speaker;
-                var segment = {speaker, words: []};
+                var segment = { speaker, words: [] };
+                if (jQuery(this).hasClass('break')) {
+                    segment.break = true;
+                }
                 jQuery(this).find(".transcript-word").each(function () {
                     var text = jQuery(this).text();
                     var start = +jQuery(this).attr('data-start');
@@ -434,7 +461,9 @@ function load(json) {
             if (segment.words.length) {
                 // Make block
                 var blockDiv = document.createElement('div');
-                blockDiv.setAttribute('class', 'transcript-block');
+                var cl = 'transcript-block';
+                if (segment.break) cl += ' break';
+                blockDiv.setAttribute('class', cl);
                 jQuery('.transcript-content').append(blockDiv);
                 // Insert speaker
                 blockDiv.setAttribute('data-speaker', segment.speaker);
@@ -883,7 +912,11 @@ function init() {
                 return;
             } 
         }
-        // formatTimeout = setTimeout(function(){ format() }, 500);
+        formatTimeout = setTimeout(function(){
+            format();
+            var preview = require("./preview.js");
+            preview.redraw();
+        }, 500);
     });
     
     // Move playhead when clicking on a word
@@ -1019,6 +1052,7 @@ function init() {
     jQuery(document).on('click', '#transcript-pane > div.tip', function(){
         format();
         console.log(toJSON());
+        console.log(toSubs());
     });
     
 }
@@ -1028,6 +1062,7 @@ module.exports = {
     load,
     clear,
     toJSON,
+    toSubs,
     highlight,
     format,
     export: exportTranscript,

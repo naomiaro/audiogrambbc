@@ -132,10 +132,10 @@ module.exports = function(t) {
     }
 
     // SUBTITLES
-    if (theme.subtitles.enabled && options.transcript) {
+    if (theme.subtitles.enabled && options.subtitles) {
 
-      var time = options.frame / options.fps || 0;
-      subtitles.draw(context, theme, time);
+      var time = options.frame / options.fps || options.time || 0;
+      subtitles.draw(context, theme, options.subtitles, time);
 
       // options.transcript.segments.forEach(function(segment, i){
       //   if (segment.words.length) {

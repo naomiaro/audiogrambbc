@@ -161,15 +161,18 @@ function redraw() {
   renderer.foregroundImage(jQuery.isEmptyObject(foreground) ? null : foreground);
   renderer.backgroundImage(jQuery.isEmptyObject(background) ? null : background);
 
+  var subtitles = transcript.toSubs();
+
   renderer.drawFrame(context, {
     caption: theme.caption.text,
-    transcript: transcript.toJSON(),
+    subtitles,
     waveform: sampleWave,
     backgroundInfo: (img.background && imgInfo.background ? imgInfo.background : theme.backgroundImageInfo ? theme.backgroundImageInfo[theme.orientation] : null),
     preview: true,
     start: selection ? selection.start : 0,
     end: selection ? selection.end : Infinity,
-    frame: 0
+    frame: 0,
+    time: selection ? selection.start : 0
   });
 
 }

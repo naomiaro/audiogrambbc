@@ -62,6 +62,10 @@ function save(type, path, cb) {
 }
 
 function format(options, cb) {
+
+    if (cb) cb(null);
+    return;
+
   if (!options.transcript) return;
 
   subs = [];
@@ -147,7 +151,7 @@ function format(options, cb) {
 
 }
 
-function draw(context, theme, time) {
+function draw(context, theme, subs, time) {
 
   var lines = null;
   for (var i = 0; i < subs.length; i++) {
