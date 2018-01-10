@@ -752,6 +752,7 @@ function init() {
     // Format text to simulate line/page breaks
     jQuery(document).on('keydown', '.transcript-editor', function (e) {
         clearTimeout(formatTimeout);
+        jQuery('.transcript-btn-select').hide();
         // Arrow - down
         if (e.keyCode === 40) {
             var sel = window.getSelection();
@@ -840,18 +841,17 @@ function init() {
                 selPos = 0;
             }
             // Merge with previous block
-            if (jQuery(selNode).is(':first-child')) {
+            if (jQuery(selNode).is(':first-child') && selPos==0) {
                 var block = jQuery(selNode).parents('.transcript-block')[0];
                 if (jQuery(block).index() > 0) {
                     var words = jQuery(block).find('.transcript-segment').children();
                     var prevBlock = jQuery(block).prev();
                     var prevBlockIndex = prevBlock.index();
-                    var prevBlockWordIndex = prevBlock.find('.transcript-word').length;
+                    var selWord = jQuery(block).find('.transcript-word:first').get()[0];
                     prevBlock.find('.transcript-segment').append(words);
                     jQuery(block).remove();
                     selNode.normalize();
                     format();
-                    var selWord = jQuery(`.transcript-block:eq(${prevBlockIndex}) .transcript-word:eq(${prevBlockWordIndex})`).get()[0];
                     sel.collapse(selWord.firstChild, 0);
                 }
                 utils.stopIt(e);
@@ -967,7 +967,27 @@ function init() {
             var selAnchor = sel.anchorNode.parentElement;
             var selFocus = sel.focusNode.parentElement;
             if (selAnchor != selFocus && selAnchor.className.includes('transcript-word') && selFocus.className.includes('transcript-word')) {
-                var dur = audio.duration();
+                if (selAnchor.offsetTop > selFocus.offsetTop) {
+                    var firstNode = selFocus;
+                    var lastNode = selAnchor;
+                } else {
+                    var firstNode = selAnchor;
+                    var lastNode = selFocus;
+                }
+                var top = firstNode.offsetTop - 36;
+                var lineEndNode = jQuery(selAnchor).nextUntil('.transcript-line').filter('.transcript-word').last();
+                if (!lineEndNode.length) lineEndNode = firstNode;
+                var startLeft = jQuery(firstNode).offset().left;
+                if (jQuery(lineEndNode).offset().top < jQuery(lastNode).offset().top) {
+                    var endLeft = jQuery(lineEndNode).offset().left + jQuery(lineEndNode).width();
+                } else {
+                    var endLeft = jQuery(lastNode).offset().left + jQuery(lastNode).width();
+                }
+                var offset = jQuery('#transcript').offset().left;
+                var left = (startLeft - offset) + (endLeft - startLeft)/2;
+                left -= jQuery('.transcript-btn-select').width()/2;
+                jQuery('.transcript-btn-select').css('top', top);
+                jQuery('.transcript-btn-select').css('left', left);
                 var firstStart = +jQuery(selAnchor).attr('data-start');
                 var firstEnd = +jQuery(selAnchor).attr('data-end');
                 var start = firstStart + (firstEnd - firstStart) / 4;
@@ -976,13 +996,45 @@ function init() {
                 var lastEnd = +jQuery(selFocus).attr('data-end');
                 var end = lastEnd - (lastEnd - lastStart) / 4;
                 if (jQuery(selFocus).is('.transcript-word:last') && dur - end < 1) end = dur;
-                minimap.drawBrush({
-                    start: start / dur, 
-                    end: end / dur
-                });
+                jQuery('.transcript-btn-select').attr('data-start', start).attr('data-end', end);
+                jQuery('.transcript-btn-select').show();
+
+            //     var dur = audio.duration();
+            //     var firstStart = +jQuery(selAnchor).attr('data-start');
+            //     var firstEnd = +jQuery(selAnchor).attr('data-end');
+            //     var start = firstStart + (firstEnd - firstStart) / 4;
+            //     if (jQuery(selAnchor).is('.transcript-word:first') && start < 1) start = 0;
+            //     var lastStart = +jQuery(selFocus).attr('data-start');
+            //     var lastEnd = +jQuery(selFocus).attr('data-end');
+            //     var end = lastEnd - (lastEnd - lastStart) / 4;
+            //     if (jQuery(selFocus).is('.transcript-word:last') && dur - end < 1) end = dur;
+            //     minimap.drawBrush({
+            //         start: start / dur, 
+            //         end: end / dur
+            //     });
             }
-            if (selAnchor != selFocus ) {
-                sel.collapse(sel.anchorNode, 0);
+            // if (selAnchor != selFocus ) {
+            //     sel.collapse(sel.anchorNode, 0);
+            // }
+        }
+    });
+    jQuery(document).on('click', '.transcript-btn-select', function () {
+        var dur = audio.duration();
+        var start = +jQuery('.transcript-btn-select').attr('data-start');
+        var end = +jQuery('.transcript-btn-select').attr('data-end');
+        minimap.drawBrush({
+            start: start / dur, 
+            end: end / dur
+        });
+        jQuery('.transcript-btn-select').hide();
+    });
+    jQuery(document).on('click', function () {
+        if (jQuery('.transcript-btn-select').is(':visible')) {
+            var sel = window.getSelection();
+            var selAnchor = sel.anchorNode.parentElement;
+            var selFocus = sel.focusNode.parentElement;
+            if (selAnchor == selFocus || !selAnchor.className.includes('transcript-word') || !selFocus.className.includes('transcript-word')) {
+                jQuery('.transcript-btn-select').hide();
             }
         }
     });

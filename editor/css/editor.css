@@ -357,6 +357,39 @@ body.landing #error {
   cursor: text;
 }
 
+.transcript-btn-select {
+    display: none;
+    z-index: 999;
+    color: white;
+    position: absolute;
+    top: 232px;
+    left: 220px;
+    padding: 3px 7px 5px 7px;
+    border-radius: 3px;
+    background: rgba(0,0,0,0.95);
+    cursor: pointer;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.transcript-btn-select:after, .transcript-btn-select:before {
+	top: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+.transcript-btn-select:before {
+	border-color: rgba(0, 0, 0, 0, 0.9);
+	border-top-color: rgba(0, 0, 0, 0.9);
+	border-width: 8px;
+	margin-left: -8px;
+}
+.transcript-btn-select:hover {
+    text-decoration: underline;
+}
+
 .transcript-content {
     outline: none;
 }
@@ -415,6 +448,7 @@ body.landing #error {
 }
 
 .transcript-word {
+    position: relative;
     display: inline-block;
     background-color: rgba(147, 197, 247, 0.5);
     border: 1px solid #ddd;
