@@ -71,6 +71,10 @@ function update() {
     }
 
     minimap.time(pos);
+    if (isPlaying()) {
+      var preview = require("./preview");
+      preview.redraw();
+    }
 
   }
 

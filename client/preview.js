@@ -163,6 +163,12 @@ function redraw() {
 
   var subtitles = transcript.toSubs();
 
+  if (audio.isPlaying()) {
+    var time = audio.currentTime();
+  } else if (subtitles[0]) {
+    var time = subtitles[0].start;
+  }
+
   renderer.drawFrame(context, {
     caption: theme.caption.text,
     subtitles,
@@ -172,7 +178,7 @@ function redraw() {
     start: selection ? selection.start : 0,
     end: selection ? selection.end : Infinity,
     frame: 0,
-    time: selection ? selection.start : 0
+    time: time || 0
   });
 
 }

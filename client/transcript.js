@@ -378,8 +378,36 @@ function toSubs() {
             subs.push({speaker, start, end, lines});
         }
     });
+    // Remove small gaps between segments
+    for (let i = 1; i < subs.length; i++) {
+        var mergeGapsSmallerThan = 1;
+        var gap = subs[i].start - subs[i-1].end;
+        if (gap > 0 && gap < mergeGapsSmallerThan) {
+            var diff = gap / 2;
+            subs[i].start -= diff;
+            subs[i - 1].end += diff;
+        }
+    }
+    // Pad short segments
+    for (let i = 0; i < subs.length; i++) {
+        var minSegmentDur = 1;
+        var dur = subs[i].end - subs[i].start;
+        if (dur < minSegmentDur) {
+            // move start time
+            var diff = minSegmentDur - dur;
+            if (subs[i-1]) {
+                subs[i-1].end = Math.max(subs[i-1].end - diff/2, subs[i-1].start + minSegmentDur);
+                subs[i].start = Math.max(subs[i].start - diff/2, subs[i-1].end);
+            }
+            // move end time
+            var diff = minSegmentDur - (subs[i].end - subs[i].start);
+            subs[i].end += diff;
+            if (subs[i+1]) {
+                subs[i+1].start += diff;
+            }
+        }
+    }
     return subs;
-    console.log(subs);
 }
 
 function toJSON() {
@@ -705,15 +733,13 @@ function importFromFile() {
 function init() {
     // Attach listener to hightlight words during playback
     jQuery('audio').on('timeupdate', function() {
-        jQuery('.transcript-editor-block__word').removeClass('played');
+        jQuery('.transcript-word').removeClass('played');
         if (!this.paused) {
             var currentTime = this.currentTime;
-            jQuery('.transcript-editor-block__word')
-            .filter(function() {
+            jQuery('.transcript-word').filter(function() {
                 var wordStart = +jQuery(this).attr('data-start') + 0.1;
                 return wordStart < currentTime;
-            })
-            .addClass('played');
+            }).addClass('played');
         }
     });
 
@@ -750,7 +776,6 @@ function init() {
                     var newSel = null;
                     jQuery(firstWord).nextAll('.transcript-word').each(function() {
                         charCount += jQuery(this).text().length + 1;
-                        console.log("TEST", charCount);
                         if (!newSel && charCount >= offset) {
                             newSel = jQuery(this).get()[0];
                             return false;
@@ -796,7 +821,6 @@ function init() {
                     var newSel = null;
                     jQuery(firstWord).nextAll('.transcript-word').each(function() {
                         charCount += jQuery(this).text().length + 1;
-                        console.log("TEST", charCount);
                         if (!newSel && charCount >= offset) {
                             newSel = jQuery(this).get()[0];
                             return false;

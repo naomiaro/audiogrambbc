@@ -416,15 +416,21 @@ body.landing #error {
 
 .transcript-word {
     display: inline-block;
-    background-color: #d4eaff;
+    background-color: rgba(147, 197, 247, 0.5);
     border: 1px solid #ddd;
     padding: 0px 3px;
     border-radius: 3px;
     margin: 1px;
 }
+.transcript-word:not(.unused).played {
+  background-color: rgba(147, 197, 247, 1);
+}
 
 .transcript-word.added {
-    background-color: rgb(255, 230, 230);
+    background-color: rgba(255, 195, 195, 0.5);
+}
+.transcript-word.added:not(.unused).played  {
+    background-color: rgba(255, 195, 195, 1);
 }
 
 .transcript-word.unused {
