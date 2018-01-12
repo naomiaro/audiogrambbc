@@ -196,7 +196,7 @@ function draw(context, theme, subs, time) {
   if (lines.length && theme.subtitles.box && theme.subtitles.box.opacity>0) {
     context.globalAlpha = theme.subtitles.box.opacity;
     context.fillStyle = theme.subtitles.box.color || "#000000";
-    context.fillRect(0, y-spacing, theme.width, totalHeight+spacing*3);
+    context.fillRect(0, y-spacing, theme.width, totalHeight + spacing * (Math.max(1, lines.length - 1)) );
     context.globalAlpha = 1;
   }
 

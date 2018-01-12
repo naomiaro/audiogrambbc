@@ -14,9 +14,9 @@ function drawFrames(renderer, options, cb) {
     canvases.push(new Canvas(options.width, options.height));
   }
 
-  if (theme.subtitles.enabled && options.transcript) {
-    frameQueue.defer(subtitles.format, {transcript: options.transcript, theme: theme, trim: {start: options.start, end: options.end}});
-  }
+  // if (theme.subtitles.enabled && options.subtitles) {
+  //   frameQueue.defer(subtitles.format, {subtitles: options.subtitles, theme: theme, trim: {start: options.start, end: options.end}});
+  // }
 
   for (var i = +options.frames.start; i < +options.frames.end; i++) {
     frameQueue.defer(drawFrame, i);
@@ -59,20 +59,15 @@ function drawFrames(renderer, options, cb) {
   function drawFrame(frameNumber, frameCallback) {
 
     var drawQueue = queue(1);
-
     var canvas = canvases.pop(),
         context = canvas.getContext("2d");
 
     drawQueue.defer(loadVideoFrame, options, frameNumber);
-
     drawQueue.await(function(err){
-      if (err) {
-        return cb(err);
-      }
-
+      if (err) return cb(err);
       renderer.drawFrame(context, {
         caption: options.caption,
-        transcript: options.transcript,
+        subtitles: options.subtitles,
         waveform: options.waveform[frameNumber],
         backgroundInfo: options.backgroundInfo,
         start: options.start,

@@ -31,7 +31,7 @@ transports.getHash(hashId, function(err, hash){
     // Parse job info
     var theme = JSON.parse(hash.theme),
         options = JSON.parse(hash.options);
-
+        
     // Supplement options
     options.frames = frames;
     options.tick = function() {

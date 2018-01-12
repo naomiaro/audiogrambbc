@@ -94,7 +94,8 @@ function submitted() {
         )
     );
     formData.append('caption', caption);
-    formData.append('transcript', JSON.stringify(transcript.toJSON()));
+    formData.append("transcript", JSON.stringify(transcript.toJSON()));
+    formData.append("subtitles", JSON.stringify(transcript.toSubs()));
 
     utils.setClass('loading');
     d3.select('#loading-message').text('Uploading files...');

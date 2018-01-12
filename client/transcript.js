@@ -537,9 +537,7 @@ function poll(job) {
     kaldiPoll = setTimeout(function(){
         jQuery.getJSON( "/kaldi/" + job, function( data ) {
             if (data.status=="SUCCESS" && !data.error) {
-                var transcript = JSON.parse(data.transcript),
-                segments = JSON.parse(data.segments);
-                load({transcript: transcript, segments: segments, kaldi: transcript.metadata.version});
+                load({segments: data.script});
                 jQuery("#transcript").removeClass("loading");
             } else if (data.error) {
                 jQuery("#transcript-pane .error span").html("The BBC R&D Kaldi transcription failed<br/><i>Ref: " + job + "</i>");
@@ -841,7 +839,7 @@ function init() {
                 selPos = 0;
             }
             // Merge with previous block
-            if (jQuery(selNode).is(':first-child') && selPos==0) {
+            if (jQuery(selNode).is(':first-child') && selPos==0 && sel.focusNode===sel.anchorNode) {
                 var block = jQuery(selNode).parents('.transcript-block')[0];
                 if (jQuery(block).index() > 0) {
                     var words = jQuery(block).find('.transcript-segment').children();
@@ -953,10 +951,10 @@ function init() {
             jQuery('audio').get(0).currentTime = time;
         }
         if (e.detail > 1) {
-            utils.stopIt(e);
-            if (sel.focusNode) {
-                sel.collapse(sel.focusNode, 0);
-            }
+            // utils.stopIt(e);
+            // if (sel.focusNode) {
+            //     sel.collapse(sel.focusNode, 0);
+            // }
         }
     });
     
