@@ -44,7 +44,7 @@ function format() {
     }
     // Catch words in spaces for some reason
     jQuery('.transcript-space span').each(function(){
-
+        console.log('UH OH!!');
     });
     // Clear lines/breaks
     jQuery('.transcript-space, .transcript-line, .transcript-break').remove();
@@ -61,7 +61,11 @@ function format() {
     });
     // Split words
     jQuery(".transcript-word").each(function () {
-        var text = jQuery(this).text();
+        var text = jQuery(this).text().replace('&nbsp;', ' ');
+        if (!jQuery(this).is('.transcript-word:first:last') || jQuery(this).text().length > 1) {
+            text = text.trim();
+        }
+        jQuery(this).text(text);
         if (text.includes(' ') && (text!=' ' || !jQuery(this).is('.transcript-word:first:last'))) {
             var words = text.split(' ').reverse();
             for (let i = 0; i < words.length - 1; i++) {
@@ -93,15 +97,17 @@ function format() {
         }
     });
     // Set added word timings
+    var extent = audio.extent();
+    var duration = audio.duration();
     jQuery('.transcript-word.added').attr('data-start', null).attr('data-end', null);
     jQuery('.transcript-word.added').each(function () {
         if (!jQuery(this).attr('data-start')) {
             var start = +jQuery(this).prevAll('.transcript-word:not(.added)').first().attr('data-end');
             if (!start) start = +jQuery(this).parentsUntil('.transcript-content').last().prev().find('.transcript-word:last').attr('data-end');
-            if (!start) start = 0;
+            if (!start) start = extent[0] * duration;
             var end = +jQuery(this).nextAll('.transcript-word:not(.added)').first().attr('data-start');
             if (!end) end = +jQuery(this).parentsUntil('.transcript-content').last().next().find('.transcript-word:first').attr('data-start');
-            if (!end) end = audio.duration();
+            if (!end) end = extent[1] * duration;
             var dur = end - start;
             var nextWords = jQuery(this).nextUntil('.transcript-word:not(.added)').filter('.transcript-word');
             var charCount = jQuery(this).text().length;
@@ -672,8 +678,18 @@ function init() {
 
     jQuery(document).on('paste', '.transcript-editor', function(e){
         utils.stopIt(e);
+        var sel = window.getSelection();
+        var selNode = sel.focusNode.parentElement;
         var text = ' ' + e.originalEvent.clipboardData.getData("text/plain") + ' ';
-        document.execCommand("insertHTML", false, text);
+        if (selNode.className.includes('transcript-segment')) {
+            jQuery(selNode).find('.transcript-word:last').append(text);
+            var newNode = jQuery(selNode).find('.transcript-word:last').get(0);
+            newNode.normalize();
+            sel.collapse(newNode.firstChild, newNode.firstChild.length);
+        } else {
+            document.execCommand("insertHTML", false, text);
+        }
+        format();
     });
     
     // Format text to simulate line/page breaks
@@ -851,9 +867,11 @@ function init() {
             if (selNode.className.includes('transcript-space')) {
                 var spaceText = sel.focusNode.textContent.trim();
                 if (spaceText.length > 0) {
-                    jQuery(selNode).nextAll('.transcript-word')[0].prepend(spaceText);
-                    selNode = jQuery(selNode).nextAll('.transcript-word')[0];
-                    sel.collapse(selNode.firstChild, spaceText.length);
+                    jQuery(selNode).prevAll('.transcript-word')[0].append(' ' + spaceText);
+                    newNode = jQuery(selNode).prevAll('.transcript-word')[0];
+                    jQuery(selNode).remove();
+                    newNode.normalize();
+                    sel.collapse(newNode.firstChild, newNode.firstChild.length);
                     format();
                     return;
                 }
@@ -871,12 +889,11 @@ function init() {
     });
     
     // Move playhead when clicking on a word
-    jQuery(document).on('click', '.transcript-editor', function (e) {
-        var sel = window.getSelection();
-        var selPos = sel.focusOffset;
-        var selNode = sel.focusNode.parentElement;
-        if (selNode.className.includes('transcript-word')) {
-            var time = jQuery(selNode).attr('data-start');
+    jQuery(document).on('click', '.transcript-word', function (e) {
+        var isPlaying = audio.isPlaying();
+        var isAdded = jQuery(this).hasClass('added');
+        if (!isPlaying || !isAdded) {
+            var time = jQuery(this).attr('data-start');
             jQuery('audio').get(0).currentTime = time;
         }
     });
