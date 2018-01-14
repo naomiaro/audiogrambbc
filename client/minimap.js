@@ -134,6 +134,14 @@ function updateTrim(extent) {
 
 function init() {
     d3.selectAll("#start, #end").on("change", updateTrim);
+    jQuery(document).on('click', '#minimap svg', function(e){
+        console.log('click map');
+        var pos = e.offsetX / jQuery(this).width();
+        var audio = require('./audio');
+        var dur = audio.duration();
+        var time = pos * dur;
+        audio.currentTime(time);
+    });
 }
 
 module.exports = {
