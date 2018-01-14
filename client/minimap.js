@@ -96,7 +96,10 @@ function brushed() {
       .attr("width", t.invert(end - start));
 
   onBrush([start, end]);
-
+  
+  var transcript = require('./transcript');
+  transcript.format();
+  
   if (d3.event.type === "end") {
     onBrushEnd([start, end]);
   }

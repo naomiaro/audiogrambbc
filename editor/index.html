@@ -622,13 +622,25 @@
                             </div>
                             <div style="float: right;">
                                 <div id="duration">
-                                    <strong></strong> seconds selected</div>
+                                    <strong></strong> seconds selected
+                                </div>
+                                <div id="playbackRate" data-rate='1' class="tooltip-info" data-placement="left" title="Changing the playback rate is for preview and transcription assistance only.<br/>It will not affect video output.">
+                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                    <select>
+                                        <option value="0.5">0.5x</option>
+                                        <option value="1" selected>1.0x</option>
+                                        <option value="1.5">1.5x</option>
+                                    </select>
+                                </div>
                                 <button id="play">
-                                    <i class="fa fa-play"></i>Play</button>
+                                    <i class="fa fa-play"></i>Play
+                                </button>
                                 <button id="pause" class="hidden">
-                                    <i class="fa fa-pause"></i>Pause</button>
+                                    <i class="fa fa-pause"></i>Pause
+                                </button>
                                 <button id="restart">
-                                    <i class="fa fa-step-backward"></i>Restart</button>
+                                    <i class="fa fa-step-backward"></i>Restart
+                                </button>
                             </div>
                             <div class="clear"></div>
                             <div id="shortcuts" class="hidden">

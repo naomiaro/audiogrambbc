@@ -701,6 +701,47 @@ button,
   font-size: 16px;
 }
 
+#playbackRate {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+#playbackRate i {
+    position: absolute;
+    z-index: 1;
+    top: 7px;
+    left: 6px;
+    color: #333;
+}
+#playbackRate select {
+    background: #e6e6e6;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    line-height: 12px;
+    font-size: 13px;
+    position: relative;
+    top: 1px;
+    margin-right: 1px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    text-align: center;
+    padding-left: 22px;
+    cursor: pointer;
+}
+#playbackRate[data-rate='1'] select,
+#playbackRate[data-rate='1'] i {
+    background: #fff;
+    color: #333;
+}
+#playbackRate:hover select,
+#playbackRate:hover i{
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+
 #download {
   /*padding: 9px 12px 6px 12px;*/
   /*color: #fff;*/

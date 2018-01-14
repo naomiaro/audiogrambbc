@@ -213,6 +213,14 @@ function init() {
         jQuery('#shortcuts').toggleClass('hidden');
         utils.stopIt(d3.event);
     });
+
+    jQuery(document).on('change', '#playbackRate select', function(e){
+        var rate = jQuery(this).val();
+        audio.playbackRate = rate;
+        jQuery('#playbackRate').attr('data-rate', rate);
+        jQuery('#playbackRate').tooltip('destroy');
+    });
+
 }
 
 module.exports = {

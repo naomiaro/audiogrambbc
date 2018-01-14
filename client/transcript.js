@@ -63,7 +63,7 @@ function format() {
     jQuery(".transcript-word").each(function () {
         var text = jQuery(this).text().replace('&nbsp;', ' ');
         if (!jQuery(this).is('.transcript-word:first:last') || jQuery(this).text().length > 1) {
-            text = text.trim();
+            text = text.replace(/^\s+/, "");
         }
         jQuery(this).text(text);
         if (text.includes(' ') && (text!=' ' || !jQuery(this).is('.transcript-word:first:last'))) {
@@ -99,15 +99,17 @@ function format() {
     // Set added word timings
     var extent = audio.extent();
     var duration = audio.duration();
+    var selectionStart = extent[0] * duration;
+    var selectionEnd = extent[1] * duration;
     jQuery('.transcript-word.added').attr('data-start', null).attr('data-end', null);
     jQuery('.transcript-word.added').each(function () {
         if (!jQuery(this).attr('data-start')) {
             var start = +jQuery(this).prevAll('.transcript-word:not(.added)').first().attr('data-end');
             if (!start) start = +jQuery(this).parentsUntil('.transcript-content').last().prev().find('.transcript-word:last').attr('data-end');
-            if (!start) start = extent[0] * duration;
+            if (!start) start = selectionStart;
             var end = +jQuery(this).nextAll('.transcript-word:not(.added)').first().attr('data-start');
             if (!end) end = +jQuery(this).parentsUntil('.transcript-content').last().next().find('.transcript-word:first').attr('data-start');
-            if (!end) end = extent[1] * duration;
+            if (!end) end = selectionEnd;
             var dur = end - start;
             var nextWords = jQuery(this).nextUntil('.transcript-word:not(.added)').filter('.transcript-word');
             var charCount = jQuery(this).text().length;
@@ -125,6 +127,8 @@ function format() {
             });
         }
     });
+    // Highlight words
+    highlight(selectionStart, selectionEnd);
     // Insert new lines
     var firstWord = jQuery('.transcript-word:not(.unused):first');
     var lastWord = jQuery('.transcript-word:not(.unused):last');
@@ -881,11 +885,13 @@ function init() {
                 return;
             } 
         }
-        formatTimeout = setTimeout(function(){
-            format();
-            var preview = require("./preview.js");
-            preview.redraw();
-        }, 500);
+        if (e.key!="Meta") {
+            formatTimeout = setTimeout(function(){
+                format();
+                var preview = require("./preview.js");
+                preview.redraw();
+            }, 500);
+        }
     });
     
     // Move playhead when clicking on a word
@@ -1000,6 +1006,18 @@ function init() {
         loadEmpty();
         jQuery("#transcript").removeClass("loading error");
         utils.stopIt(e);
+    });
+
+    var selectedNode = {};
+    jQuery(document).on('mousedown', '#play, #pause', function(e){
+        utils.stopIt(e);
+        var sel = window.getSelection();
+        selectedNode.node = sel.focusNode;
+        selectedNode.offset = sel.focusOffset;
+    });
+    jQuery(document).on('mouseup', '#play, #pause', function (e) {
+        var sel = window.getSelection();
+        sel.collapse(selectedNode.node, selectedNode.offset);
     });
     
 }
