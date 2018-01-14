@@ -455,6 +455,7 @@ body.landing #error {
     padding: 0px 3px;
     border-radius: 3px;
     margin: 1px;
+    min-height: 21px;
 }
 .transcript-word:not(.unused).played {
   background-color: rgba(147, 197, 247, 1);

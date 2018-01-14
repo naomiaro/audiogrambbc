@@ -52,13 +52,17 @@ function format(kaldiResponse) {
 									return (word.start >= start && word.end <= end);
 								}).map(function(word) {
 									return {start: word.start, end: word.end, text: word.punct};
-								});
-		var speakerId = segment.speaker['@id'];
-		var speaker = speakers.indexOf(speakerId);
-		if (speaker === -1) {
-      speakers.push(speakerId);
-      speaker = speakers.length - 1;
-    }
+                                });
+        if (words.length) {
+            var speakerId = segment.speaker['@id'];
+            var speaker = speakers.indexOf(speakerId);
+            if (speaker === -1) {
+                speakers.push(speakerId);
+                speaker = speakers.length - 1;
+            }
+        } else {
+            speaker = 0;
+        }
 		return {
 			start,
 			end,

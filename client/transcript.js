@@ -12,8 +12,6 @@ var jQuery = require("jquery"),
   kaldiPoll,
   formatTimeout;
 
-var reformat = false;
-
 // Highlight selected words 
 function highlight(start, end) {
     jQuery(".transcript-word").removeClass("unused");
@@ -28,7 +26,12 @@ function highlight(start, end) {
 }
 
 function format() {
-    if (!jQuery(".transcript-block").length) return;
+    if (!jQuery(".transcript-word").length) {
+        if (jQuery("transcript:visible").length) {
+            loadEmpty();
+        }
+        return;
+    }
     // Get selection pos
     var sel = window.getSelection();
     if (sel.focusNode) {
@@ -39,6 +42,10 @@ function format() {
             selPos = 0;
         }
     }
+    // Catch words in spaces for some reason
+    jQuery('.transcript-space span').each(function(){
+
+    });
     // Clear lines/breaks
     jQuery('.transcript-space, .transcript-line, .transcript-break').remove();
     // Merge segments
@@ -55,7 +62,7 @@ function format() {
     // Split words
     jQuery(".transcript-word").each(function () {
         var text = jQuery(this).text();
-        if (text.includes(' ')) {
+        if (text.includes(' ') && (text!=' ' || !jQuery(this).is('.transcript-word:first:last'))) {
             var words = text.split(' ').reverse();
             for (let i = 0; i < words.length - 1; i++) {
                 if (words[i].length) {
@@ -178,6 +185,7 @@ function format() {
             jQuery(this).parentsUntil('.transcript-content').last().after(newBlock);
         }
     });
+    jQuery('.transcript-break').remove();
     // Normalise blocks
     jQuery('.transcript-block').each(function () {
         var totalLines = jQuery(this).find('.transcript-line').length + 1;
@@ -251,96 +259,6 @@ function format() {
 
     return;
 }
-
-function OLDformat() {
-    var currentJSON = toJSON();
-    var maxChar = +jQuery("input[name='subtitles.lineWidth']").val(),
-    maxLines = +jQuery("input[name='subtitles.linesMax']").val(),
-    charCount = 0,
-    lineCount = 1;
-    // LINE BREAKS
-    jQuery('.transcript-editor-block__space').removeClass("line-break").removeClass("page-break");
-    jQuery( ".transcript-editor-block__text, .transcript-editor-block__word" ).each(function( index ) {
-        if (jQuery(this).is('.transcript-editor-block__word')) {
-            if ( jQuery(this).is(".transcript-editor-block__word:not(.unused):first") && jQuery(this).prev().is(".transcript-editor-block__space") ) {
-                // Audio has been trimmed at START
-                jQuery(this).prev().addClass("page-break");
-                charCount = 0;
-                lineCount = 1;
-            } else if ( jQuery(this).is(".transcript-editor-block__word:not(.unused):last") && jQuery(this).next().is(".transcript-editor-block__space") ) {
-                // Audio has be trimmed at END
-                jQuery(this).next().addClass("page-break");
-                charCount = 0;
-                lineCount = 1;
-            }
-            // Word (add to character count)
-            var str = jQuery(this).text();
-            charCount += str.length + 1;
-            if ( (charCount-1) > maxChar ) {
-                // Simulate line-break before word
-                var space = jQuery(this).prevAll(".transcript-editor-block__space:first");
-                space.addClass("line-break");
-                if (lineCount+1 > maxLines) {
-                    space.addClass("page-break");
-                    lineCount = 1;
-                } else {
-                    lineCount++;
-                }
-                charCount = str.length + 1;
-            }
-        } else {
-            // New block, reset counters
-            charCount = 0;
-            lineCount = 1;
-        }
-    });
-    
-    // SPEAKER SELECTION
-    // Reset
-    jQuery('select.transcript-speaker').remove();
-    jQuery( ".transcript-editor-block__speaker" ).show();
-    // Count number of speakers
-    var count = Math.max(speakerCount(), currentJSON ? currentJSON.speakers.length : 0);
-    // Add dropdown for each block
-    var block = 0;
-    jQuery( ".transcript-editor-block__speaker" ).each(function( index ) {
-        var speaker = jQuery(this),
-        select = document.createElement("select");
-        speaker.after(select);
-        speaker.hide();
-        jQuery(select).addClass("transcript-speaker")
-        for (var i = 1; i <= count+1 ; i++) {
-            var option = document.createElement("option");
-            option.text = "Speaker " + i;
-            select.appendChild(option);
-        }
-        // jQuery(select).val(jQuery(speaker).text());
-        if ( jQuery( ".transcript-editor-block__speaker" ).length == currentJSON.segments.length ) {
-            var index = currentJSON.segments[block].speaker;
-        } else {
-            var index = +speaker.text().split(" ").pop() - 1;
-        }
-        jQuery(select).prop('selectedIndex', index);
-        if (jQuery("input[name='subtitles.color." + index + "']").length) {
-            var color = jQuery("input[name='subtitles.color." + index + "']").val();
-        } else {
-            var preview = require("./preview.js"),
-            theme = preview.theme();
-            if (theme.subtitles.color[index]) {
-                color = theme.subtitles.color[index];
-            } else {
-                color = theme.subtitles.color[0];
-                preview.themeConfig("subtitles.color." + index, color);
-            }
-            var el = jQuery("input[name^='subtitles.color']:last").parent();
-            el.after(el.clone());
-            jQuery("input[name^='subtitles.color']:last").attr("name","subtitles.color." + index).val(color);
-        }
-        jQuery(select).next().css("border-color",color);
-        block++;
-    });
-}
-
 
 function speakerCount() {
     var speakerCount = 1;
@@ -452,6 +370,21 @@ function toJSON() {
     return json;
 }
 
+function  loadEmpty() {
+    clear();
+    var emptyScript = {
+        segments: [{
+            speaker: 0,
+            words: [{
+                start: 0,
+                end: 0,
+                text: ' '
+            }]
+        }]
+    };
+    load(emptyScript);
+}
+
 function load(json) {
     clear();
     if (!json) return;
@@ -516,13 +449,10 @@ function load(json) {
         });
 
     format();
+    var preview = require("./preview.js");
+    preview.redraw();
     
 }
-
-function buildTranscript() {
-    return data;
-
-};
 
 function clear() {
     jQuery(".transcript-content").text("");
@@ -533,7 +463,6 @@ function clear() {
 }
 
 function poll(job) {
-    
     kaldiPoll = setTimeout(function(){
         jQuery.getJSON( "/kaldi/" + job, function( data ) {
             if (data.status=="SUCCESS" && !data.error) {
@@ -544,7 +473,7 @@ function poll(job) {
                 jQuery("#transcript").removeClass("loading").addClass("error");
                 logger.error("Kaldi job failed: " + job);
             } else {
-                poll(job);
+                return poll(job);
             }
         });
     }, 5000);
@@ -786,7 +715,7 @@ function init() {
                     }
                 }
             }
-            sel.collapse(newSel.firstChild, Math.round(newSel.firstChild.length / 2));
+            if (newSel.firstChild) sel.collapse(newSel.firstChild, Math.round(newSel.firstChild.length / 2));
             utils.stopIt(e);
         // Arrow - up
         } else if (e.keyCode === 38) {
@@ -827,7 +756,7 @@ function init() {
                     });
                 }
             }
-            sel.collapse(newSel.firstChild, Math.round(newSel.firstChild.length / 2));
+            if (newSel.firstChild) sel.collapse(newSel.firstChild, Math.round(newSel.firstChild.length / 2));
             utils.stopIt(e);
         // Backspace
         } else if (e.keyCode === 8) {
@@ -839,7 +768,7 @@ function init() {
                 selPos = 0;
             }
             // Merge with previous block
-            if (jQuery(selNode).is(':first-child') && selPos==0 && sel.focusNode===sel.anchorNode) {
+            if (jQuery(selNode).is(':first-child') && (selPos==0 || jQuery(selNode).text()==' ') && sel.focusNode===sel.anchorNode) {
                 var block = jQuery(selNode).parents('.transcript-block')[0];
                 if (jQuery(block).index() > 0) {
                     var words = jQuery(block).find('.transcript-segment').children();
@@ -950,12 +879,6 @@ function init() {
             var time = jQuery(selNode).attr('data-start');
             jQuery('audio').get(0).currentTime = time;
         }
-        if (e.detail > 1) {
-            // utils.stopIt(e);
-            // if (sel.focusNode) {
-            //     sel.collapse(sel.focusNode, 0);
-            // }
-        }
     });
     
     // Make clip selection when highlighting transcript segments
@@ -996,24 +919,7 @@ function init() {
                 if (jQuery(selFocus).is('.transcript-word:last') && dur - end < 1) end = dur;
                 jQuery('.transcript-btn-select').attr('data-start', start).attr('data-end', end);
                 jQuery('.transcript-btn-select').show();
-
-            //     var dur = audio.duration();
-            //     var firstStart = +jQuery(selAnchor).attr('data-start');
-            //     var firstEnd = +jQuery(selAnchor).attr('data-end');
-            //     var start = firstStart + (firstEnd - firstStart) / 4;
-            //     if (jQuery(selAnchor).is('.transcript-word:first') && start < 1) start = 0;
-            //     var lastStart = +jQuery(selFocus).attr('data-start');
-            //     var lastEnd = +jQuery(selFocus).attr('data-end');
-            //     var end = lastEnd - (lastEnd - lastStart) / 4;
-            //     if (jQuery(selFocus).is('.transcript-word:last') && dur - end < 1) end = dur;
-            //     minimap.drawBrush({
-            //         start: start / dur, 
-            //         end: end / dur
-            //     });
             }
-            // if (selAnchor != selFocus ) {
-            //     sel.collapse(sel.anchorNode, 0);
-            // }
         }
     });
     jQuery(document).on('click', '.transcript-btn-select', function () {
@@ -1036,68 +942,6 @@ function init() {
             }
         }
     });
-
-    // var selectionStart;
-    // jQuery(document)
-    // .on('mousedown', '.public-DraftStyleDefault-block', function() {
-    //     // Start selection on block whitespace
-    //     if (!selectionStart) {
-    //         selectionStart = jQuery(this)
-    //         .parents('[data-block]')
-    //         .next()
-    //         .find('.transcript-editor-block__word:first');
-    //     }
-    // })
-    // .on('mousedown', '.transcript-editor-block__space', function() {
-    //     // Start selection on space between words
-    //     if (!selectionStart) {
-    //         selectionStart = jQuery(this).prev();
-    //     }
-    // })
-    // .on('mousedown', '.transcript-editor-block__word', function() {
-    //     // Start selection on a word
-    //     selectionStart = jQuery(this);
-    // })
-    // .on('mouseup', 'body *', function() {
-    //     if (selectionStart) {
-    //         var selectionEnd = null;
-    //         if (jQuery(this).is('.transcript-editor-block__word *')) {
-    //             // Finish selection on a word
-    //             selectionEnd = jQuery(this).parents('.transcript-editor-block__word');
-    //         } else if (jQuery(this).is('.transcript-editor-block__space *')) {
-    //             // Finish selection on a space
-    //             selectionEnd = jQuery(this)
-    //             .parents('.transcript-editor-block__space')
-    //             .prev();
-    //         } else if (jQuery(this).is('.public-DraftStyleDefault-block')) {
-    //             // Finish selection on block whitespace
-    //             selectionEnd = jQuery(this).find('.transcript-editor-block__word:last');
-    //         }
-    //         if (selectionEnd && selectionStart.get(0) !== selectionEnd.get(0)) {
-    //             // If start/end points aren't the same
-    //             var minimap = require('./minimap.js'),
-    //             audio = require('./audio.js'),
-    //             duration = Math.round(100 * audio.duration()) / 100,
-    //             start = +jQuery(selectionStart).attr('data-start'),
-    //             end = +jQuery(selectionEnd).attr('data-end');
-    //             if (start > end) {
-    //                 end = +jQuery(selectionStart).attr('data-start');
-    //                 start = +jQuery(selectionEnd).attr('data-end');
-    //             }
-    //             if (!jQuery(this).is('.public-DraftStyleDefault-block') || end - start > 1) {
-    //                 start = start / duration;
-    //                 end = end / duration;
-    //                 minimap.drawBrush({ start: start, end: end });
-    //                 if (window.getSelection) {
-    //                     window.getSelection().removeAllRanges();
-    //                 } else if (document.selection) {
-    //                     document.selection.empty();
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     selectionStart = null;
-    // });
     
     d3.selectAll('.transcript-export-btn').on('click', exportTranscript);
     d3.selectAll('#input-transcript').on('change', importFromFile);
@@ -1127,6 +971,18 @@ function init() {
         format();
         console.log(toJSON());
         console.log(toSubs());
+    });
+
+    jQuery(document).on('change', 'input[name^="subtitle.color"]', function(){
+        var block = jQuery(this).parentsUntil('.transcript-content').last();
+        block.removeClass('same-speaker');
+        format();
+    })
+
+    jQuery(document).on('click', '.transcript-manual', function (e) {
+        loadEmpty();
+        jQuery("#transcript").removeClass("loading error");
+        utils.stopIt(e);
     });
     
 }

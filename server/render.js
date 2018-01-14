@@ -112,6 +112,7 @@ function route(req, res) {
         customForegroundPath: req.body.media.foreground ? req.body.media.foreground.dest: null
       }
     );
+    console.log(req.body.theme.subtitles);
     transports.addJob(_.extend({ id: jobId, created: (new Date()).getTime(), media: req.body.media, theme: themeWithBackgroundImage }, req.body));
     
     res.json({ id: jobId, media: req.body.media });
