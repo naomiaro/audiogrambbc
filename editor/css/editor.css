@@ -709,7 +709,7 @@ button,
 #playbackRate i {
     position: absolute;
     z-index: 1;
-    top: 7px;
+    top: 6px;
     left: 6px;
     color: #333;
 }
@@ -721,7 +721,7 @@ button,
     line-height: 12px;
     font-size: 13px;
     position: relative;
-    top: 1px;
+    top: 0;
     margin-right: 1px;
     -webkit-appearance: none;
     -moz-appearance: none;

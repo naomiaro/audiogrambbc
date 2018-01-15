@@ -128,7 +128,9 @@ function format() {
         }
     });
     // Highlight words
-    highlight(selectionStart, selectionEnd);
+    if (!jQuery('.transcript-word:not(.added)').length) {
+        highlight(selectionStart, selectionEnd);
+    }
     // Insert new lines
     var firstWord = jQuery('.transcript-word:not(.unused):first');
     var lastWord = jQuery('.transcript-word:not(.unused):last');
