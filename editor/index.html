@@ -622,13 +622,25 @@
                             </div>
                             <div style="float: right;">
                                 <div id="duration">
-                                    <strong></strong> seconds selected</div>
+                                    <strong></strong> seconds selected
+                                </div>
+                                <div id="playbackRate" data-rate='1' class="tooltip-info" data-placement="left" title="Changing the playback rate is for preview and transcription assistance only.<br/>It will not affect video output.">
+                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                    <select>
+                                        <option value="0.5">0.5x</option>
+                                        <option value="1" selected>1.0x</option>
+                                        <option value="1.5">1.5x</option>
+                                    </select>
+                                </div>
                                 <button id="play">
-                                    <i class="fa fa-play"></i>Play</button>
+                                    <i class="fa fa-play"></i>Play
+                                </button>
                                 <button id="pause" class="hidden">
-                                    <i class="fa fa-pause"></i>Pause</button>
+                                    <i class="fa fa-pause"></i>Pause
+                                </button>
                                 <button id="restart">
-                                    <i class="fa fa-step-backward"></i>Restart</button>
+                                    <i class="fa fa-step-backward"></i>Restart
+                                </button>
                             </div>
                             <div class="clear"></div>
                             <div id="shortcuts" class="hidden">
@@ -811,7 +823,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="settings" style="width: 100%; text-align: center;">Stroke Colour:</label>
-                                <input type="color" id="input-color" class="themeConfig" name="subtitles.stroke.color">
+                                <input type="color"  class="themeConfig" name="subtitles.stroke.color">
                             </div>
                         </div>
                         <hr>
@@ -822,10 +834,10 @@
                             <div class="col-md-9">
                                 <div class="row">
                                     <div class="col-md-3 subtitle-color-col">
-                                        <input type="color" id="input-color" class="themeConfig" name="subtitles.color.0">
+                                        <input type="color"  class="themeConfig" name="subtitles.color.0">
                                     </div>
                                     <div class="col-md-3 subtitle-color-col">
-                                        <input type="color" id="input-color" class="themeConfig" name="subtitles.color.1">
+                                        <input type="color"  class="themeConfig" name="subtitles.color.1">
                                     </div>
                                 </div>
                             </div>
@@ -847,24 +859,43 @@
                         <div id="transcript-pane">
                             <!-- <input id="input-transcript" name="transcript" type="file" /> -->
 
-                            <div class="tip" style="margin: -5px 0 10px 0;">
+                            <div class="tip hidden" style="margin: -5px 0 10px 0;">
                                 Highlight text to select the corresponding audio clip. You can edit the transcription manually below.
                                 <br/>
                                 <em>Word(s) within each blue box appear at the same time, so try to edit word by word.</em>
                             </div>
-                            <transcript></transcript>
+                            <transcript>
+
+<div class="transcript-editor">
+    <div class="transcript-btn-select">
+        <span>select corresponding audio</span>
+    </div>
+    <div id='transcript-content' class="transcript-content" contenteditable="true" spellcheck="false">
+
+    </div>
+</div>
+
+
+
+                            </transcript>
                             <div class="loading">
                                 <div style="margin: -20px 0 20px 0">
                                     <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
                                 </div>
                                 The transcript for this clip is waiting in a queue to be processed.
                                 <br/> It will appear here automatically when ready.
+                                <div>
+                                    <a class='transcript-manual' href="#">Click here to transcribe manually instead</a>
+                                </div>
                             </div>
                             <div class="error">
                                 <div style="margin: -20px 0 20px 0">
                                     <i class="fa fa-warning fa-3x fa-fw"></i>
                                 </div>
                                 <span></span>
+                                <div>
+                                    <a class='transcript-manual' href="#">Click here to transcribe manually</a>
+                                </div>
                             </div>
                             <div class="transcript-export">
                                 <a id="trasncript-export-dummy" href="" target="_blank" style="display: none"></a>
@@ -1021,7 +1052,7 @@
                                         </label>
                                     </div>
                                     <div id="group-color" class="col-md-3" style="padding: 0">
-                                        <input type="color" id="input-color" class="themeConfig" name="wave.color" value="#942924">
+                                        <input type="color"  class="themeConfig" name="wave.color" value="#942924">
                                     </div>
                                     <div id="group-wave-advanced" class="col-md-4">
                                         <button type="button" class="btn btn-secondary btn-block">Position</button>
@@ -1062,7 +1093,7 @@
                                         <hr>
                                     </div>
                                     <div class="col-md-4">
-                                        <input type="color" id="input-color" class="themeConfig" name="caption.color">
+                                        <input type="color"  class="themeConfig" name="caption.color">
                                     </div>
                                     <div class="col-md-3">
                                         <input name="caption.fontSize" type="text" class="themeConfig form-control" style="text-align: center;" value="" />

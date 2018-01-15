@@ -62,6 +62,10 @@ function save(type, path, cb) {
 }
 
 function format(options, cb) {
+
+    if (cb) cb(null);
+    return;
+
   if (!options.transcript) return;
 
   subs = [];
@@ -147,7 +151,7 @@ function format(options, cb) {
 
 }
 
-function draw(context, theme, time) {
+function draw(context, theme, subs, time) {
 
   var lines = null;
   for (var i = 0; i < subs.length; i++) {
@@ -192,7 +196,7 @@ function draw(context, theme, time) {
   if (lines.length && theme.subtitles.box && theme.subtitles.box.opacity>0) {
     context.globalAlpha = theme.subtitles.box.opacity;
     context.fillStyle = theme.subtitles.box.color || "#000000";
-    context.fillRect(0, y-spacing, theme.width, totalHeight+spacing*3);
+    context.fillRect(0, y-spacing, theme.width, totalHeight + spacing * (Math.max(2, lines.length)) );
     context.globalAlpha = 1;
   }
 

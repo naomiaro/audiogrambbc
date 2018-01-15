@@ -141,6 +141,7 @@ Audiogram.prototype.drawFrames = function(cb) {
         backgroundFrameDir: self.backgroundFrameDir,
         caption: self.settings.caption,
         transcript: JSON.parse(self.settings.transcript),
+        subtitles: JSON.parse(self.settings.subtitles),
         waveform: self.waveform,
         fps: self.settings.theme.framesPerSecond,
         start: self.settings.start,

@@ -1,115 +1,276 @@
 var jQuery = require("jquery"),
-logger = require("./slack.js"),
-ReactDOM = require('react-dom'),
-React = require('react'),
-TranscriptEditor = require('transcript-editor').default,
-Transcript = require('transcript-model').Transcript,
-currentTranscript,
-kaldiPoll;
-var reformat = false;
+  logger = require("./slack.js"),
+  utils = require("./utils"),
+  audio = require('./audio.js'),
+  minimap = require('./minimap.js'),
+  ReactDOM = require("react-dom"),
+  React = require("react"),
+  uuid = require("uuid/v4"),
+  TranscriptEditor = require("transcript-editor").default,
+  Transcript = require("transcript-model").Transcript,
+  currentTranscript,
+  kaldiPoll,
+  formatTimeout;
 
 // Highlight selected words 
 function highlight(start, end) {
-    jQuery(".transcript-editor-block__word").removeClass("unused");
+    jQuery(".transcript-word").removeClass("unused");
     if (start>=0 && end) {
-        jQuery(".transcript-editor-block__word").filter(function() {
+        jQuery(".transcript-word").filter(function() {
             var wordStart = jQuery(this).attr("data-start"),
             wordEnd = jQuery(this).attr("data-end"),
             wordMiddle = wordEnd - (wordEnd-wordStart)/2;
-            return wordStart < start || wordStart > end;
+            return wordEnd < start || wordStart > end;
         }).addClass("unused");
     }
 }
 
 function format() {
-    var currentJSON = toJSON();
-    var maxChar = +jQuery("input[name='subtitles.lineWidth']").val(),
-    maxLines = +jQuery("input[name='subtitles.linesMax']").val(),
-    charCount = 0,
-    lineCount = 1;
-    // LINE BREAKS
-    jQuery('.transcript-editor-block__space').removeClass("line-break").removeClass("page-break");
-    jQuery( ".transcript-editor-block__text, .transcript-editor-block__word" ).each(function( index ) {
-        if (jQuery(this).is('.transcript-editor-block__word')) {
-            if ( jQuery(this).is(".transcript-editor-block__word:not(.unused):first") && jQuery(this).prev().is(".transcript-editor-block__space") ) {
-                // Audio has been trimmed at START
-                jQuery(this).prev().addClass("page-break");
-                charCount = 0;
-                lineCount = 1;
-            } else if ( jQuery(this).is(".transcript-editor-block__word:not(.unused):last") && jQuery(this).next().is(".transcript-editor-block__space") ) {
-                // Audio has be trimmed at END
-                jQuery(this).next().addClass("page-break");
-                charCount = 0;
-                lineCount = 1;
-            }
-            // Word (add to character count)
-            var str = jQuery(this).text();
-            charCount += str.length + 1;
-            if ( (charCount-1) > maxChar ) {
-                // Simulate line-break before word
-                var space = jQuery(this).prevAll(".transcript-editor-block__space:first");
-                space.addClass("line-break");
-                if (lineCount+1 > maxLines) {
-                    space.addClass("page-break");
-                    lineCount = 1;
-                } else {
-                    lineCount++;
+    if (!jQuery(".transcript-word").length) {
+        if (jQuery("transcript:visible").length) {
+            loadEmpty();
+        }
+        return;
+    }
+    // Get selection pos
+    var sel = window.getSelection();
+    if (sel.focusNode) {
+        var selNode = sel.focusNode.parentElement;
+        var selPos = sel.focusOffset;
+        if (selNode.className.includes('transcript-space')) {
+            selNode = jQuery(selNode).nextAll('.transcript-word')[0];
+            selPos = 0;
+        }
+    }
+    // Catch words in spaces for some reason
+    jQuery('.transcript-space span').each(function(){
+        console.log('UH OH!!');
+    });
+    // Clear lines/breaks
+    jQuery('.transcript-space, .transcript-line, .transcript-break').remove();
+    // Merge segments
+    jQuery('.transcript-block').each(function () {
+        var speaker = jQuery(this).attr('data-speaker');
+        var prevSpeaker = jQuery(this).prev().attr('data-speaker');
+        if (speaker != prevSpeaker) jQuery(this).removeClass('same-speaker');
+    });
+    jQuery(".transcript-block.same-speaker:not(.break)").each(function () {
+        var words = jQuery(this).find('.transcript-word');
+        jQuery(this).prev().find('.transcript-segment').append(words);
+        jQuery(this).remove();
+    });
+    // Split words
+    jQuery(".transcript-word").each(function () {
+        var text = jQuery(this).text().replace('&nbsp;', ' ');
+        if (!jQuery(this).is('.transcript-word:first:last') || jQuery(this).text().length > 1) {
+            text = text.replace(/^\s+/, "");
+        }
+        jQuery(this).text(text);
+        if (text.includes(' ') && (text!=' ' || !jQuery(this).is('.transcript-word:first:last'))) {
+            var words = text.split(' ').reverse();
+            for (let i = 0; i < words.length - 1; i++) {
+                if (words[i].length) {
+                    var newWord = jQuery(this).clone();
+                    newWord.text(words[i]);
+                    if ( words[i] != newWord.attr('data-text') ) {
+                        newWord.addClass('added');
+                        newWord.attr('data-text', null);
+                    }
+                    jQuery(this).after(newWord);
                 }
-                charCount = str.length + 1;
             }
-        } else {
-            // New block, reset counters
-            charCount = 0;
-            lineCount = 1;
+            var word0 = words[words.length - 1];
+            jQuery(this).text(word0);
+            if (word0 != jQuery(this).attr('data-text')) {
+                jQuery(this).attr('data-text', null);
+                jQuery(this).addClass('added');
+            }
+            if (selNode && jQuery(this).is(jQuery(selNode))) {
+                var posWords = text.slice(0, selPos).split(' ');
+                var wordOffset = posWords.length - 1;
+                var wordIndex = jQuery(this).index() + wordOffset;
+                selNode = jQuery(this).parent().find(`:eq(${wordIndex})`).get()[0];
+                selPos = posWords[posWords.length - 1].length;
+            }
+        } else if (text == '') {
+            jQuery(this).remove();
         }
     });
-    
-    // SPEAKER SELECTION
-    // Reset
-    jQuery('select.transcript-speaker').remove();
-    jQuery( ".transcript-editor-block__speaker" ).show();
-    // Count number of speakers
-    var count = Math.max(speakerCount(), currentJSON ? currentJSON.speakers.length : 0);
-    // Add dropdown for each block
-    var block = 0;
-    jQuery( ".transcript-editor-block__speaker" ).each(function( index ) {
-        var speaker = jQuery(this),
-        select = document.createElement("select");
-        speaker.after(select);
-        speaker.hide();
-        jQuery(select).addClass("transcript-speaker")
-        for (var i = 1; i <= count+1 ; i++) {
-            var option = document.createElement("option");
-            option.text = "Speaker " + i;
-            select.appendChild(option);
+    // Set added word timings
+    var extent = audio.extent();
+    var duration = audio.duration();
+    var selectionStart = extent[0] * duration;
+    var selectionEnd = extent[1] * duration;
+    jQuery('.transcript-word.added').attr('data-start', null).attr('data-end', null);
+    jQuery('.transcript-word.added').each(function () {
+        if (!jQuery(this).attr('data-start')) {
+            var start = +jQuery(this).prevAll('.transcript-word:not(.added)').first().attr('data-end');
+            if (!start) start = +jQuery(this).parentsUntil('.transcript-content').last().prev().find('.transcript-word:last').attr('data-end');
+            if (!start) start = selectionStart;
+            var end = +jQuery(this).nextAll('.transcript-word:not(.added)').first().attr('data-start');
+            if (!end) end = +jQuery(this).parentsUntil('.transcript-content').last().next().find('.transcript-word:first').attr('data-start');
+            if (!end) end = selectionEnd;
+            var dur = end - start;
+            var nextWords = jQuery(this).nextUntil('.transcript-word:not(.added)').filter('.transcript-word');
+            var charCount = jQuery(this).text().length;
+            nextWords.each(function () {
+                charCount += jQuery(this).text().length;
+            });
+            var secPerChar = dur / charCount;
+            var wordStart = start;
+            var wordEnd = wordStart + secPerChar * jQuery(this).text().length;
+            jQuery(this).attr('data-start', wordStart).attr('data-end', wordEnd);
+            nextWords.each(function () {
+                wordStart = wordEnd;
+                wordEnd = wordStart + secPerChar * jQuery(this).text().length;
+                jQuery(this).attr('data-start', wordStart).attr('data-end', wordEnd);
+            });
         }
-        // jQuery(select).val(jQuery(speaker).text());
-        if ( jQuery( ".transcript-editor-block__speaker" ).length == currentJSON.segments.length ) {
-            var index = currentJSON.segments[block].speaker;
+    });
+    // Highlight words
+    if (!jQuery('.transcript-word:not(.added)').length) {
+        highlight(selectionStart, selectionEnd);
+    }
+    // Insert new lines
+    var firstWord = jQuery('.transcript-word:not(.unused):first');
+    var lastWord = jQuery('.transcript-word:not(.unused):last');
+    var maxChar = +jQuery("input[name='subtitles.lineWidth']").val();
+    var maxLines = +jQuery("input[name='subtitles.linesMax']").val();
+    jQuery(".transcript-block").each(function () {
+        var charCount = 0;
+        var lineCount = 1;
+        jQuery(this).find(".transcript-word").each(function () {
+            var text = jQuery(this).text();
+            if (jQuery(this).is(firstWord)) {
+                var breakSpan = document.createElement('span');
+                breakSpan.setAttribute('class', 'transcript-break');
+                jQuery(this).before(breakSpan);
+                charCount = text.length;
+                lineCount = 1;
+            } else if (jQuery(this).is(lastWord)) {
+                var breakSpan = document.createElement('span');
+                breakSpan.setAttribute('class', 'transcript-break');
+                jQuery(this).after(breakSpan);
+                charCount += text.length;
+                if (charCount > maxChar) {
+                    lineCount++;
+                    if (lineCount > maxLines) {
+                        var cl = 'transcript-break';
+                        lineCount = 1;
+                    } else {
+                        var cl = 'transcript-line';
+                    }
+                    var lineSpan = breakSpan.cloneNode()
+                    lineSpan.setAttribute('class', cl);
+                    jQuery(this).before(lineSpan);
+                }
+                charCount = 0;
+                lineCount = 1;
+            } else {
+                if (charCount > 0) {
+                    charCount++;
+                }
+                charCount += text.length;
+                if (charCount > maxChar) {
+                    charCount = text.length;
+                    lineCount++;
+                    if (lineCount > maxLines) {
+                        var cl = 'transcript-break';
+                        lineCount = 1;
+                    } else {
+                        var cl = 'transcript-line';
+                    }
+                    var lineSpan = document.createElement('span');
+                    lineSpan.setAttribute('class', cl);
+                    jQuery(this).before(lineSpan);
+                }
+            }
+        });
+    });
+    // Insert new blocks
+    jQuery('.transcript-break').each(function() {
+        if (!jQuery(this).is(':first-child, :last-child')) {
+            var block = jQuery(this).parentsUntil('.transcript-content').last();
+            var newBlock = block.clone();
+            newBlock.addClass('same-speaker').removeClass('break');
+            newBlock.find('.transcript-segment').html('').append(jQuery(this).nextAll());
+            jQuery(this).parentsUntil('.transcript-content').last().after(newBlock);
+        }
+    });
+    jQuery('.transcript-break').remove();
+    // Normalise blocks
+    jQuery('.transcript-block').each(function () {
+        var totalLines = jQuery(this).find('.transcript-line').length + 1;
+        var totalChars = jQuery(this).find('.transcript-word').length - 1;
+        jQuery(this).find('.transcript-word').each(function () {
+            totalChars += +jQuery(this).text().length;
+        });
+        var charsPerLine = totalChars / totalLines;
+        jQuery(this).find('.transcript-line').remove();
+        var charCount = 0;
+        var lineCount = 1;
+        jQuery(this).find('.transcript-word').each(function () {
+            var textLength = +jQuery(this).text().length;
+            if (charCount > 0) charCount++;
+            charCount += textLength;
+            if (charCount > charsPerLine) {
+                var lineSpan = document.createElement('span');
+                lineSpan.setAttribute('class', 'transcript-line');
+                if (charCount > maxChar) {
+                    jQuery(this).before(lineSpan);
+                } else {
+                    jQuery(this).after(lineSpan);
+                }
+                charCount = textLength;
+                lineCount++;
+                if (lineCount == totalLines) {
+                    return false;
+                }
+            }
+        });
+    });
+    // Insert spaces
+    jQuery(".transcript-word:not(:last-child)").each(function () {
+        var spaceSpan = document.createElement('span');
+        spaceSpan.setAttribute('class', 'transcript-space');
+        spaceSpan.textContent = " ";
+        jQuery(this).after(spaceSpan);
+    });
+    // Reset selection
+    if (selNode && selNode.firstChild) {
+      selPos = Math.min(selPos, selNode.firstChild.length);
+      sel.collapse(selNode.firstChild, selPos);
+    }
+    // Set speaker colours
+    jQuery('.transcript-block').each(function () {
+        var speaker = jQuery(this).attr('data-speaker');
+        var prevSpeaker = jQuery(this).prev().attr('data-speaker');
+        jQuery(this).find('.transcript-speaker select').val(speaker);
+        if (speaker === prevSpeaker) {
+            jQuery(this).addClass('same-speaker');
         } else {
-            var index = +speaker.text().split(" ").pop() - 1;
+            jQuery(this).removeClass('same-speaker');
         }
-        jQuery(select).prop('selectedIndex', index);
-        if (jQuery("input[name='subtitles.color." + index + "']").length) {
-            var color = jQuery("input[name='subtitles.color." + index + "']").val();
+        if (jQuery("input[name='subtitles.color." + speaker + "']").length) {
+            var color = jQuery("input[name='subtitles.color." + speaker + "']").val();
         } else {
             var preview = require("./preview.js"),
-            theme = preview.theme();
-            if (theme.subtitles.color[index]) {
-                color = theme.subtitles.color[index];
+                theme = preview.theme();
+            if (theme.subtitles.color[speaker]) {
+                color = theme.subtitles.color[speaker];
             } else {
                 color = theme.subtitles.color[0];
-                preview.themeConfig("subtitles.color." + index, color);
+                preview.themeConfig("subtitles.color." + speaker, color);
             }
             var el = jQuery("input[name^='subtitles.color']:last").parent();
             el.after(el.clone());
-            jQuery("input[name^='subtitles.color']:last").attr("name","subtitles.color." + index).val(color);
+            jQuery("input[name^='subtitles.color']:last").attr("name", "subtitles.color." + speaker).val(color);
         }
-        jQuery(select).next().css("border-color",color);
-        block++;
+        jQuery(this).find('.transcript-segment').css("border-color", color);
     });
-}
 
+    return;
+}
 
 function speakerCount() {
     var speakerCount = 1;
@@ -125,62 +286,188 @@ function speakerCount() {
     return speakerCount;
 }
 
+function toSubs() {
+    var subs = [];
+    jQuery('.transcript-block').each(function() {
+        var wordCount = jQuery(this).find('.transcript-word:not(.unused)').length;
+        if (wordCount) {
+            var speaker = +jQuery(this).attr('data-speaker');
+            var lines = [];
+            var start = +jQuery(this).find('.transcript-word:not(.unused):first').attr('data-start');
+            var end = +jQuery(this).find('.transcript-word:not(.unused):last').attr('data-end');
+            var str = '';
+            jQuery(this).find('.transcript-word, .transcript-space, .transcript-line').each(function() {
+                if ( jQuery(this).is('.transcript-line') ) {
+                    lines.push(str);
+                    str = '';
+                } else {
+                    str += jQuery(this).text();
+                }
+            });
+            lines.push(str);
+            subs.push({speaker, start, end, lines});
+        }
+    });
+    // Remove small gaps between segments
+    for (let i = 1; i < subs.length; i++) {
+        var mergeGapsSmallerThan = 1;
+        var gap = subs[i].start - subs[i-1].end;
+        if (gap > 0 && gap < mergeGapsSmallerThan) {
+            var diff = gap / 2;
+            subs[i].start -= diff;
+            subs[i - 1].end += diff;
+        }
+    }
+    // Pad short segments
+    for (let i = 0; i < subs.length; i++) {
+        var minSegmentDur = 1;
+        var dur = subs[i].end - subs[i].start;
+        if (dur < minSegmentDur) {
+            // move start time
+            var diff = minSegmentDur - dur;
+            if (subs[i-1]) {
+                subs[i-1].end = Math.max(subs[i-1].end - diff/2, subs[i-1].start + minSegmentDur);
+                subs[i].start = Math.max(subs[i].start - diff/2, subs[i-1].end);
+            }
+            // move end time
+            var diff = minSegmentDur - (subs[i].end - subs[i].start);
+            subs[i].end += diff;
+            if (subs[i+1]) {
+                subs[i+1].start += diff;
+            }
+        }
+    }
+    return subs;
+}
+
 function toJSON() {
     if (!currentTranscript) return null;
-    var json = currentTranscript.toJSON(),
-    count = speakerCount(),
-    speakers = [];
-    // Add speakers
-    for (var i = 0; i < count; i++) {
-        speakers.push({name: null});
-    }
-    json.speakers = speakers;
-    // Update block speakers
-    var i = 0
-    jQuery( "select.transcript-speaker" ).each(function( index ) {
-        var value = +jQuery(this).val().split(" ").pop();
-        if (json.segments[i]) json.segments[i].speaker = value - 1;
-        i++;
-    });
+    var speakers = [];
+    var segments = [];
+    var speakerMax = 0;
+    var json = {speakers, segments};
+    // Segments
+        if (!jQuery(".transcript-word").length) {
+            if (currentTranscript.toJSON) {
+                json = currentTranscript.toJSON();
+            } else {
+                json = currentTranscript;
+            }
+        } else {
+            jQuery(".transcript-block").each(function () {
+                var speaker = +jQuery(this).find('.transcript-speaker select').val();
+                if (speaker > speakerMax) speakerMax = speaker;
+                var segment = { speaker, words: [] };
+                if (jQuery(this).hasClass('break')) {
+                    segment.break = true;
+                }
+                jQuery(this).find(".transcript-word").each(function () {
+                    var text = jQuery(this).text();
+                    var start = +jQuery(this).attr('data-start');
+                    var end = +jQuery(this).attr('data-end');
+                    var word = {text, start, end};
+                    if (jQuery(this).hasClass('added')) {
+                        word.added = true;
+                    }
+                    segment.words.push(word);
+                });
+                json.segments.push(segment);
+            });
+        }
+
+    // Speakers
+        for (var i = 0; i <= speakerMax; i++) {
+            speakers.push({name: null});
+        }
     return json;
+}
+
+function  loadEmpty() {
+    clear();
+    var emptyScript = {
+        segments: [{
+            speaker: 0,
+            words: [{
+                start: 0,
+                end: 0,
+                text: ' '
+            }]
+        }]
+    };
+    load(emptyScript);
 }
 
 function load(json) {
     clear();
-    if (!json) {
-        return;
-    }
-    
+    if (!json) return;
+
     if (json.hasOwnProperty("commaSegments")) {
         currentTranscript = Transcript.fromComma(json);
     } else if (json.hasOwnProperty("kaldi")) {
         currentTranscript = Transcript.fromKaldi(json.transcript, json.segments);
     } else {
-        currentTranscript = Transcript.fromJSON(json);
-    }
-    
-    var props = {
-        transcript: currentTranscript,
-        showSpeakers: true,
-        onTranscriptUpdate: function(data){
-            format();
-            currentTranscript = data;
-            var preview = require("./preview.js");
-            preview.redraw();
+        // currentTranscript = Transcript.fromJSON(json);
+        currentTranscript = json;
+    }    
+    var script = toJSON();
+
+    // Generate speaker dropdown
+        var speakerDiv = document.createElement('div');
+        speakerDiv.setAttribute('class', 'transcript-speaker');
+        speakerDiv.setAttribute('contenteditable', 'false');
+        var speakerSel = document.createElement('select');
+        speakerDiv.appendChild(speakerSel);
+        var speakerCount = 1;
+        script.segments.forEach(function(segment){
+            var speakerId = segment.speaker + 1;
+            if (speakerId>speakerCount) speakerCount = speakerId;
+        });
+        for (let i = 0; i <= speakerCount; i++) {
+            var speakerOpt = document.createElement('option');
+            speakerOpt.value = i;
+            speakerOpt.text = `Speaker ${i + 1}`;
+            speakerSel.appendChild(speakerOpt);
         }
-    };
-    var TS = function() {
-        return React.createElement(TranscriptEditor, props);
-    };
-    var transcriptElement = document.querySelector("transcript");
-    ReactDOM.render(React.createElement(TS), transcriptElement, function(){
-        setTimeout(format,1000);
-    });
+    
+    // Add segments
+        script.segments.forEach(function(segment) {
+            if (segment.words.length) {
+                // Make block
+                var blockDiv = document.createElement('div');
+                var cl = 'transcript-block';
+                if (segment.break) cl += ' break';
+                blockDiv.setAttribute('class', cl);
+                jQuery('.transcript-content').append(blockDiv);
+                // Insert speaker
+                blockDiv.setAttribute('data-speaker', segment.speaker);
+                blockDiv.appendChild(speakerDiv.cloneNode(true));
+                // Insert segment
+                var segmentDiv = document.createElement('div');
+                segmentDiv.setAttribute('class', 'transcript-segment');
+                blockDiv.appendChild(segmentDiv);
+                // Insert words
+                segment.words.forEach(function(word) {
+                    var wordSpan = document.createElement('span');
+                    var cl = 'transcript-word';
+                    if (word.added) cl += ' added';
+                    wordSpan.setAttribute('class', cl);
+                    wordSpan.setAttribute('data-start', word.start);
+                    wordSpan.setAttribute('data-end', word.end);
+                    wordSpan.setAttribute('data-text', word.text);
+                    wordSpan.textContent = word.text;
+                    segmentDiv.appendChild(wordSpan);
+                });
+            }
+        });
+
+    format();
+    var preview = require("./preview.js");
+    preview.redraw();
     
 }
 
 function clear() {
-    jQuery("transcript").text("");
+    jQuery(".transcript-content").text("");
     jQuery("#transcript").removeClass("loading");
     currentTranscript = null;
     clearTimeout(kaldiPoll);
@@ -188,20 +475,17 @@ function clear() {
 }
 
 function poll(job) {
-    
     kaldiPoll = setTimeout(function(){
         jQuery.getJSON( "/kaldi/" + job, function( data ) {
             if (data.status=="SUCCESS" && !data.error) {
-                var transcript = JSON.parse(data.transcript),
-                segments = JSON.parse(data.segments);
-                load({transcript: transcript, segments: segments, kaldi: transcript.metadata.version});
+                load({segments: data.script});
                 jQuery("#transcript").removeClass("loading");
             } else if (data.error) {
                 jQuery("#transcript-pane .error span").html("The BBC R&D Kaldi transcription failed<br/><i>Ref: " + job + "</i>");
                 jQuery("#transcript").removeClass("loading").addClass("error");
                 logger.error("Kaldi job failed: " + job);
             } else {
-                poll(job);
+                return poll(job);
             }
         });
     }, 5000);
@@ -316,7 +600,6 @@ function exportTranscript() {
             text += '\n\n';
         });
         text += '</div> </body> </tt>';
-        console.log(text);
         var src = 'data:text/srt;base64,' + btoa(text);
         jQuery('#trasncript-export-dummy').attr('href', src);
         jQuery('#trasncript-export-dummy').attr('download', 'transcript.srt');
@@ -367,7 +650,6 @@ function exportTranscript() {
             });
             text += '</p>';
         });
-        console.log(text);
         var src = 'data:text/srt;base64,' + btoa(text);
         jQuery('#trasncript-export-dummy').attr('href', src);
         jQuery('#trasncript-export-dummy').attr('download', 'transcript.xml');
@@ -379,7 +661,6 @@ function exportTranscript() {
 
 function importFromFile() {
     function onReaderLoad(event){
-        console.log(event.target.result);
         var obj = JSON.parse(event.target.result);
         load(obj);
     }
@@ -391,107 +672,309 @@ function importFromFile() {
 function init() {
     // Attach listener to hightlight words during playback
     jQuery('audio').on('timeupdate', function() {
-        jQuery('.transcript-editor-block__word').removeClass('played');
+        jQuery('.transcript-word').removeClass('played');
         if (!this.paused) {
             var currentTime = this.currentTime;
-            jQuery('.transcript-editor-block__word')
-            .filter(function() {
+            jQuery('.transcript-word').filter(function() {
                 var wordStart = +jQuery(this).attr('data-start') + 0.1;
                 return wordStart < currentTime;
-            })
-            .addClass('played');
+            }).addClass('played');
         }
+    });
+
+    jQuery(document).on('paste', '.transcript-editor', function(e){
+        utils.stopIt(e);
+        var sel = window.getSelection();
+        var selNode = sel.focusNode.parentElement;
+        var text = ' ' + e.originalEvent.clipboardData.getData("text/plain") + ' ';
+        if (selNode.className.includes('transcript-segment')) {
+            jQuery(selNode).find('.transcript-word:last').append(text);
+            var newNode = jQuery(selNode).find('.transcript-word:last').get(0);
+            newNode.normalize();
+            sel.collapse(newNode.firstChild, newNode.firstChild.length);
+        } else {
+            document.execCommand("insertHTML", false, text);
+        }
+        format();
     });
     
     // Format text to simulate line/page breaks
-    jQuery(document).on('keydown', '.transcript-editor', function(e) {
-        if (e.metaKey || e.ctrlKey) reformat = true;
-    });
-    jQuery(document).on('keyup', '.transcript-editor', function(e) {
-        if (reformat) {
-            format();
-            var preview = require('./preview.js');
-            preview.redraw();
-        }
-        reformat = false;
-    });
-    
-    // Move playhead when clicking on a word
-    jQuery(document).on('click', '.transcript-editor-block__word', function() {
-        var time = jQuery(this).attr('data-start');
-        jQuery('audio').get(0).currentTime = time;
-    });
-    
-    // Make clip selection when highlighting transcript segments
-    var selectionStart;
-    jQuery(document)
-    .on('mousedown', '.public-DraftStyleDefault-block', function() {
-        // Start selection on block whitespace
-        if (!selectionStart) {
-            selectionStart = jQuery(this)
-            .parents('[data-block]')
-            .next()
-            .find('.transcript-editor-block__word:first');
-        }
-    })
-    .on('mousedown', '.transcript-editor-block__space', function() {
-        // Start selection on space between words
-        if (!selectionStart) {
-            selectionStart = jQuery(this).prev();
-        }
-    })
-    .on('mousedown', '.transcript-editor-block__word', function() {
-        // Start selection on a word
-        selectionStart = jQuery(this);
-    })
-    .on('mouseup', 'body *', function() {
-        if (selectionStart) {
-            var selectionEnd = null;
-            if (jQuery(this).is('.transcript-editor-block__word *')) {
-                // Finish selection on a word
-                selectionEnd = jQuery(this).parents('.transcript-editor-block__word');
-            } else if (jQuery(this).is('.transcript-editor-block__space *')) {
-                // Finish selection on a space
-                selectionEnd = jQuery(this)
-                .parents('.transcript-editor-block__space')
-                .prev();
-            } else if (jQuery(this).is('.public-DraftStyleDefault-block')) {
-                // Finish selection on block whitespace
-                selectionEnd = jQuery(this).find('.transcript-editor-block__word:last');
+    jQuery(document).on('keydown', '.transcript-editor', function (e) {
+        clearTimeout(formatTimeout);
+        jQuery('.transcript-btn-select').hide();
+        // Arrow - down
+        if (e.keyCode === 40) {
+            var sel = window.getSelection();
+            var selNode = sel.focusNode.parentElement;
+            var offset = sel.focusOffset;
+            jQuery(selNode).prevAll(".transcript-word, .transcript-space, .transcript-line").each(function() {
+                if (jQuery(this).is('.transcript-line')) return false;
+                if (jQuery(this).is(".transcript-space")) offset++;
+                offset += jQuery(this).text().length;
+            });
+            var nextLine = jQuery(selNode).nextAll('.transcript-line').first();
+            if (nextLine.length) {
+                var firstWord = jQuery(nextLine).nextAll('.transcript-word').first();
+            } else {
+                var firstWord = jQuery(selNode).parentsUntil('.transcript-content').next().find('.transcript-word:first');
             }
-            if (selectionEnd && selectionStart.get(0) !== selectionEnd.get(0)) {
-                // If start/end points aren't the same
-                var minimap = require('./minimap.js'),
-                audio = require('./audio.js'),
-                duration = Math.round(100 * audio.duration()) / 100,
-                start = +jQuery(selectionStart).attr('data-start'),
-                end = +jQuery(selectionEnd).attr('data-end');
-                if (start > end) {
-                    end = +jQuery(selectionStart).attr('data-start');
-                    start = +jQuery(selectionEnd).attr('data-end');
-                }
-                if (!jQuery(this).is('.public-DraftStyleDefault-block') || end - start > 1) {
-                    start = start / duration;
-                    end = end / duration;
-                    minimap.drawBrush({ start: start, end: end });
-                    if (window.getSelection) {
-                        window.getSelection().removeAllRanges();
-                    } else if (document.selection) {
-                        document.selection.empty();
+            if (firstWord) {
+                var charCount = firstWord.text().length;
+                if (charCount >= offset) {
+                    var newSel = firstWord.get()[0];
+                } else {
+                    var newSel = null;
+                    jQuery(firstWord).nextAll('.transcript-word').each(function() {
+                        charCount += jQuery(this).text().length + 1;
+                        if (!newSel && charCount >= offset) {
+                            newSel = jQuery(this).get()[0];
+                            return false;
+                        }
+                    });
+                    if (!newSel) {
+                        var lastWord = jQuery(firstWord).nextAll(".transcript-word:last");
+                        newSel = lastWord.length ? jQuery(lastWord).get()[0] : jQuery(firstWord).get()[0];
                     }
                 }
             }
+            if (newSel.firstChild) sel.collapse(newSel.firstChild, Math.round(newSel.firstChild.length / 2));
+            utils.stopIt(e);
+        // Arrow - up
+        } else if (e.keyCode === 38) {
+            var sel = window.getSelection();
+            var selNode = sel.focusNode.parentElement;
+            var offset = sel.focusOffset;
+            jQuery(selNode).prevAll(".transcript-word, .transcript-space, .transcript-line").each(function() {
+                if (jQuery(this).is('.transcript-line')) return false;
+                if (jQuery(this).is(".transcript-space")) offset++;
+                offset += jQuery(this).text().length;
+            });
+            var prevLines = jQuery(selNode).prevAll('.transcript-line');
+            if (prevLines.length == 1) {
+                var firstWord = jQuery(selNode).parentsUntil(".transcript-content").find('.transcript-word:first');
+            } else if (prevLines.length > 1) {
+                var firstWord = jQuery(prevLines[1]).nextAll('.transript-word').first();
+            } else {
+                var prevBlock = jQuery(selNode).parentsUntil('.transcript-content').prev();
+                var prevBlockLines = prevBlock.find('.transcript-line');
+                if (prevBlockLines.length) {
+                    var firstWord = prevBlockLines.last().nextAll('.transcript-word:first');
+                } else {
+                    var firstWord = prevBlock.find('.transcript-word');
+                }
+            }
+            if (firstWord) {
+                var charCount = firstWord.text().length;
+                if (charCount >= offset) {
+                    var newSel = firstWord.get()[0];
+                } else {
+                    var newSel = null;
+                    jQuery(firstWord).nextAll('.transcript-word').each(function() {
+                        charCount += jQuery(this).text().length + 1;
+                        if (!newSel && charCount >= offset) {
+                            newSel = jQuery(this).get()[0];
+                            return false;
+                        }
+                    });
+                }
+            }
+            if (newSel.firstChild) sel.collapse(newSel.firstChild, Math.round(newSel.firstChild.length / 2));
+            utils.stopIt(e);
+        // Backspace
+        } else if (e.keyCode === 8) {
+            var sel = window.getSelection();
+            var selNode = sel.focusNode.parentElement;
+            var selPos = sel.focusOffset;
+            if (jQuery(selNode).is('.transcript-segment')) {
+                selNode = jQuery(selNode).find('.transcript-word:first').get()[0];
+                selPos = 0;
+            }
+            // Merge with previous block
+            if (jQuery(selNode).is(':first-child') && (selPos==0 || jQuery(selNode).text()==' ') && sel.focusNode===sel.anchorNode) {
+                var block = jQuery(selNode).parents('.transcript-block')[0];
+                if (jQuery(block).index() > 0) {
+                    var words = jQuery(block).find('.transcript-segment').children();
+                    var prevBlock = jQuery(block).prev();
+                    var prevBlockIndex = prevBlock.index();
+                    var selWord = jQuery(block).find('.transcript-word:first').get()[0];
+                    prevBlock.find('.transcript-segment').append(words);
+                    jQuery(block).remove();
+                    selNode.normalize();
+                    format();
+                    sel.collapse(selWord.firstChild, 0);
+                }
+                utils.stopIt(e);
+            // Merge with previous word
+            } else if (selNode.className.includes('transcript-space')) {
+                var prev = jQuery(selNode).prev();
+                var newPos = prev.text().length;
+                var next = jQuery(selNode).next();
+                prev.append(next.text());
+                next.remove();
+                selNode.normalize();
+                format();
+                sel.collapse(prev.get()[0].firstChild, newPos);
+                utils.stopIt(e);
+            } else if (selNode.className.includes('transcript-word') && selPos === 0) {
+                var prev = jQuery(selNode).prevAll('.transcript-word')[0];
+                var newPos = prev.firstChild.length;
+                prev.append(selNode.firstChild);
+                selNode.remove();
+                selNode.normalize();
+                sel.collapse(prev.firstChild, newPos);
+                format();
+                utils.stopIt(e);
+            }
+        // Delete
+        } else if (e.keyCode === 46) {
+            var sel = window.getSelection();
+            var selNode = sel.focusNode.parentElement;
+            var selPos = sel.focusOffset;
+            if (selNode.className.includes('transcript-word') && selPos === sel.focusNode.length) {
+                var newPos = sel.focusNode.length;
+                var next = jQuery(selNode).nextAll('.transcript-word')[0];
+                jQuery(selNode).append(next.firstChild);
+                next.remove();
+                selNode.normalize();
+                format();
+                sel.collapse(selNode.firstChild, newPos);
+                utils.stopIt(e);
+            }
+        // New line
+        } else if (e.keyCode === 13) {
+            var sel = window.getSelection();
+            var selNode = sel.focusNode.parentElement;
+            var selPos = sel.focusOffset;
+            if (selPos != sel.focusNode.length) {
+                var word = sel.focusNode.textContent.slice(0, selPos) + ' ';
+                word += sel.focusNode.textContent.slice(3, sel.focusNode.textContent.length);
+                jQuery(selNode).text(word);
+                format();
+            }
+            var block = jQuery(selNode).parentsUntil('.transcript-content').last();
+            var words = jQuery(selNode).nextAll();
+            var newBlock = block.clone();
+            newBlock.find('.transcript-segment').html('').append(words);
+            newBlock.addClass('break');
+            block.after(newBlock);
+            format();
+            sel.collapse(jQuery(newBlock).find('.transcript-word:first').get()[0], 0);
+            utils.stopIt(e);
         }
-        selectionStart = null;
+    });
+    jQuery(document).on('keyup', '.transcript-editor', function (e) {
+        clearTimeout(formatTimeout);
+        var sel = window.getSelection();
+        if (sel.focusNode){
+            var selNode = sel.focusNode.parentElement;
+            if (selNode.className == '') {
+                selNode = selNode.parentElement;
+            }
+            if (selNode.className.includes('transcript-space')) {
+                var spaceText = sel.focusNode.textContent.trim();
+                if (spaceText.length > 0) {
+                    jQuery(selNode).prevAll('.transcript-word')[0].append(' ' + spaceText);
+                    newNode = jQuery(selNode).prevAll('.transcript-word')[0];
+                    jQuery(selNode).remove();
+                    newNode.normalize();
+                    sel.collapse(newNode.firstChild, newNode.firstChild.length);
+                    format();
+                    return;
+                }
+            }
+            if (jQuery(sel.focusNode.parentNode).hasClass('transcript-word') && sel.focusNode.nodeValue.includes(' ')) {
+                format();
+                return;
+            } 
+        }
+        if (e.key!="Meta") {
+            formatTimeout = setTimeout(function(){
+                format();
+                var preview = require("./preview.js");
+                preview.redraw();
+            }, 500);
+        }
+    });
+    
+    // Move playhead when clicking on a word
+    jQuery(document).on('click', '.transcript-word', function (e) {
+        var isPlaying = audio.isPlaying();
+        var isAdded = jQuery(this).hasClass('added');
+        if (!isPlaying || !isAdded) {
+            var time = jQuery(this).attr('data-start');
+            jQuery('audio').get(0).currentTime = time;
+        }
+    });
+    
+    // Make clip selection when highlighting transcript segments
+    jQuery(document).on('mouseup', '.transcript-editor', function(e) {
+        var sel = window.getSelection();
+        if (e.detail < 2 && sel.anchorNode && sel.focusNode) {
+            var selAnchor = sel.anchorNode.parentElement;
+            var selFocus = sel.focusNode.parentElement;
+            if (selAnchor != selFocus && selAnchor.className.includes('transcript-word') && selFocus.className.includes('transcript-word')) {
+                if (selAnchor.offsetTop > selFocus.offsetTop) {
+                    var firstNode = selFocus;
+                    var lastNode = selAnchor;
+                } else {
+                    var firstNode = selAnchor;
+                    var lastNode = selFocus;
+                }
+                var top = firstNode.offsetTop - 36;
+                var lineEndNode = jQuery(selAnchor).nextUntil('.transcript-line').filter('.transcript-word').last();
+                if (!lineEndNode.length) lineEndNode = firstNode;
+                var startLeft = jQuery(firstNode).offset().left;
+                if (jQuery(lineEndNode).offset().top < jQuery(lastNode).offset().top) {
+                    var endLeft = jQuery(lineEndNode).offset().left + jQuery(lineEndNode).width();
+                } else {
+                    var endLeft = jQuery(lastNode).offset().left + jQuery(lastNode).width();
+                }
+                var offset = jQuery('#transcript').offset().left;
+                var left = (startLeft - offset) + (endLeft - startLeft)/2;
+                left -= jQuery('.transcript-btn-select').width()/2;
+                jQuery('.transcript-btn-select').css('top', top);
+                jQuery('.transcript-btn-select').css('left', left);
+                var firstStart = +jQuery(selAnchor).attr('data-start');
+                var firstEnd = +jQuery(selAnchor).attr('data-end');
+                var start = firstStart + (firstEnd - firstStart) / 4;
+                if (jQuery(selAnchor).is('.transcript-word:first') && start < 1) start = 0;
+                var lastStart = +jQuery(selFocus).attr('data-start');
+                var lastEnd = +jQuery(selFocus).attr('data-end');
+                var end = lastEnd - (lastEnd - lastStart) / 4;
+                if (jQuery(selFocus).is('.transcript-word:last') && dur - end < 1) end = dur;
+                jQuery('.transcript-btn-select').attr('data-start', start).attr('data-end', end);
+                jQuery('.transcript-btn-select').show();
+            }
+        }
+    });
+    jQuery(document).on('click', '.transcript-btn-select', function () {
+        var dur = audio.duration();
+        var start = +jQuery('.transcript-btn-select').attr('data-start');
+        var end = +jQuery('.transcript-btn-select').attr('data-end');
+        minimap.drawBrush({
+            start: start / dur, 
+            end: end / dur
+        });
+        jQuery('.transcript-btn-select').hide();
+    });
+    jQuery(document).on('click', function () {
+        if (jQuery('.transcript-btn-select').is(':visible')) {
+            var sel = window.getSelection();
+            var selAnchor = sel.anchorNode.parentElement;
+            var selFocus = sel.focusNode.parentElement;
+            if (selAnchor == selFocus || !selAnchor.className.includes('transcript-word') || !selFocus.className.includes('transcript-word')) {
+                jQuery('.transcript-btn-select').hide();
+            }
+        }
     });
     
     d3.selectAll('.transcript-export-btn').on('click', exportTranscript);
     d3.selectAll('#input-transcript').on('change', importFromFile);
     // Reformate line-breaks and speakers
-    jQuery(document).on('change', 'select.transcript-speaker', function() {
+    jQuery(document).on('change', '.transcript-speaker select', function() {
+        var speaker = jQuery(this).val();
+        jQuery(this).parentsUntil('.transcript-content').last().attr('data-speaker', speaker);
         format();
-        var preview = require('./preview.js');
-        preview.redraw();
     });
     
     d3.selectAll('.subFormatToggle').on('click', function() {
@@ -508,6 +991,36 @@ function init() {
             jQuery('#transcript .subFormatToggle').addClass('hidden');
         }
     });
+
+    jQuery(document).on('click', '#transcript-pane > div.tip', function(){
+        format();
+        console.log(toJSON());
+        console.log(toSubs());
+    });
+
+    jQuery(document).on('change', 'input[name^="subtitle.color"]', function(){
+        var block = jQuery(this).parentsUntil('.transcript-content').last();
+        block.removeClass('same-speaker');
+        format();
+    })
+
+    jQuery(document).on('click', '.transcript-manual', function (e) {
+        loadEmpty();
+        jQuery("#transcript").removeClass("loading error");
+        utils.stopIt(e);
+    });
+
+    var selectedNode = {};
+    jQuery(document).on('mousedown', '#play, #pause', function(e){
+        utils.stopIt(e);
+        var sel = window.getSelection();
+        selectedNode.node = sel.focusNode;
+        selectedNode.offset = sel.focusOffset;
+    });
+    jQuery(document).on('mouseup', '#play, #pause', function (e) {
+        var sel = window.getSelection();
+        sel.collapse(selectedNode.node, selectedNode.offset);
+    });
     
 }
 
@@ -516,6 +1029,7 @@ module.exports = {
     load,
     clear,
     toJSON,
+    toSubs,
     highlight,
     format,
     export: exportTranscript,
