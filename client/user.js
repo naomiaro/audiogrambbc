@@ -30,14 +30,17 @@ function displayMessages(messages) {
     jQuery(".user-messages.modal").modal("show");
 }
 
-function checkMessages(since) {
-    jQuery.getJSON('/messages/' + since, function (data) {
+function checkMessages(since, force) {
+    jQuery.getJSON('/messages/' + since,  function (data) {
+        console.log(since);
         if (data.messages && data.messages.length) {
             jQuery(function () {
                 displayMessages(data.messages);
             });
+        } else if (force) {
+            alert('There are no active user messages.');
         }
-    });
+    }.bind(force));
 }
 
 module.exports.init = function() {
@@ -74,6 +77,10 @@ module.exports.init = function() {
             })();
             // End Piwik Code
         }
-    
     });
+
+    jQuery(document).on("click", "#messagesLink", function(){
+        checkMessages(0, true);
+    });
+
 }

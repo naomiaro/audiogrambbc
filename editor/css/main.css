@@ -7205,14 +7205,23 @@ header h1 .title-superscript {
     font-size: 14px
 }
 
-header #version {
-    display: inline-block;
+header .headerLinks {
+    display: block;
     position: absolute;
-    top: 18px;
+    top: 0;
     right: 20px;
-    font-size: 13px;
+    font-size: 15px;
     color: #ddd;
     opacity: 0.75;
+}
+
+header .headerLinks a {
+    color: #ddd;
+    line-height: 60px;
+    padding: 0 5px;
+}
+header .headerLinks a:hover {
+    text-decoration: underline;
 }
 
 .export-page .timeline {
