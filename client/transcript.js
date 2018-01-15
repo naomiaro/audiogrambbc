@@ -540,122 +540,70 @@ function exportTranscript() {
     }
     
     var format = this.dataset.format,
-    script = transcript.toJSON(),
+    subs = toSubs(),
+    duration = audio.duration(),
+    preview = require('./preview'),
     selection = preview.selection(),
+    projects = require('./projects'),
+    projectTitle = projects.title().split('.')[0],
     text = '';
+
+    var blocks = jQuery('.transcript-block').filter(function () {
+        return jQuery(this).find('.transcript-word:not(.unused)').length;
+    });
     
     if (format.startsWith('plain')) {
         // PLAIN
-        script.segments.forEach(function(segment, i) {
-            newLine = true;
-            segment.words.forEach(function(word, i) {
-                if (
-                    word.start >= selection.start &&
-                    word.end <= selection.end
-                ) {
-                    if (newLine) {
-                        if (format == 'plain-timecodes') {
-                            text += formatHMS(word.start) + '\n';
-                        }
-                        newLine = false;
-                    }
-                    text += word.text + ' ';
+        blocks.each(function(e){
+            var block = jQuery(this);
+            if (!text.length || !block.hasClass('same-speaker') || block.hasClass('break')) {
+                var speaker = +block.attr('data-speaker') + 1;
+                var start = +block.find('.transcript-word:not(.unused):first').attr('data-start');
+                var time = formatHMS(start);
+                if (text.length) text += '\n\n';
+                if (format == 'plain-timecodes') {
+                    text += time + ' - SPEAKER ' + speaker;
+                    text += '\n';
                 }
-            });
-            text += '\n\n';
+            }
+            block.find('.transcript-word:not(.unused)').each(function(){
+                text += jQuery(this).text() + ' ';
+            })
         });
-        window.open('data:text/plain;charset=utf-8;base64,' + btoa(text));
+        window.open('/64/' + btoa(text) + '.txt');
     } else if (format == 'srt') {
         // SRT
-        script.segments.forEach(function(segment, i) {
-            var lineLength = 0,
-            lines = 1;
-            segment.words.forEach(function(word, i) {
-                if (
-                    word.start >= selection.start &&
-                    word.end <= selection.end
-                ) {
-                    if (lineLength + word.text.length + 1 > 37) {
-                        text += '\n';
-                        lines++;
-                        lineLength = 0;
-                    }
-                    if (lines > 2) {
-                        lines = 1;
-                        text += '\n';
-                    }
-                    if ((lines == 1) & (lineLength == 0)) {
-                        var start = word.start,
-                        end = Math.min(
-                            selection.end,
-                            segment.words[segment.words.length - 1].end
-                        );
-                        text +=
-                        formatHMS(start).replace('.', ',') +
-                        ' --> ' +
-                        formatHMS(end).replace('.', ',') +
-                        '\n';
-                    }
-                    text += word.text + ' ';
-                    lineLength += word.text.length + 1;
-                }
+        subs.forEach(function(sub, i) {
+            if (text.length) text += '\n\n';
+            text += (i+1) + '\n';
+            text += formatHMS(sub.start).replace('.', ',');
+            text += ' --> ';
+            text += formatHMS(sub.end).replace('.', ',');
+            sub.lines.forEach(function(line) {
+                text += '\n' + line;
             });
-            text += '\n\n';
         });
-        text += '</div> </body> </tt>';
         var src = 'data:text/srt;base64,' + btoa(text);
         jQuery('#trasncript-export-dummy').attr('href', src);
-        jQuery('#trasncript-export-dummy').attr('download', 'transcript.srt');
+        jQuery('#trasncript-export-dummy').attr('download', `${projectTitle}.srt`);
         document.getElementById('trasncript-export-dummy').click();
     } else if (format == 'ebu') {
         // EBU
-        text =
-        '<?xml version="1.0"?> <tt xmlns="http://www.w3.org/2006/10/ttaf1" xmlns:st="http://www.w3.org/ns/ttml#styling" xml:lang="eng" ';
-        text +=
-        '> <head> <styling> <style id="backgroundStyle" st:fontFamily="proportionalSansSerif" st:fontSize="18px" st:textAlign="center" st:backgroundColor="rgba(0,0,0,0)" st:displayAlign="center"/> </styling> <layout/> </head> <body> <div>';
-        script.segments.forEach(function(segment, i) {
-            var lineLength = 0,
-            lines = 1;
-            segment.words.forEach(function(word, i) {
-                if (
-                    word.start >= selection.start &&
-                    word.end <= selection.end
-                ) {
-                    if (lineLength + word.text.length + 1 > 37) {
-                        lines++;
-                        text += '<br/>';
-                        lineLength = 0;
-                    }
-                    if (lines > 2) {
-                        lines = 1;
-                        text += '</p>';
-                    }
-                    if ((lines == 1) & (lineLength == 0)) {
-                        var start = word.start,
-                        end = Math.min(
-                            selection.end,
-                            segment.words[segment.words.length - 1].end
-                        );
-                        text +=
-                        '<p begin="' +
-                        formatHMS(start)
-                        .split('.')
-                        .shift() +
-                        '" end="' +
-                        formatHMS(end)
-                        .split('.')
-                        .shift() +
-                        '">';
-                    }
-                    text += word.text + ' ';
-                    lineLength += word.text.length + 1;
-                }
+        text = '<?xml version="1.0"?> <tt xmlns="http://www.w3.org/2006/10/ttaf1" xmlns:st="http://www.w3.org/ns/ttml#styling" xml:lang="eng"> <head> <styling> <style id="backgroundStyle" st:fontFamily="proportionalSansSerif" st:fontSize="18px" st:textAlign="center" st:backgroundColor="rgba(0,0,0,0)" st:displayAlign="center"/> </styling> <layout/> </head> <body> <div>';
+        subs.forEach(function (sub, i) {
+            var start = formatHMS(sub.start);
+            var end = formatHMS(sub.end);
+            text += `<p begin="${start}" end="${end}">`;
+            sub.lines.forEach(function (line, j) {
+                if (j>0) text += '<br/>';
+                text += line;
             });
             text += '</p>';
         });
-        var src = 'data:text/srt;base64,' + btoa(text);
+        text += '</div></body></tt>';
+        var src = 'data:text/xml;base64,' + btoa(text);
         jQuery('#trasncript-export-dummy').attr('href', src);
-        jQuery('#trasncript-export-dummy').attr('download', 'transcript.xml');
+        jQuery('#trasncript-export-dummy').attr('download', `${projectTitle}.xml`);
         document.getElementById('trasncript-export-dummy').click();
     }
     

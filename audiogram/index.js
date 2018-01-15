@@ -191,8 +191,10 @@ Audiogram.prototype.saveSubtitles = function(type,cb) {
 
   console.log("generate subtitles: " + type);
 
+    
+
   if (self.settings.transcript) {
-    subtitles.save(type, path.join(self.dir, "subtitles." + type), function(err){
+    subtitles.save(type, self.settings.subtitles, path.join(self.dir, "subtitles." + type), function(err){
       if (err) return cb(err);
       transports.uploadVideo(path.join(self.dir, "subtitles." + type), "video/" + self.id + "." + type, function(err){
         return cb(err);

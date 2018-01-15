@@ -151,6 +151,14 @@ app.get("/simulcast/media/:id/", simulcast.pipe);
 app.get("/simulcast", simulcast.readme);
 app.get("/simulcast/delete/:id/", simulcast.delete);
 
+// Base64
+app.get("/64/:string", function(req, res){
+    var buffer = Buffer.from(req.params.string, 'base64');
+    var text = buffer.toString();
+    res.set('content-type', 'text/plain');
+    return res.send(text);
+});
+
 // Serve background images and themes JSON statically
 app.use("/settings/", function(req, res, next) {
 

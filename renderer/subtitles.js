@@ -21,40 +21,57 @@ function ifNumeric(val, alt, ratio) {
   return (typeof val === "number" && !isNaN(val)) ? val*ratio : alt;
 }
 
-function save(type, path, cb) {
+function formatHMS(t) {
+    t = Number(t);
+    var h = Math.floor(t / 3600),
+        m = Math.floor((t % 3600) / 60),
+        s = ((t % 3600) % 60).toFixed(2),
+        string =
+            `00${h}`.slice(-2) +
+            ':' +
+            `00${m}`.slice(-2) +
+            ':' +
+            `00${s}`.slice(-5);
+    return string;
+}
 
-  var fs = require('fs'),
-      sub = "";
+function save(type, subs, path, cb) {
 
+  var fs = require('fs');
+  subs = JSON.parse(subs);
+  
   if (type=="srt"){
-    // SRT
-      var i = 1;
-      for (var key in srt){
-          sub += i + "\n";
-          sub += key + "\n";
-          sub += srt[key] + "\n\n";
-          i++;
+      // SRT
+      text = "";
+      for (let i = 0; i < subs.length; i++) {
+          if (text.length) text += '\n\n';
+          text += (i + 1) + '\n';
+          text += formatHMS(subs[i].start).replace('.', ',');
+          text += ' --> ';
+          text += formatHMS(subs[i].end).replace('.', ',');
+          for (let j = 0; j < subs[i].lines.length; j++) {
+              text += '\n' + subs[i].lines[j];
+          }
       }
     } else if (type=="xml") {
       // EBU-TT-D
-        var sub = '<?xml version="1.0"?> <tt xmlns="http://www.w3.org/2006/10/ttaf1" xmlns:st="http://www.w3.org/ns/ttml#styling" xml:lang="eng" ';
-        // TODO: Add tts:extent to size subs properly on square/vertical video
-        // sub += 'tts:extent=""';
-        sub += '> <head> <styling> <style id="backgroundStyle" st:fontFamily="proportionalSansSerif" st:fontSize="18px" st:textAlign="center" st:backgroundColor="rgba(0,0,0,0)" st:displayAlign="center"/> </styling> <layout/> </head> <body> <div>';
-        for (var key in srt){
-            var timing = key.split(" --> "),
-                begin = timing[0].split(",").shift(),
-                end = timing[1].split(",").shift();
-            sub += '<p begin="' + begin + '" end="' + end + '">';
-            sub += srt[key].replace("\n","<br/>");
-            sub += '</p>';
-        }
-        sub += '</div> </body> </tt>';
+      text = '<?xml version="1.0"?> <tt xmlns="http://www.w3.org/2006/10/ttaf1" xmlns:st="http://www.w3.org/ns/ttml#styling" xml:lang="eng"> <head> <styling> <style id="backgroundStyle" st:fontFamily="proportionalSansSerif" st:fontSize="18px" st:textAlign="center" st:backgroundColor="rgba(0,0,0,0)" st:displayAlign="center"/> </styling> <layout/> </head> <body> <div>';
+      for (let i = 0; i < subs.length; i++) {
+          var start = formatHMS(subs[i].start);
+          var end = formatHMS(subs[i].end);
+          text += `<p begin="${start}" end="${end}">`;
+          for (let j = 0; j < subs[i].lines.length; j++) {
+              if (j > 0) text += '<br/>';
+              text += subs[i].lines[j];
+          }
+          text += '</p>';
+      }
+      text += '</div></body></tt>';
     } else {
       return cb("Unsupported subtitle format");
     }
 
-    fs.writeFile(path, sub, function(err){
+    fs.writeFile(path, text, function(err){
       err = err ? "Error saving subtitle file: " + err : null;
       return cb(err);
     });
