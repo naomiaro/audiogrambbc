@@ -217,7 +217,7 @@
         function displayMessages(messages) {
           console.log(messages);
           const now = Date.parse(new Date());
-          let i = 1;
+          var i = 1;
           jQuery('#messages-edit .user-messages .message-wrapper:not(:first-child)').remove();
           jQuery('#messages-edit .user-messages').show();
           messages.forEach(message => {

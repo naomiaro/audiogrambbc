@@ -8,7 +8,7 @@ var request = require('request'),
 
 function list(req, res) {
     const dir = path.join(__dirname, "../vcs");
-    let items = [];
+    var items = [];
     fs.readdir(dir, function (err, files) {
         for (var i = 0; i < files.length; i++) {
             if (files[i].includes('#') && files[i].split('.')[1] != 'xml') {

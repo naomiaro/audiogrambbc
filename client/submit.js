@@ -7,7 +7,7 @@ const preview = require('./preview');
 const transcript = require('./transcript');
 const logger = require('./slack');
 
-let title = 'Untitled';
+var title = 'Untitled';
 
 function submit() {
     const audio = media.get('audio');

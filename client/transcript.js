@@ -70,7 +70,7 @@ function format() {
         jQuery(this).text(text);
         if (text.includes(' ') && (text!=' ' || !jQuery(this).is('.transcript-word:first:last'))) {
             var words = text.split(' ').reverse();
-            for (let i = 0; i < words.length - 1; i++) {
+            for (var i = 0; i < words.length - 1; i++) {
                 if (words[i].length) {
                     var newWord = jQuery(this).clone();
                     newWord.text(words[i]);
@@ -311,7 +311,7 @@ function toSubs() {
         }
     });
     // Remove small gaps between segments
-    for (let i = 1; i < subs.length; i++) {
+    for (var i = 1; i < subs.length; i++) {
         var mergeGapsSmallerThan = 1;
         var gap = subs[i].start - subs[i-1].end;
         if (gap > 0 && gap < mergeGapsSmallerThan) {
@@ -321,7 +321,7 @@ function toSubs() {
         }
     }
     // Pad short segments
-    for (let i = 0; i < subs.length; i++) {
+    for (var i = 0; i < subs.length; i++) {
         var minSegmentDur = 1;
         var dur = subs[i].end - subs[i].start;
         if (dur < minSegmentDur) {
@@ -424,7 +424,7 @@ function load(json) {
             var speakerId = segment.speaker + 1;
             if (speakerId>speakerCount) speakerCount = speakerId;
         });
-        for (let i = 0; i <= speakerCount; i++) {
+        for (var i = 0; i <= speakerCount; i++) {
             var speakerOpt = document.createElement('option');
             speakerOpt.value = i;
             speakerOpt.text = `Speaker ${i + 1}`;

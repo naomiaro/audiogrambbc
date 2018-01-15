@@ -5,7 +5,7 @@ const projects = require("./projects");
 const themeHelper = require("./themeHelper");
 
 
-let MSID = null;
+var MSID = null;
 
 function purge() {
     jQuery.get("/simulcast/delete/" + MSID);

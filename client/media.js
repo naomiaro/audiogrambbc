@@ -5,8 +5,8 @@ const transcript = require('./transcript');
 const logger = require('./slack');
 const utils = require('./utils');
 
-let MEDIA = {};
-const BLOBS = {};
+var MEDIA = {};
+var BLOBS = {};
 
 function _get(type) {
     return type ? MEDIA[type] : MEDIA;

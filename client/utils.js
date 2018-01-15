@@ -33,7 +33,7 @@ function setClass(cl, msg, log) {
   if (jQuery('.modal').hasClass('in') && msg) {
     alert(msg);
   } else {
-    let bodyClass = cl || '';
+    var bodyClass = cl || '';
     if (error) bodyClass += ' error';
     jQuery("body").attr("class", bodyClass || null);
     jQuery('#error, #success').text(msg || '');

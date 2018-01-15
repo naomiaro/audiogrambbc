@@ -19,7 +19,7 @@ const orientation_map = {
     'portrait': 50
 }
 
-let title;
+var title;
 function _title(_) {
     return arguments.length ? (title = _) : title;
 }
