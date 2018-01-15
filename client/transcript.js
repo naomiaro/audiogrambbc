@@ -61,7 +61,9 @@ function format() {
     });
     // Split words
     jQuery(".transcript-word").each(function () {
-        var text = jQuery(this).text().replace('&nbsp;', ' ');
+        var text = jQuery(this).text()
+          .replace("&nbsp;", " ")
+          .replace("\n", " ");
         if (!jQuery(this).is('.transcript-word:first:last') || jQuery(this).text().length > 1) {
             text = text.replace(/^\s+/, "");
         }
