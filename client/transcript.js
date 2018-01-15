@@ -109,9 +109,10 @@ function format() {
             var start = +jQuery(this).prevAll('.transcript-word:not(.added)').first().attr('data-end');
             if (!start) start = +jQuery(this).parentsUntil('.transcript-content').last().prev().find('.transcript-word:last').attr('data-end');
             if (!start) start = selectionStart;
-            var end = +jQuery(this).nextAll('.transcript-word:not(.added)').first().attr('data-start');
-            if (!end) end = +jQuery(this).parentsUntil('.transcript-content').last().next().find('.transcript-word:first').attr('data-start');
-            if (!end) end = selectionEnd;
+            var next = jQuery('.transcript-word:not(.added)').filter(function () {
+                return jQuery(this).attr('data-start') > start;
+            }).first();
+            var end = next.length ? +next.attr('data-start') || duration : duration;
             var dur = end - start;
             var nextWords = jQuery(this).nextUntil('.transcript-word:not(.added)').filter('.transcript-word');
             var charCount = jQuery(this).text().length;
