@@ -334,6 +334,43 @@ body.landing #error {
   width: calc(100% + 30px);
 }
 
+.transcript-buttons {
+    font-size: 13px;
+    margin: -8px 0 8px;
+}
+.transcript-buttons > div {
+    position: relative;
+    display: inline-block;
+}
+.transcript-buttons button {
+    padding: 3px 8px;
+    position: relative;
+}
+.transcript-buttons button input{
+    cursor: pointer;
+}
+
+.transcript-btn-enabled[data-enabled='true'] .off,
+.transcript-btn-enabled[data-enabled='false'] .on {
+    display: none;
+}
+.transcript-buttons button select {
+    opacity: 0;
+    background: transparent;
+    border: none;
+    height: 24px;
+    font-size: 13px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    padding: 0;
+    cursor: pointer;
+}
+
 .transcript-speaker select {
   width: 100px;
   margin: -2px 0 !important;
@@ -473,6 +510,10 @@ body.landing #error {
   background-color: #eee;
 }
 
+#transcript-pane.disabled .transcript-word {
+    background-color: #eee;
+}
+
 .transcript-space {
     margin: 0 -2px;
     -webkit-touch-callout: none;
@@ -529,8 +570,10 @@ body.landing #error {
 
 #transcript.loading transcript,
 #transcript.error transcript,
-#transcript.loading .transcript-export,
-#transcript.error .transcript-export,
+#transcript.timings .page-header,
+#transcript.timings #transcript-pane,
+#transcript.timings > .transcript-buttons,
+#transcript:not(.timings) #transcript-timings,
 #transcript:not(.loading) .loading,
 #transcript:not(.error) .error {
   display: none;

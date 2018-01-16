@@ -849,37 +849,82 @@
 
                     <section id="transcript" class="well hidden">
                         <div class="page-header">
-                            <input id="input-subtitles" class="themeConfig" type="checkbox" name="subtitles.enabled" value="true" checked>
                             <h1 style="display: inline-block">
-                                <label for="input-subtitles">
-                                    Overlay Subtitles
-                                </label>
+                                Transcript
                             </h1>
-                            <div class="tip subFormatToggle">
-                                <a href="#">edit formatting</a>
+                        </div>
+                        <div class="transcript-buttons">
+                            <button id="transcript-btn-enabled" data-enabled='true'>
+                                <input id="input-subtitles" class="themeConfig" type="checkbox" name="subtitles.enabled" value="true" checked>
+                                Overlay Subtitles
+                                <!-- <span class='on'>ON</span><span class='off'>OFF</span> -->
+                            </button>
+                            <span style="color: #ccc; padding: 0 10px;">|</span>
+                            <button id="transcript-btn-timings">
+                                <i class="fa fa-clock-o"></i>Set Timings
+                            </button>
+                            <button id="transcript-btn-format" class="subFormatToggle">
+                                <i class="fa fa-align-center"></i>Format
+                            </button>
+                            <button id="transcript-btn-timings">
+                                <i class="fa fa-undo"></i>Reset
+                            </button>
+                            <button id="transcript-btn-import">
+                                <i class="fa fa-upload"></i>Import
+                            </button>
+                            <div>
+                                <button id="transcript-btn-export" type="button" data-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa fa-download"></i>Export
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li role="presentation">
+                                        <a class="transcript-export-btn" data-format="plain" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (script only)</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a class="transcript-export-btn" data-format="plain-timecodes" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (with timecodes)</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a class="transcript-export-btn" data-format="srt" role="menuitem" href="#">Facebook Subs (SRT)</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a class="transcript-export-btn" data-format="ebu" role="menuitem" href="#">BBC Subs (EBU-TT-D)</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="transcript-timings">
+                            <div class="transcript-buttons">
+                                <button id="transcript-btn-timings-cancel">
+                                    Cancel
+                                </button>
+                            </div>
+                            <div class="alert alert-info" role="alert" style="margin-bottom: 10px;">
+                                <p>
+                                    To set timings, preview the audio and click on the next subtitle block when it should appear.
+                                </p>
+                                <p>
+                                    Click on a block to transition to it immediately.
+                                </p>
+                                <p>
+                                    Optionally, click on the same block again to hide it until you're ready to click on the next one.
+                                </p>
+                                <hr>
+                                <p>
+                                    <b>To begin:</b> Either click the first block below, or click the play button above to start with the first subtitle block hidden.
+                                </p>
                             </div>
                         </div>
                         <div id="transcript-pane">
                             <!-- <input id="input-transcript" name="transcript" type="file" /> -->
-
-                            <div class="tip hidden" style="margin: -5px 0 10px 0;">
-                                Highlight text to select the corresponding audio clip. You can edit the transcription manually below.
-                                <br/>
-                                <em>Word(s) within each blue box appear at the same time, so try to edit word by word.</em>
-                            </div>
                             <transcript>
+                                <div class="transcript-editor">
+                                    <div class="transcript-btn-select">
+                                        <span>select corresponding audio</span>
+                                    </div>
+                                    <div id='transcript-content' class="transcript-content" contenteditable="true" spellcheck="false">
 
-<div class="transcript-editor">
-    <div class="transcript-btn-select">
-        <span>select corresponding audio</span>
-    </div>
-    <div id='transcript-content' class="transcript-content" contenteditable="true" spellcheck="false">
-
-    </div>
-</div>
-
-
-
+                                    </div>
+                                </div>
                             </transcript>
                             <div class="loading">
                                 <div style="margin: -20px 0 20px 0">
@@ -903,28 +948,6 @@
                             <div class="transcript-export">
                                 <a id="trasncript-export-dummy" href="" target="_blank" style="display: none"></a>
                                 <hr>
-                                <div class="btn-group">
-                                    <div class="dropdown-button right btn-group btn-group" style=" float: right; width: auto;">
-                                        <button class="btn-sm btn-secondary dropdown-toggle btn" title="Create a new document" type="button" data-toggle="dropdown"
-                                            aria-expanded="false">Export Transcript
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li role="presentation">
-                                                <a class="transcript-export-btn" data-format="plain" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (script only)</a>
-                                            </li>
-                                            <li role="presentation">
-                                                <a class="transcript-export-btn" data-format="plain-timecodes" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (with timecodes)</a>
-                                            </li>
-                                            <li role="presentation">
-                                                <a class="transcript-export-btn" data-format="srt" role="menuitem" href="#">Facebook Subs (SRT)</a>
-                                            </li>
-                                            <li role="presentation">
-                                                <a class="transcript-export-btn" data-format="ebu" role="menuitem" href="#">BBC Subs (EBU-TT-D)</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </section>

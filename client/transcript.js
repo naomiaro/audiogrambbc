@@ -972,6 +972,20 @@ function init() {
         var sel = window.getSelection();
         sel.collapse(selectedNode.node, selectedNode.offset);
     });
+
+    jQuery(document).on('click', '#transcript-btn-enabled', function(e){
+        var checkbox = jQuery(this).find('input');
+        var checked = !checkbox.prop("checked");
+        if (jQuery(e.target).is('input')) checked = !checked;
+        checkbox.prop("checked", checked);
+        d3.select('#transcript-pane').classed('disabled', !checked);
+        var preview = require('./preview');
+        preview.redraw();
+    });
+
+    jQuery(document).on('click', '#transcript-btn-timings', function(){
+        jQuery("#transcript").toggleClass("timings");
+    });
     
 }
 

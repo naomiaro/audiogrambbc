@@ -175,7 +175,7 @@ function loadProject(id) {
     }
     // Load theme
     jQuery('#input-subtitles')[0].checked = data.theme.subtitles.enabled;
-    d3.select('#transcript-pane').classed('hidden', !data.theme.subtitles.enabled);
+    d3.select('#transcript-pane').classed('disabled', !data.theme.subtitles.enabled);
     jQuery("#input-theme").val(data.theme.name);
     themeHelper.update(data.theme);
     // Load transcript

@@ -268,7 +268,7 @@ function update(theme) {
 
 function updateThemeConfig() {
     preview.themeConfig(this.name, this.type == 'checkbox' ? this.checked : this.value);
-    if (this.name == 'subtitles.enabled') d3.select('#transcript-pane').classed('hidden', !this.checked);
+    // if (this.name == 'subtitles.enabled') d3.select('#transcript-pane').classed('hidden', !this.checked);
     if (this.name.includes('subtitles')) transcript.format();
 }
 d3.selectAll('.themeConfig').on('change', updateThemeConfig);
