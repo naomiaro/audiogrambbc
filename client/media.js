@@ -1,9 +1,9 @@
-const audio = require('./audio');
-const video = require('./video');
-const preview = require('./preview');
-const transcript = require('./transcript');
-const logger = require('./slack');
-const utils = require('./utils');
+var audio = require('./audio');
+var video = require('./video');
+var preview = require('./preview');
+var transcript = require('./transcript');
+var logger = require('./slack');
+var utils = require('./utils');
 
 var MEDIA = {};
 var BLOBS = {};
@@ -31,7 +31,7 @@ function loadFromURL(type, url, cb) {
         if (type == 'audio') {
             update(xhr.response, cb);
         } else {
-            const themeHelper = require("./themeHelper");
+            var themeHelper = require("./themeHelper");
             themeHelper.updateImage(null, type, xhr.response, cb);
         }
     };
@@ -105,7 +105,7 @@ function deleteAll() {
     for (var type in MEDIA) {
         deleteMedia(type);
     }
-    const deleteMediaSelector = require("./mediaSelector").purge;
+    var deleteMediaSelector = require("./mediaSelector").purge;
     deleteMediaSelector();
 }
 

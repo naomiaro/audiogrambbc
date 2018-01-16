@@ -1,6 +1,6 @@
 var queue = require("d3").queue;
 
-const PROCESSES = {};
+var PROCESSES = {};
 function getPid(id) {
   return PROCESSES[id];
 }

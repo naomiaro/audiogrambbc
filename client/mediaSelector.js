@@ -1,8 +1,8 @@
-const utils = require("./utils");
-const logger = require('./slack');
-const media = require("./media");
-const projects = require("./projects");
-const themeHelper = require("./themeHelper");
+var utils = require("./utils");
+var logger = require('./slack');
+var media = require("./media");
+var projects = require("./projects");
+var themeHelper = require("./themeHelper");
 
 
 var MSID = null;
@@ -45,7 +45,7 @@ function txSearch() {
     }
     utils.setClass(null);
     jQuery('#new-tx').modal('hide');
-    const sourceName = jQuery("#input-tx-vpid option[value='" + vpid + "']").text();
+    var sourceName = jQuery("#input-tx-vpid option[value='" + vpid + "']").text();
     projects.title(sourceName);
     d3.select('#loading-message').text('Fetching media: ' + sourceName + ' (' + start.toLocaleString() + ')');
     utils.setClass('loading');
@@ -70,8 +70,8 @@ function txSearch() {
 
 function txPoll(id, type, req) {
     req = req || null;
-    const ext = (type=='audio') ? 'mp3' : 'mp4';
-    const url = "/simulcast/status/" + id + "." + ext;
+    var ext = (type=='audio') ? 'mp3' : 'mp4';
+    var url = "/simulcast/status/" + id + "." + ext;
     utils.setClass('loading');
     vpid = $('#input-tx-vpid').val();
     jQuery.getJSON(url, function(data) {

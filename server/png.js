@@ -6,7 +6,7 @@ var request = require('request'),
 
 function list(req, res) {
 	const dir = path.join(__dirname, "../png");
-	let items = [];
+	var items = [];
 	fs.readdir(dir, function(err, files) {
 		for (var i = 0; i < files.length; i++) {
 			if (files[i].includes('.json')) {

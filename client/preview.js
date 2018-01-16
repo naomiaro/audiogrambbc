@@ -116,7 +116,7 @@ function resize(width, height) {
     width = width || theme.width;
     height = height || theme.height;
 
-    const bodyClass = jQuery("body").attr("class");
+    var bodyClass = jQuery("body").attr("class");
     jQuery("body").attr("class", null);
     var wrapperWidth = d3.select("#canvas").node().getBoundingClientRect().width;
     jQuery("body").attr("class", bodyClass);

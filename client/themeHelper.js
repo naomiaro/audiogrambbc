@@ -1,9 +1,9 @@
-const preview = require('./preview');
-const media = require('./media');
-const utils = require('./utils');
-const ui = require('./ui');
-const transcript = require("./transcript");
-const logger = require("./slack");
+var preview = require('./preview');
+var media = require('./media');
+var utils = require('./utils');
+var ui = require('./ui');
+var transcript = require("./transcript");
+var logger = require("./slack");
 
 var themesRaw;
 function _raw(_) {
@@ -83,7 +83,7 @@ function setBackground() {
     $('#videoload a').attr('data-used', true);
     if ($('#input-audio')[0].files.length) {
         // $('#input-background')[0].files = $('#input-audio')[0].files;
-        const blob = $("#input-audio")[0].files[0];
+        var blob = $("#input-audio")[0].files[0];
         updateImage(null, 'background', blob, function(){
             utils.setClass(null);
             var filename = jQuery('#input-audio')
@@ -94,7 +94,7 @@ function setBackground() {
         });
     } else {
         var id = $('#videoload a').attr('data-id');
-        const mediaSelector = require('./mediaSelector');
+        var mediaSelector = require('./mediaSelector');
         mediaSelector.poll(id, "video", {
           processStart: performance.now()
         });
@@ -123,7 +123,7 @@ function updateImage(event, type, blob, cb) {
         return true;
     }
 
-    const imgFile = blob || this.files[0];
+    var imgFile = blob || this.files[0];
     media.upload(type, imgFile);
     var filename = blob
         ? 'blob'

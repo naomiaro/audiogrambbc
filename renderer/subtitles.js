@@ -43,24 +43,24 @@ function save(type, subs, path, cb) {
   if (type=="srt"){
       // SRT
       text = "";
-      for (let i = 0; i < subs.length; i++) {
+      for (var i = 0; i < subs.length; i++) {
           if (text.length) text += '\n\n';
           text += (i + 1) + '\n';
           text += formatHMS(subs[i].start).replace('.', ',');
           text += ' --> ';
           text += formatHMS(subs[i].end).replace('.', ',');
-          for (let j = 0; j < subs[i].lines.length; j++) {
+          for (var j = 0; j < subs[i].lines.length; j++) {
               text += '\n' + subs[i].lines[j];
           }
       }
     } else if (type=="xml") {
       // EBU-TT-D
       text = '<?xml version="1.0"?> <tt xmlns="http://www.w3.org/2006/10/ttaf1" xmlns:st="http://www.w3.org/ns/ttml#styling" xml:lang="eng"> <head> <styling> <style id="backgroundStyle" st:fontFamily="proportionalSansSerif" st:fontSize="18px" st:textAlign="center" st:backgroundColor="rgba(0,0,0,0)" st:displayAlign="center"/> </styling> <layout/> </head> <body> <div>';
-      for (let i = 0; i < subs.length; i++) {
+      for (var i = 0; i < subs.length; i++) {
           var start = formatHMS(subs[i].start);
           var end = formatHMS(subs[i].end);
           text += `<p begin="${start}" end="${end}">`;
-          for (let j = 0; j < subs[i].lines.length; j++) {
+          for (var j = 0; j < subs[i].lines.length; j++) {
               if (j > 0) text += '<br/>';
               text += subs[i].lines[j];
           }

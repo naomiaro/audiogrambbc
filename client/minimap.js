@@ -1,5 +1,5 @@
 var d3 = require("d3");
-const utils = require('./utils');
+var utils = require('./utils');
 
 var minimap = d3.select("#minimap"),
     svg = minimap.select("svg"),
@@ -123,7 +123,7 @@ function updateTrim(extent) {
             end = extent[0] || parseFloat(d3.select('#start').property('value'));
             start = extent[1] || parseFloat(d3.select('#end').property('value'));
         }
-        const audio = require('./audio');
+        var audio = require('./audio');
         var duration = Math.round(100 * audio.duration()) / 100;
         if (start < 0.1) start = 0;
         if (end > (duration-0.1)) end = duration;
