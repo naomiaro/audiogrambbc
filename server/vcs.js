@@ -7,7 +7,7 @@ var request = require('request'),
     _ = require("lodash");
 
 function list(req, res) {
-    const dir = path.join(__dirname, "../vcs");
+    var dir = path.join(__dirname, "../vcs");
     var items = [];
     fs.readdir(dir, function (err, files) {
         for (var i = 0; i < files.length; i++) {
@@ -16,12 +16,12 @@ function list(req, res) {
                     split = files[i].split('#'),
                     id = split[0],
                     name = split[1].split('.')[0];
-                const xmlPath = path.join(dir, `${id}#${name}.xml`);
-                const xml = fs.readFileSync(path.join(xmlPath));
-                const fileJson = xmlParser.toJson(xml);
-                const metadata = JSON.parse(fileJson);
-                const date = metadata.EXPORT.TAKE.GENERIC.GENE_ROW_MOD_TIME;
-                const time = Date.parse(new Date(date));
+                var xmlPath = path.join(dir, `${id}#${name}.xml`);
+                var xml = fs.readFileSync(path.join(xmlPath));
+                var fileJson = xmlParser.toJson(xml);
+                var metadata = JSON.parse(fileJson);
+                var date = metadata.EXPORT.TAKE.GENERIC.GENE_ROW_MOD_TIME;
+                var time = Date.parse(new Date(date));
                 items.push({ id, name, file, time });
             }
         }
@@ -47,14 +47,14 @@ function search(req, res) {
         if (response.statusCode !== 200) {
             return res.json({error: body});
         }
-        const results = JSON.parse(body);
-        const items = [];
+        var results = JSON.parse(body);
+        var items = [];
         results.forEach(result => {
-            const title = result.vcsinfo.take.GENERIC.GENE_TITLE;
-            const dir = result.dir.split('/');
-            const store = dir[dir.length - 1];
-            const meida = result.mediaurl;
-            const id = result.file.split('#')[0];
+            var title = result.vcsinfo.take.GENERIC.GENE_TITLE;
+            var dir = result.dir.split('/');
+            var store = dir[dir.length - 1];
+            var meida = result.mediaurl;
+            var id = result.file.split('#')[0];
             items.push({
                 id,
                 title,
@@ -67,8 +67,8 @@ function search(req, res) {
 }
 
 function media(req, res) {
-    const file = req.params.file;
-    const src = path.join(__dirname, "../vcs", file);
+    var file = req.params.file;
+    var src = path.join(__dirname, "../vcs", file);
     if (fs.existsSync(src)) {
         res.sendFile(src);
     } else {

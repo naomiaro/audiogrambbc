@@ -2,26 +2,26 @@ global.d3 = require("d3");
 global.jQuery  = require("jquery");
 global.$ = jQuery;
 
-const path = require("path");
+var path = require("path");
 
-const utils = require('./utils');
-const transcript = require('./transcript');
-const logger = require('./slack');
-const preview = require('./preview');
-const minimap = require('./minimap');
-const video = require('./video');
-const audio = require('./audio');
-const media = require('./media');
-const projects = require('./projects');
-const ui = require('./ui');
-const themeHelper = require('./themeHelper');
-const ichef = require('./ichef');
-const mediaSelector = require('./mediaSelector');
-const submit = require('./submit');
-const vcs = require('./vcs');
-const png = require('./png');
-const webcap = require('./webcap');
-const user = require('./user');
+var utils = require('./utils');
+var transcript = require('./transcript');
+var logger = require('./slack');
+var preview = require('./preview');
+var minimap = require('./minimap');
+var video = require('./video');
+var audio = require('./audio');
+var media = require('./media');
+var projects = require('./projects');
+var ui = require('./ui');
+var themeHelper = require('./themeHelper');
+var ichef = require('./ichef');
+var mediaSelector = require('./mediaSelector');
+var submit = require('./submit');
+var vcs = require('./vcs');
+var png = require('./png');
+var webcap = require('./webcap');
+var user = require('./user');
 
 user.init();
 
@@ -111,9 +111,9 @@ function initialize(err, themesWithImages) {
   });
 
   jQuery(function() {
-    const path = window.location.pathname.split('/');
+    var path = window.location.pathname.split('/');
     if (path[1]=='ag') {
-      const id = path[2];
+      var id = path[2];
       projects.load(id);
     } else {
       utils.setClass("landing");
@@ -183,7 +183,7 @@ function preloadImages(themes) {
     }
 
     // Update raw themes
-    const raw = themeHelper.raw();
+    var raw = themeHelper.raw();
     raw[theme.name].backgroundImageFile = theme.backgroundImageFile;
     raw[theme.name].backgroundImageInfo = theme.backgroundImageInfo;
     raw[theme.name].foregroundImageFile = theme.foregroundImageFile;

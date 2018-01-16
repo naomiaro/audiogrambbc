@@ -1,7 +1,7 @@
-const logger = require('./slack');
+var logger = require('./slack');
 
 function navigate(state, msg, log) {
-    const classMap = {
+    var classMap = {
       home: "landing",
       new: null,
       edit: null,
@@ -9,26 +9,26 @@ function navigate(state, msg, log) {
       view: "rendered"
     };
     if (state == 'home') {
-      const projectsInit = require("./projects").init;
-      const deleteAllMedia = require("./media").deleteAll;
+      var projectsInit = require("./projects").init;
+      var deleteAllMedia = require("./media").deleteAll;
       projectsInit();
       deleteAllMedia();
       jQuery("#input-audio").val('');
     }
     if (state != 'view' && jQuery('body').is('.rendered')) {
-      const exitVideo = require("./video").exit;
+      var exitVideo = require("./video").exit;
       exitVideo();
     }
     setBreadcrumb(state);
-    const cl = classMap[state];
+    var cl = classMap[state];
     jQuery('.modal').modal('hide');
     setClass(cl, msg, log);
-    const audio = require('./audio');
+    var audio = require('./audio');
     audio.pause();
 }
 
 function setClass(cl, msg, log) {
-  const error = cl=='error';
+  var error = cl=='error';
   cl = LOADING ? error ? 'landing' : 'loading' : cl;
   if (jQuery('.modal').hasClass('in') && msg) {
     alert(msg);
@@ -39,7 +39,7 @@ function setClass(cl, msg, log) {
     jQuery('#error, #success').text(msg || '');
   }
   if (cl=='landing') {
-    const projects = require('./projects');
+    var projects = require('./projects');
     projects.getProjects();
   }
   // Log warning
@@ -134,8 +134,8 @@ function clickBreadcrumb(level) {
 jQuery(document).on('click', 'section.breadcrumbs > span', clickBreadcrumb);
 
 function statusMessage(result) {
-    const getBlobs = require("./media").blobs;
-    const blobs = getBlobs();
+    var getBlobs = require("./media").blobs;
+    var blobs = getBlobs();
   switch (result.status) {
     case "queued":
       return (

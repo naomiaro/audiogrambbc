@@ -1,11 +1,11 @@
-const media = require('./media');
-const utils = require('./utils');
+var media = require('./media');
+var utils = require('./utils');
 
 function updateList() {
     jQuery.getJSON("/vcs/list", function (list) {
         jQuery("#new-vcs-table-store tbody").text('');
         list.forEach(function (item) {
-            const el = `<tr><td><input type="radio" name="vcs-import" value="${item.file}"></td><td>${item.id}</td><td>${item.name}</td></tr>`;
+            var el = `<tr><td><input type="radio" name="vcs-import" value="${item.file}"></td><td>${item.id}</td><td>${item.name}</td></tr>`;
             jQuery("#new-vcs-table-store tbody").append(el);
         });
         jQuery("#new-vcs input[name=vcs-import]:first").attr("checked", true);
@@ -13,11 +13,11 @@ function updateList() {
 }
 
 function search() {
-    const id = jQuery('#new-vcs-search-input').val();
+    var id = jQuery('#new-vcs-search-input').val();
     jQuery.getJSON("/vcs/search/" + id, function (list) {
         jQuery("#new-vcs-table-store tbody").text('');
         list.forEach(function (item) {
-            const el = `<tr><td><input type="radio" name="vcs-import" value="${item.file}"></td><td>${item.id}</td><td>${item.name}</td></tr>`;
+            var el = `<tr><td><input type="radio" name="vcs-import" value="${item.file}"></td><td>${item.id}</td><td>${item.name}</td></tr>`;
             jQuery("#new-vcs-table-store tbody").append(el);
         });
         jQuery("#new-vcs input[name=vcs-import]:first").attr("checked", true);
@@ -26,11 +26,11 @@ function search() {
 
 function load(file) {
     file = file || jQuery("#new-vcs input[name=vcs-import]:checked").val();
-    const title = file.split('#')[1].split('.')[0];
-    const projects = require('./projects');
+    var title = file.split('#')[1].split('.')[0];
+    var projects = require('./projects');
     projects.title(title);
-    const src = encodeURIComponent(file);
-    const url = "/vcs/media/" + src;
+    var src = encodeURIComponent(file);
+    var url = "/vcs/media/" + src;
     media.loadFromURL('audio', url, function () {
         utils.navigate('edit');
     });

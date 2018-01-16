@@ -5,20 +5,20 @@ var transports = require("../lib/transports"),
     auth = require('./auth');
 
 function adminMiddleware(req, res) {
-  const email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "localhost@audiogram.newslabs.co";  
+  var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "localhost@audiogram.newslabs.co";  
   auth.isAdmin(email, function(err, isAdmin){
     return projectList(req, res, isAdmin);
   });
 }
 
 function projectList(req, res, admin) {
-  const email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "localhost@audiogram.newslabs.co";
+  var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "localhost@audiogram.newslabs.co";
   transports.getProjectList(function(err, projects) {
     if (err) return res.json({ err: err });
     var list = [],
       now = new Date().getTime();
     for (var i = 0; i < projects.length; i++) {
-      const private = +projects[i].private;
+      var private = +projects[i].private;
       // Don't return private projects of other users
       if (!private || projects[i].user == email || admin) {
         var id = projects[i].id,
@@ -69,8 +69,8 @@ function getProject(req, res) {
 
 function updateProject(req, res) {
     var user = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "audiogram-dev@bbc.co.uk";
-    const opts = req.query;
-    const id = req.params.id;
+    var opts = req.query;
+    var id = req.params.id;
     transports.updateProject(id, user, opts, function (err, project) {
         if (err) return res.json({ err });
         return res.json(project);

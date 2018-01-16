@@ -1,7 +1,7 @@
-const webcap = require('./webcap');
-const preview = require('./preview');
-const minimap = require('./minimap');
-const audio = require('./audio');
+var webcap = require('./webcap');
+var preview = require('./preview');
+var minimap = require('./minimap');
+var audio = require('./audio');
 
 function initializeSliders() {
     $(function() {
@@ -48,9 +48,9 @@ function showAdvancedConfig() {
 function windowResize() {
     if (!jQuery('body').is('.loading,.rendered,.landing')) {
         preview.redraw();
-        const audio = require('./audio');
-        const duration = audio.duration();
-        const extent = audio.extent().map((e) => {
+        var audio = require('./audio');
+        var duration = audio.duration();
+        var extent = audio.extent().map((e) => {
             return e * duration;
         });
         var hidden = d3.select('#minimap').classed('hidden');

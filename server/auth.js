@@ -1,14 +1,14 @@
-const request = require('request');
+var request = require('request');
 
   function isAdmin (email, cb) {
-    const adminGroup = "CN=BBC News Labs Team,OU=B,OU=Distribution Groups,OU=Users and Desktops,OU=London,OU=MTS,DC=national,DC=core,DC=bbc,DC=co,DC=uk";
+    var adminGroup = "CN=BBC News Labs Team,OU=B,OU=Distribution Groups,OU=Users and Desktops,OU=London,OU=MTS,DC=national,DC=core,DC=bbc,DC=co,DC=uk";
     if (email == "localhost@audiogram.newslabs.co") {
       return cb(null, true);
     }
-    const url = `http://apis.labs.jupiter.bbc.co.uk/whois/${email}`;
+    var url = `http://apis.labs.jupiter.bbc.co.uk/whois/${email}`;
     request({url, proxy: null }, function(err, adRes, adBody) {
-      const userData = JSON.parse(adBody);
-      const isAdmin = userData.retval.groups ? userData.retval.groups.includes(adminGroup) : false;
+      var userData = JSON.parse(adBody);
+      var isAdmin = userData.retval.groups ? userData.retval.groups.includes(adminGroup) : false;
       cb(err, isAdmin);
     });
   }

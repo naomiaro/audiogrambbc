@@ -39,8 +39,8 @@ app.use(function(req, res, next) {
 });
 
 // whitelist
-const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV : "development" ;
-const WHITELIST = require('../whitelist.json');
+var NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV : "development" ;
+var WHITELIST = require('../whitelist.json');
 // NODE_ENV === 'production' && app.use(auth(WHITELIST));
 // NODE_ENV === app.use(auth(WHITELIST));
 

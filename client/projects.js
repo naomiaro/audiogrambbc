@@ -1,19 +1,19 @@
-const dateFormat = require("dateformat");
-const path = require("path");
+var dateFormat = require("dateformat");
+var path = require("path");
 
-const utils = require("./utils");
-const media = require("./media");
-const audio = require("./audio");
-const video = require("./video");
-const vcs = require("./vcs");
-const png = require("./png");
-const preview = require("./preview");
-const minimap = require("./minimap");
-const transcript = require("./transcript");
-const themeHelper = require("./themeHelper");
+var utils = require("./utils");
+var media = require("./media");
+var audio = require("./audio");
+var video = require("./video");
+var vcs = require("./vcs");
+var png = require("./png");
+var preview = require("./preview");
+var minimap = require("./minimap");
+var transcript = require("./transcript");
+var themeHelper = require("./themeHelper");
 
-const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const orientation_map = {
+var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var orientation_map = {
     'landscape': 160,
     'square': 90,
     'portrait': 50
@@ -26,13 +26,13 @@ function _title(_) {
 
 function formatDuration(time) {
     time = Math.round(time);
-    const minutes = Math.floor(time / 60);
-    const seconds = utils.pad(time - minutes * 60, 2);
+    var minutes = Math.floor(time / 60);
+    var seconds = utils.pad(time - minutes * 60, 2);
     return `${minutes}′${seconds}″`;
 }
 
 function newProject(e) {
-  const type = e.target
+  var type = e.target
     ? jQuery(e.target)
         .parents("[data-type]")
         .attr("data-type")
@@ -88,7 +88,7 @@ function getProjects() {
         el.attr("data-user", projects[i].user);
         el.find(".user").text(projects[i].user.split('@').shift());
         el.find(".box-icon").css("background-image", "url(/video/" + projects[i].id + ".jpg)");
-        const imageWidth = orientation_map[projects[i].orientation];
+        var imageWidth = orientation_map[projects[i].orientation];
         el.find('.box-icon').css('width', imageWidth + "px");
         el.find('.info-box-content').css('width', "calc(100% - " + imageWidth + "px - 20px)");
       }
@@ -105,7 +105,7 @@ function getProjects() {
 }
 
 function updateFilter() {
-  const filter = jQuery("#recent-filter").val();
+  var filter = jQuery("#recent-filter").val();
   jQuery("#landing .saved [data-id]").addClass("hidden");
   jQuery("#landing .saved .empty").show();
   if (filter=="all") {
@@ -122,9 +122,9 @@ function updateFilter() {
 }
 
 function selectProject() {
-  const id = jQuery(this).attr("data-id");
-  const audioId = jQuery(this).attr("data-audioId");
-  const versions = +jQuery("#landing .saved [data-audioId='" + audioId + "']").length;
+  var id = jQuery(this).attr("data-id");
+  var audioId = jQuery(this).attr("data-audioId");
+  var versions = +jQuery("#landing .saved [data-audioId='" + audioId + "']").length;
   if (versions > 1 && !jQuery('#version-history').is(':visible')) {
     loadHistory(audioId);
   } else {
@@ -135,7 +135,7 @@ function selectProject() {
 
 function loadHistory(audioId) {
   jQuery("#version-history-body").html('');
-  const projects = jQuery("#landing .saved").clone();
+  var projects = jQuery("#landing .saved").clone();
   jQuery("#version-history-body").html(projects);
   jQuery("#version-history-body [data-audioId][data-audioId!='" + audioId + "']").remove();
   jQuery("#version-history-body [data-hideVersion]").attr("data-hideVersion", null);
@@ -184,7 +184,7 @@ function loadProject(id) {
       if (script) {
         transcript.load(script);
       } else {
-        const blobs = media.blobs();
+        var blobs = media.blobs();
         transcript.generate(blobs.audio);
       }
       cb(null);
@@ -213,15 +213,15 @@ function init() {
   jQuery(document).on("click", "#landing .saved [data-id]", selectProject);
   jQuery(document).on("change", "#input-audio", function(){
     media.update();
-    const name = jQuery('#input-audio')[0].files[0].name;
+    var name = jQuery('#input-audio')[0].files[0].name;
     _title(name);
     utils.navigate("new");
   });
   jQuery(document).on("change", "#recent-filter", updateFilter);
   jQuery(document).on("change", "#sharing-private", function(){
-    const private = jQuery(this).val();
-    const id = jQuery(this).attr('data-id');
-    const url = `/updateProject/${id}?private=${private}`;
+    var private = jQuery(this).val();
+    var id = jQuery(this).attr('data-id');
+    var url = `/updateProject/${id}?private=${private}`;
     jQuery('#sharing-spinner').show();
     jQuery.getJSON(url, function(data) {
         jQuery('#sharing-spinner').hide();

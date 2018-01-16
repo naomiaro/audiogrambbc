@@ -42,9 +42,9 @@ function update(url, data) {
   jQuery("#sharing-link-project").attr("href", window.location.origin + url.replace(".mp4","").replace("video/", "ag/"));
   jQuery("#sharing-link-project-text").val(window.location.origin + url.replace(".mp4","").replace("video/", "ag/"));
   
-  const id = data.id || url.split('/')[2].split('.')[0];
-  const private = data.private != undefined ? data.private : jQuery('#input-private').val();
-  const user = data.user ? data.user : USER.email;
+  var id = data.id || url.split('/')[2].split('.')[0];
+  var private = data.private != undefined ? data.private : jQuery('#input-private').val();
+  var user = data.user ? data.user : USER.email;
 
   jQuery("#sharing-private").val(private);
   jQuery("#sharing-private").attr('data-id', id);

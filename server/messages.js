@@ -1,11 +1,11 @@
-const _ = require("lodash");
-const uuidv4 = require("uuid/v4");
-const async = require('async');
-const auth = require('./auth');
+var _ = require("lodash");
+var uuidv4 = require("uuid/v4");
+var async = require('async');
+var auth = require('./auth');
 
-const redisHost = require("../settings/").redisHost;
-const redis = require("redis");
-const redisClient = redis.createClient({ host: redisHost });
+var redisHost = require("../settings/").redisHost;
+var redis = require("redis");
+var redisClient = redis.createClient({ host: redisHost });
 redisClient.on("error", function(err) {
   console.log("REDIS ERROR>> ", err);
 });
@@ -16,8 +16,8 @@ function fetchReadCount(id, cb) {
 
 function getMessages(req, res) {
 
-    const since = req.params.since;
-    const now = Date.parse(new Date());
+    var since = req.params.since;
+    var now = Date.parse(new Date());
 
     redisClient.smembers(`audiogram:messages`, (err, messages) => {
         messages = messages.map((message) => {
@@ -26,7 +26,7 @@ function getMessages(req, res) {
         messages = _.sortBy(messages, "date").reverse();
         if (_.isUndefined(since)) {
             // Admin view
-            const ids = messages.map((message) => message.id);
+            var ids = messages.map((message) => message.id);
             async.map(ids, fetchReadCount, (err, readCounts) => {
               messsages = messages.map((message, i) => {
                 message.readCount = readCounts[i] || 0;
@@ -36,8 +36,8 @@ function getMessages(req, res) {
         } else {
             // User view
             messages = messages.filter((message) => {
-                const date = Date.parse(message.date);
-                const expires = Date.parse(message.expire);
+                var date = Date.parse(message.date);
+                var expires = Date.parse(message.expire);
                 if (expires < now || date < since) return false;
                 redisClient.incr(`audiogram:messages:readcount:${message.id}`);
                 return true;
@@ -65,8 +65,8 @@ function getMessages(req, res) {
 };
 
 function expire(req, res) {
-    const id = req.params.id;
-    const expire = Date.parse(new Date()) - 1000;
+    var id = req.params.id;
+    var expire = Date.parse(new Date()) - 1000;
     redisClient.smembers(`audiogram:messages`, (err, messages) => {
         messages = messages.map((message) => {
             return JSON.parse(message);
@@ -88,19 +88,19 @@ function expire(req, res) {
 }
 
 function editor(req, res) {
-    const email = req.header('BBC_IDOK') ? req.header('BBC_EMAIL') : 'localhost@audiogram.newslabs.co';
+    var email = req.header('BBC_IDOK') ? req.header('BBC_EMAIL') : 'localhost@audiogram.newslabs.co';
     auth.isAdmin(email, function(err, isAdmin){
         if (!isAdmin) {
             return res.status(401).send("HTTP/1.1 401 Unauthorized");
         }
-        const path = require("path");
-        const messagesPage = path.join(__dirname, "../editor/messages.html");
+        var path = require("path");
+        var messagesPage = path.join(__dirname, "../editor/messages.html");
         return res.sendFile(messagesPage);
     });
 }
 
 function add(req, res) {
-    const message = req.body;
+    var message = req.body;
     message.id = uuidv4();
     message.user = req.header('BBC_IDOK') ? req.header('BBC_EMAIL') : 'localhost@audiogram.newslabs.co';
     message.date = new Date(Date.parse(message.date));

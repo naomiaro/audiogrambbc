@@ -1,4 +1,4 @@
-const logger = require('./slack');
+var logger = require('./slack');
 
 global.USER = { name: 'Unknown', email: null };
 
@@ -18,7 +18,7 @@ function displayMessages(messages) {
     var i = 1;
     messages.forEach(message => {
         if (i>1) {
-            const div = jQuery(".user-messages.modal .message:last").clone();
+            var div = jQuery(".user-messages.modal .message:last").clone();
             jQuery(".user-messages.modal .message:last").after(div);
         }
         jQuery(".user-messages.modal .message:last .user-messages-title").text(message.title);

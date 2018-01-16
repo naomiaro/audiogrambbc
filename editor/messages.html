@@ -201,7 +201,7 @@
         };
 
         jQuery('#new-message-date').val(formatDate());
-        const defaultExpiry = Date.parse(new Date()) + 604800000;
+        var defaultExpiry = Date.parse(new Date()) + 604800000;
         jQuery('#new-message-expire').val(formatDate(defaultExpiry));
 
         // Get user
@@ -216,13 +216,13 @@
         // Load messages
         function displayMessages(messages) {
           console.log(messages);
-          const now = Date.parse(new Date());
+          var now = Date.parse(new Date());
           var i = 1;
           jQuery('#messages-edit .user-messages .message-wrapper:not(:first-child)').remove();
           jQuery('#messages-edit .user-messages').show();
           messages.forEach(message => {
             if (i > 1) {
-              const div = jQuery(".user-messages .message-wrapper:last").clone();
+              var div = jQuery(".user-messages .message-wrapper:last").clone();
               jQuery(".user-messages .message-wrapper:last").after(div);
             }
             jQuery(".user-messages .message-wrapper:last .user-messages-title").text(message.title);
@@ -231,7 +231,7 @@
             jQuery(".user-messages .message-wrapper:last .user-messages-text").html(message.text);
             jQuery(".user-messages .message-wrapper:last .message-read-count span").html(message.readCount);
             jQuery(".user-messages .message-wrapper:last .message-expire-now").attr('data-id', message.id);
-            const expires = Date.parse(message.expire);
+            var expires = Date.parse(message.expire);
             if (expires < now) {
               jQuery(".user-messages .message-wrapper:last").addClass('expired');
               jQuery(".user-messages .message-wrapper:last .message-info .message-active").hide();
@@ -262,7 +262,7 @@
 
         jQuery(document).on('click', '.message-expire-now', (e) => {
             jQuery("body").addClass("loading");
-            const id = jQuery(e.currentTarget).attr('data-id');
+            var id = jQuery(e.currentTarget).attr('data-id');
             console.log(id);
             jQuery.getJSON(`/messages/expire/${id}`, function (data) {
                 checkMessages();

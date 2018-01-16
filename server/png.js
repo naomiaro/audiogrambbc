@@ -5,7 +5,7 @@ var request = require('request'),
     fs = require("fs");
 
 function list(req, res) {
-	const dir = path.join(__dirname, "../png");
+	var dir = path.join(__dirname, "../png");
 	var items = [];
 	fs.readdir(dir, function(err, files) {
 		for (var i = 0; i < files.length; i++) {
@@ -36,8 +36,8 @@ function list(req, res) {
 // }
 
 function media(req, res) {
-    const file = req.params.file;
-    const src = path.join(__dirname, "../png", file);
+    var file = req.params.file;
+    var src = path.join(__dirname, "../png", file);
     if (fs.existsSync(src)) {
         res.sendFile(src);
     } else {

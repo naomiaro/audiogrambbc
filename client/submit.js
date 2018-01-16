@@ -1,17 +1,17 @@
-const utils = require('./utils');
-const media = require('./media');
-const audio = require('./audio');
-const video = require('./video');
-const projects = require('./projects');
-const preview = require('./preview');
-const transcript = require('./transcript');
-const logger = require('./slack');
+var utils = require('./utils');
+var media = require('./media');
+var audio = require('./audio');
+var video = require('./video');
+var projects = require('./projects');
+var preview = require('./preview');
+var transcript = require('./transcript');
+var logger = require('./slack');
 
 var title = 'Untitled';
 
 function submit() {
-    const audio = media.get('audio');
-    const theme = preview.theme();
+    var audio = media.get('audio');
+    var theme = preview.theme();
     validate();
 }
 
@@ -19,7 +19,7 @@ function validate() {
     console.log('validate');
     d3.select('#loading-message').text('Uploading files...');
     utils.setClass('loading');
-    const data = media.get();
+    var data = media.get();
     for (var type in data) {
         if (!data[type].path) {
             console.log('validate timeout');
@@ -66,7 +66,7 @@ function submitted() {
     formData.append("title", projects.title());
     formData.append('user', USER.email);
 
-    const private = +jQuery("#input-private").val();
+    var private = +jQuery("#input-private").val();
     formData.append('private', private);
 
     // formData.append("audio", audioFile);

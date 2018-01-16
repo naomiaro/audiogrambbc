@@ -1,21 +1,21 @@
-const fs = require("fs");
-const rimraf = require("rimraf");
-const path = require("path");
-const backgroundVideo = require("../audiogram/background-video");
+var fs = require("fs");
+var rimraf = require("rimraf");
+var path = require("path");
+var backgroundVideo = require("../audiogram/background-video");
 
 module.exports.delete = function(req, res) {
-  const type = req.params.type;
-	const id = req.params.id;
+  var type = req.params.type;
+	var id = req.params.id;
   console.log('DELETE', type, id);
 
-	const filePath = path.join(__dirname, "../tmp", type, id);
+	var filePath = path.join(__dirname, "../tmp", type, id);
 	if (fs.existsSync(filePath)) {
 		fs.unlinkSync(filePath);
 	}
 
-	const framesPath = path.join(__dirname, "../tmp/frames", id);
+	var framesPath = path.join(__dirname, "../tmp/frames", id);
   if (fs.existsSync(framesPath)) {
-    const pid = backgroundVideo.getPid(id);
+    var pid = backgroundVideo.getPid(id);
     if (pid) {
       process.kill(pid);
     }
@@ -35,8 +35,8 @@ module.exports.post = function(req, res) {
     name = req.files["file"][0].originalname,
     type = req.body.type;
 
-	const destDir = path.join(__dirname, "../tmp/", type);
-	const dest = path.join(destDir, id);
+	var destDir = path.join(__dirname, "../tmp/", type);
+	var dest = path.join(destDir, id);
 	if (!fs.existsSync(destDir)) {
     fs.mkdirSync(destDir);
   }
@@ -55,12 +55,12 @@ module.exports.post = function(req, res) {
   // Process video file
   if (req.body.type == "background" && mimetype.startsWith("video")) {
 
-		const framesPath = path.join(__dirname, "../tmp/frames/");
+		var framesPath = path.join(__dirname, "../tmp/frames/");
     if (!fs.existsSync(framesPath)) {
       fs.mkdirSync(framesPath);
 		}
 		
-		const framesDir = path.join(framesPath, id);
+		var framesDir = path.join(framesPath, id);
 		if (!fs.existsSync(framesDir)) {
 			fs.mkdirSync(framesDir);
 		}

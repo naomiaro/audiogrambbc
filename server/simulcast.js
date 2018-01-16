@@ -18,25 +18,25 @@ var q,
 	segmentDuration,
 	mediaURL;
 
-const PROCESSES = {};
+var PROCESSES = {};
 
 function purge(req, res) {
-    const id = req ? req.params.id : job;
+    var id = req ? req.params.id : job;
 
-    const mp3 = path.join(__dirname, "../tmp/mediaselector", id + ".mp3");
+    var mp3 = path.join(__dirname, "../tmp/mediaselector", id + ".mp3");
 		if (fs.existsSync(mp3)) {
       fs.unlinkSync(mp3);
     }
-    const mp4 = path.join(__dirname, "../tmp/mediaselector", id + ".mp4");
+    var mp4 = path.join(__dirname, "../tmp/mediaselector", id + ".mp4");
     if (fs.existsSync(mp4)) {
       fs.unlinkSync(mp4);
     }
-    const log = path.join(__dirname, "../tmp/mediaselector", id + ".log");
+    var log = path.join(__dirname, "../tmp/mediaselector", id + ".log");
     if (fs.existsSync(log)) {
       fs.unlinkSync(log);
     }
 
-    const workingDir = path.join(__dirname, "../tmp/mediaselector", id);
+    var workingDir = path.join(__dirname, "../tmp/mediaselector", id);
     if (fs.existsSync(workingDir)) {
 			if (PROCESSES[id] && PROCESSES[id].length){
 				PROCESSES[id].forEach(pid => {
@@ -178,8 +178,8 @@ function generateMedia(type, start, end, cb) {
 			console.log("SIMULCAST EXIT...", command.pid);
 			if (err!=="") return cb(err);
 			// Rename file, ready for collection
-			const moveFrom = tmpPath + type + '.' + ext;
-			const moveTo = destPath + job + '.' + ext;
+			var moveFrom = tmpPath + type + '.' + ext;
+			var moveTo = destPath + job + '.' + ext;
 			if (fs.existsSync(moveFrom)) {
 				fs.rename(moveFrom, moveTo, function(err){cb(err)});
 			}

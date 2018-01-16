@@ -1,7 +1,7 @@
-const redisHost = require("../settings/").redisHost;
-const redis = require("redis");
-const redisClient = redis.createClient({ host: redisHost });
-const prefix = "audiogram:";
+var redisHost = require("../settings/").redisHost;
+var redis = require("redis");
+var redisClient = redis.createClient({ host: redisHost });
+var prefix = "audiogram:";
 
 redisClient.on("error", function(err) {
 	console.log('REDIS ERROR>> ', err);
@@ -18,7 +18,7 @@ module.exports = function(req, res) {
 	}
 
 	redisClient.smembers(`audiogram:user:${email}`, (err, loginDates) => {
-		const lastLogin = loginDates.sort()[loginDates.length - 1];
+		var lastLogin = loginDates.sort()[loginDates.length - 1];
 		redisClient.sadd(`audiogram:users`, email);
 		redisClient.sadd(`audiogram:user:${email}`, Date.now());
 		return res.json({ name, email, lastLogin });
