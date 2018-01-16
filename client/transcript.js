@@ -824,7 +824,7 @@ function init() {
             if (selNode.className.includes('transcript-space')) {
                 var spaceText = sel.focusNode.textContent.trim();
                 if (spaceText.length > 0) {
-                    jQuery(selNode).prevAll('.transcript-word')[0].append(' ' + spaceText);
+                    jQuery(selNode).prevAll('.transcript-word').first().append(' ' + spaceText);
                     newNode = jQuery(selNode).prevAll('.transcript-word')[0];
                     jQuery(selNode).remove();
                     newNode.normalize();
