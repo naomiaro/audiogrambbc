@@ -570,7 +570,7 @@ function exportTranscript() {
                 text += jQuery(this).text() + ' ';
             })
         });
-        window.open('/64/' + btoa(text) + '.txt');
+        window.open('/transcript?txt=' + btoa(text));
     } else if (format == 'srt') {
         // SRT
         subs.forEach(function(sub, i) {

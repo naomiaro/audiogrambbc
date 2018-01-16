@@ -152,8 +152,8 @@ app.get("/simulcast", simulcast.readme);
 app.get("/simulcast/delete/:id/", simulcast.delete);
 
 // Base64
-app.get("/64/:string", function(req, res){
-    var buffer = Buffer.from(req.params.string, 'base64');
+app.get("/transcript", function(req, res){
+    var buffer = Buffer.from(req.query.txt, "base64");
     var text = buffer.toString();
     res.set('content-type', 'text/plain');
     return res.send(text);
