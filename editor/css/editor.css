@@ -349,6 +349,12 @@ body.landing #error {
 .transcript-buttons button input{
     cursor: pointer;
 }
+.transcript-buttons button.active {
+    cursor: default;
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
 
 .transcript-btn-enabled[data-enabled='true'] .off,
 .transcript-btn-enabled[data-enabled='false'] .on {
@@ -369,6 +375,54 @@ body.landing #error {
     outline: none;
     padding: 0;
     cursor: pointer;
+}
+
+#transcript-timings .transcript-buttons {
+    padding-bottom: 8px;
+    margin-top: 0;
+    border-bottom: 1px solid #ccc;
+}
+#transcript-timings-wizard-info button {
+  padding: 3px 8px;
+}
+
+#transcript-timings .block.template {
+  display: none;
+}
+#transcript-timings .block {
+  text-align: center;
+}
+#transcript-timings .block .box{
+    border: 1px solid #ccc;
+    margin: 0 auto 5px auto;
+    padding: 10px;
+    clear: both;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+#transcript-timings .block .times input {
+    font-size: 14px;
+    padding: 1px;
+    width: 80px;
+    display: block;
+    position: absolute;
+    text-align: center;
+    border-color: transparent;
+}
+#transcript-timings .block .times input[name='start'] {
+  top: 8px;
+  left: 8px;
+}
+#transcript-timings .block .times input[name='end'] {
+  bottom: 8px;
+  right: 8px;
+}
+#transcript-timings .block .subtitles{
+  margin: 0 85px;
+  padding: 0 25px;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
 }
 
 .transcript-speaker select {
