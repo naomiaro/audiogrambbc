@@ -6,7 +6,6 @@ var backgroundVideo = require("../audiogram/background-video");
 module.exports.delete = function(req, res) {
   var type = req.params.type;
 	var id = req.params.id;
-  console.log('DELETE', type, id);
 
 	var filePath = path.join(__dirname, "../tmp", type, id);
 	if (fs.existsSync(filePath)) {

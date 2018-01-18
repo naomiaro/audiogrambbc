@@ -52,14 +52,12 @@ function newProject(e) {
 }
 
 function getProjects() {
-  console.log("Fetching projects...");
   // Load previously saved projects
   $.ajax({
     url: "/getProjects/",
     error: error,
     dataType: "json",
     success: function(projects) {
-      console.log(projects);
       jQuery("#version-history-body").html("");
       jQuery("#landing .saved [data-id][data-id!='template']").remove();
       // Loop through each project
@@ -157,7 +155,6 @@ function loadProject(id) {
     });
   }
   fetchProject(id, function(data) {
-    console.log(data);
     if (data.err) {
       utils.error(data.err);
       return;

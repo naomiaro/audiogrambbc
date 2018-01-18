@@ -14,7 +14,6 @@ function formatDate(input) {
 };
 
 function displayMessages(messages) {
-    console.log(messages);
     var i = 1;
     messages.forEach(message => {
         if (i>1) {
@@ -32,7 +31,6 @@ function displayMessages(messages) {
 
 function checkMessages(since, force) {
     jQuery.getJSON('/messages/' + since,  function (data) {
-        console.log(since);
         if (data.messages && data.messages.length) {
             jQuery(function () {
                 displayMessages(data.messages);

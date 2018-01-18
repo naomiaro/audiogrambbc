@@ -22,7 +22,6 @@ function updateList() {
                 count++;
             }
         }
-        console.log('UPDATE WEBCAP LIST');
         jQuery("#input-webcap option[value='loading']").remove();
         if (jQuery('#input-webcap:visible').length)
             setTimeout(updateList, 10000);
@@ -38,7 +37,6 @@ function use() {
     if (filename == 'local') {
         setTimeout(function() {
             jQuery('#input-foreground').click();
-            console.log('click');
         }, 1000);
     }
 

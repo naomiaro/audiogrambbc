@@ -29,7 +29,6 @@ function set(req, res) {
 				diff.removed.push(listCurrent[person]);
 			}
 		}
-	console.log(JSON.stringify(diff));
 	// Update list
 		var list = JSON.stringify(listNew);
 		fs.writeFile(path.join(__dirname, "../whitelist.json"), list, function(err){

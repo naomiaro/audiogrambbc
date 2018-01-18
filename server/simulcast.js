@@ -168,14 +168,12 @@ function generateMedia(type, start, end, cb) {
 			err = "";
 		PROCESSES[job] = PROCESSES[job] || [];
 		PROCESSES[job].push(command.pid);
-		console.log('SIMULCAST PROCESS ADDED:', command.pid)
 		command.stderr.on('data', function(data) {
 			err += data;
 		});
 		command.on('exit', function() {
 			var pidIndex = PROCESSES[job].indexOf(command.pid);
 			PROCESSES[job].splice(pidIndex, 1);
-			console.log("SIMULCAST EXIT...", command.pid);
 			if (err!=="") return cb(err);
 			// Rename file, ready for collection
 			var moveFrom = tmpPath + type + '.' + ext;
@@ -258,7 +256,6 @@ function startJob(req, res) {
 }
 
 function poll(req, res) {
-	console.log("POLL >> ", req.params.id);
 	var file = req.params.id.split("."),
 		job = file[0],
 		ext = file[1],
@@ -267,7 +264,6 @@ function poll(req, res) {
 		logExists = fs.existsSync(logPath),
 		mediaPath = path.join(__dirname, "../tmp/mediaselector", job + "." + ext),
 		mediaExists = fs.existsSync(mediaPath);
-		console.log(mediaPath);
 	if (logExists) {
 		fs.readFile(logPath, 'utf8', function(err, data) {
 			if (err) {

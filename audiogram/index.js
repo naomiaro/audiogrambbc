@@ -188,11 +188,6 @@ Audiogram.prototype.drawFrames = function(cb) {
 Audiogram.prototype.saveSubtitles = function(type,cb) {
 
   var self = this;
-
-  console.log("generate subtitles: " + type);
-
-    
-
   if (self.settings.transcript) {
     subtitles.save(type, self.settings.subtitles, path.join(self.dir, "subtitles." + type), function(err){
       if (err) return cb(err);
