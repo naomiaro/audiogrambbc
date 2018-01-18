@@ -96,6 +96,7 @@ function getProjects() {
           jQuery("#landing .saved .empty").hide();
       }
       if (jQuery("#landing .saved [data-id][data-admin]").length || jQuery("#landing .saved [data-id][data-finished='false']").length) {
+        jQuery("#recent-filter option[value='admin']").remove();
         jQuery("#recent-filter option:last").after('<option value="admin">Admin View</option>');
       }
       utils.tooltips();
