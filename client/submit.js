@@ -16,13 +16,11 @@ function submit() {
 }
 
 function validate() {
-    console.log('validate');
     d3.select('#loading-message').text('Uploading files...');
     utils.setClass('loading');
     var data = media.get();
     for (var type in data) {
         if (!data[type].path) {
-            console.log('validate timeout');
             setTimeout(validate, 2000);
             return false;
         }
@@ -31,8 +29,6 @@ function validate() {
 }
 
 function submitted() {
-    console.log('submitted');
-
     if (d3.event) d3.event.preventDefault();
 
     var theme = preview.theme(),
@@ -116,7 +112,6 @@ function submitted() {
         success: function(data) {
             if (data.error == 'reupload') {
                 // Temporary media files have been lost. Reupload them and try again.
-                console.log('Reuploading media');
                 return reUploadMedia();
             } else if (data.error) {
                 return utils.error(data.error);

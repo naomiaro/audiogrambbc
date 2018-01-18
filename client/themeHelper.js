@@ -14,7 +14,6 @@ function themeReset() {
     var themes = themesRaw,
         theme = preview.theme(),
         name = jQuery('#input-theme').val();
-    console.log(theme);
     var sel = jQuery('#input-theme').get(0);
     d3.select(sel.options[sel.selectedIndex]).datum(themes[theme.name]);
     update(themes[name]);
@@ -54,7 +53,6 @@ function themeSave() {
             // Add name/author
             newTheme.name = newName;
             newTheme.author = USER.email;
-            console.log(newTheme);
             // Post
             formData.append('theme', JSON.stringify(newTheme));
             $.ajax({
@@ -66,7 +64,6 @@ function themeSave() {
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    console.log(data);
                     utils.setClass('success', "The theme '" + newName + "' has been saved, and will be available next time you use Audiogram.");
                     var msg = themes[newName] ? USER.name + " updated the theme '" + newName + "'" : USER.name + " added a new theme: '" + newName + "'";
                     logger.info(msg);

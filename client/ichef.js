@@ -7,7 +7,6 @@ function load() {
         utils.setClass('loading');
         themeHelper.updateImage(null, 'background');
         var url = '/ichef/' + pid;
-        console.log(url);
         var blob = null;
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url);

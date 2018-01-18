@@ -13,7 +13,6 @@ function _get(type) {
 }
 
 function _set(obj) {
-    console.log('SET MEDIA', obj);
     return MEDIA = obj;
 }
 

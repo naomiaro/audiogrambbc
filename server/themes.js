@@ -26,8 +26,6 @@ function add(req, res) {
 		newTheme.foregroundImage = {landscape: imgFilename, portrait: imgFilename, square: imgFilename}; 
 	}
 
-	console.log(newTheme);
-
 	// Add theme
 	themes[newTheme.name] = newTheme;
 

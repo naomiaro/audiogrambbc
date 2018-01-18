@@ -111,7 +111,6 @@ function post(req, res) {
 		rimraf(req.files['audio'][0].destination, function(err){
 			if (err) console.log("Error deleting tmp dir: " + err);
 		})
-		console.log(body);
 		try {
 			var bodyJson = JSON.parse(body);
 		} catch(e) {

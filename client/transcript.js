@@ -42,10 +42,6 @@ function format() {
             selPos = 0;
         }
     }
-    // Catch words in spaces for some reason
-    jQuery('.transcript-space span').each(function(){
-        console.log('UH OH!!');
-    });
     // Clear lines/breaks
     jQuery('.transcript-space, .transcript-line, .transcript-break').remove();
     // Merge segments
@@ -963,8 +959,6 @@ function init() {
 
     jQuery(document).on('click', '#transcript-pane > div.tip', function(){
         format();
-        console.log(toJSON());
-        console.log(toSubs());
     });
 
     jQuery(document).on('change', 'input[name^="subtitle.color"]', function(){
