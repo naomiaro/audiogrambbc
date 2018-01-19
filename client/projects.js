@@ -71,10 +71,10 @@ function getProjects() {
           // If audioId already exists, increment the version number
           var versions = +jQuery("#landing .saved [data-audioId='" +projects[i].audioId +"']").length + 1;
           jQuery("#landing .saved [data-audioId='" +projects[i].audioId +"']:first .version-count").removeClass('hidden').find("span").text(versions);
-          // el.find(".versions").text();
-          // jQuery("#landing .saved [data-audioId='" +projects[i].audioId +"'] .fa-link").removeClass("hidden");
-          // el.find(".fa-link").removeClass("hidden");
-          el.attr("data-hideVersion", true);
+          // Hide this version, unless the previous one is pending/errored
+          if (jQuery("#landing .saved [data-audioId='" + projects[i].audioId + "']:not(.hidden)").length) {
+            el.attr("data-hideVersion", true);
+          }
         }
         if (projects[i].private) el.find(".private").removeClass('hidden');
         if (projects[i].private && projects[i].user!=USER.email) el.attr("data-admin", true);
