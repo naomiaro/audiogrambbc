@@ -22,14 +22,19 @@ function validate(req, res, next) {
     
   }
   
-  // var audioFile = req.files['audio'][0]
-  // if (!audioFile || !audioFile.filename) {
   if (!req.body.media.audio || !req.body.media.audio.path) {
     return res.status(500).send("No valid audio received.");
   }
   
-  var audioExists = fs.existsSync(req.body.media.audio.path);
-  if (!req.body.media.audio.dest && !audioExists) {
+  var needToReupload = false;
+  var audioMissing = req.body.media.audio && !fs.existsSync(req.body.media.audio.path);
+  var backgroundMissing = req.body.media.background && !fs.existsSync(req.body.media.background.path);
+  var foregroundMissing = req.body.media.foreground && !fs.existsSync(req.body.media.foreground.path);
+  if (audioMissing && !req.body.media.audio.dest) needToReupload = true;
+  if (backgroundMissing && !req.body.media.background.dest) needToReupload = true;
+  if (foregroundMissing && !req.body.media.foreground.dest) needToReupload = true;
+
+  if (needToReupload) {
     return res.json({error: "reupload"});
   }
   
@@ -51,41 +56,60 @@ function route(req, res) {
   console.log("RLW routing");
   var jobId = uuidv4();
   
-  if (req.body.media.background && !req.body.media.background.dest) {
-    var backgroundSrc = req.body.media.background.path,
-      backgroundId = req.body.media.background.id,
-      backgroundExt = req.body.media.background.mimetype.split("/").pop(),
-      backgroundImagePath = "background/" + backgroundId + "." + backgroundExt;
-    req.body.media.background.dest = backgroundImagePath;
-    transports.uploadBackground(backgroundSrc, backgroundImagePath, function(err) {
-      if (err) {
-        return res.status(500).send(err);
+  if (req.body.media.background) {
+    var backgroundExists = req.body.media.background.dest && fs.existsSync(req.body.media.background.dest);
+    if (!backgroundExists) {
+      var backgroundSrc = req.body.media.background.path;
+      if (!fs.existsSync(backgroundSrc)) {
+        console.log("reuploading background");
+        return res.json({ error: "reupload" });
       }
-      fs.unlinkSync(backgroundSrc);
-    });
+      var backgroundId = req.body.media.background.id;
+      var backgroundExt = req.body.media.background.mimetype.split("/").pop();
+      var backgroundImagePath = "background/" + backgroundId + "." + backgroundExt;
+      req.body.media.background.dest = backgroundImagePath;
+      transports.uploadBackground(backgroundSrc, backgroundImagePath, function(err) {
+        if (err) {
+          return res.status(500).send(err);
+        }
+        fs.unlinkSync(backgroundSrc);
+      });
+    }
   }
   
-  if (req.body.media.foreground && !req.body.media.foreground.dest) {
-    var foregroundSrc = req.body.media.foreground.path,
-      foregroundId = req.body.media.foreground.id,
-      foregroundExt = req.body.media.foreground.mimetype.split("/").pop(),
-      foregroundImagePath = "foreground/" + foregroundId + "." + foregroundExt;
-    req.body.media.foreground.dest = foregroundImagePath;
-    transports.uploadBackground(foregroundSrc, foregroundImagePath, function(err) {
-      if (err) {
-        return res.status(500).send(err);
+  if (req.body.media.foreground) {
+    var foregroundExists = req.body.media.foreground.dest && fs.existsSync(req.body.media.foreground.dest);
+    if (!foregroundExists) {
+      var foregroundSrc = req.body.media.foreground.path;
+      if (!fs.existsSync(foregroundSrc)) {
+        console.log("reuploading foreground");
+        return res.json({ error: "reupload" });
       }
-      fs.unlinkSync(foregroundSrc);
-    });
+      var foregroundId = req.body.media.foreground.id;
+      var foregroundExt = req.body.media.foreground.mimetype.split("/").pop();
+      var foregroundImagePath = "foreground/" + foregroundId + "." + foregroundExt;
+      req.body.media.foreground.dest = foregroundImagePath;
+      transports.uploadBackground(foregroundSrc, foregroundImagePath, function(err) {
+        if (err) {
+          return res.status(500).send(err);
+        }
+        fs.unlinkSync(foregroundSrc);
+      });
+    }
   }
   
-  if (!req.body.media.audio.dest) {
-    var audioSrc = req.body.media.audio.path,
-      audioId = req.body.media.audio.id,
-      audioType = req.body.media.audio.mimetype,
-      audioExt = audioType.split("/").pop(),
-      audioExt = audioExt == "mpeg" ? "mp3" : audioExt,
-      audioExt = audioExt.includes("wav") ? "wav" : audioExt;
+  var audioExists = req.body.media.audio.dest && fs.existsSync(req.body.media.audio.dest);  
+  if (!audioExists) {
+    var audioSrc = req.body.media.audio.path;
+    if (!fs.existsSync(audioSrc)) {
+      console.log("reuploading audio");
+      return res.json({ error: "reupload" });
+    }
+    var audioId = req.body.media.audio.id;
+    var audioType = req.body.media.audio.mimetype;
+    var audioExt = audioType.split("/").pop();
+    audioExt = audioExt == "mpeg" ? "mp3" : audioExt;
+    audioExt = audioExt.includes("wav") ? "wav" : audioExt;
     if (audioExt !== "mp3" && audioExt !== "wav" && audioExt !== "mp4" && audioExt !== "mov") {
       return res.json({ error: `Audio file type ${audioExt} invalid` });
     }
