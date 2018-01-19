@@ -35,6 +35,7 @@ function validate(req, res, next) {
   if (foregroundMissing && !req.body.media.foreground.dest) needToReupload = true;
 
   if (needToReupload) {
+    console.log("needToReupload");
     return res.json({error: "reupload"});
   }
   
@@ -57,7 +58,8 @@ function route(req, res) {
   var jobId = uuidv4();
   
   if (req.body.media.background) {
-    var backgroundExists = req.body.media.background.dest && fs.existsSync(req.body.media.background.dest);
+    var backgroundDest = path.join(__dirname, "../media", req.body.media.background.dest);
+    var backgroundExists = req.body.media.background.dest && fs.existsSync(backgroundDest);
     if (!backgroundExists) {
       var backgroundSrc = req.body.media.background.path;
       if (!fs.existsSync(backgroundSrc)) {
@@ -78,7 +80,8 @@ function route(req, res) {
   }
   
   if (req.body.media.foreground) {
-    var foregroundExists = req.body.media.foreground.dest && fs.existsSync(req.body.media.foreground.dest);
+    var foregroundDest = path.join(__dirname, "../media", req.body.media.foreground.dest);
+    var foregroundExists = req.body.media.foreground.dest && fs.existsSync(foregroundDest);
     if (!foregroundExists) {
       var foregroundSrc = req.body.media.foreground.path;
       if (!fs.existsSync(foregroundSrc)) {
@@ -98,7 +101,8 @@ function route(req, res) {
     }
   }
   
-  var audioExists = req.body.media.audio.dest && fs.existsSync(req.body.media.audio.dest);  
+  var audioDest = path.join(__dirname, "../media", req.body.media.audio.dest);
+  var audioExists = req.body.media.audio.dest && fs.existsSync(audioDest);  
   if (!audioExists) {
     var audioSrc = req.body.media.audio.path;
     if (!fs.existsSync(audioSrc)) {
