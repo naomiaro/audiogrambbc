@@ -58,8 +58,7 @@ function route(req, res) {
   var jobId = uuidv4();
   
   if (req.body.media.background) {
-    var backgroundDest = path.join(__dirname, "../media", req.body.media.background.dest);
-    var backgroundExists = req.body.media.background.dest && fs.existsSync(backgroundDest);
+    var backgroundExists = req.body.media.background.dest && fs.existsSync(path.join(__dirname, "../media", req.body.media.background.dest));
     if (!backgroundExists) {
       var backgroundSrc = req.body.media.background.path;
       if (!fs.existsSync(backgroundSrc)) {
@@ -80,8 +79,7 @@ function route(req, res) {
   }
   
   if (req.body.media.foreground) {
-    var foregroundDest = path.join(__dirname, "../media", req.body.media.foreground.dest);
-    var foregroundExists = req.body.media.foreground.dest && fs.existsSync(foregroundDest);
+    var foregroundExists = req.body.media.foreground.dest && fs.existsSync(path.join(__dirname, "../media", req.body.media.foreground.dest));
     if (!foregroundExists) {
       var foregroundSrc = req.body.media.foreground.path;
       if (!fs.existsSync(foregroundSrc)) {
@@ -101,8 +99,7 @@ function route(req, res) {
     }
   }
   
-  var audioDest = path.join(__dirname, "../media", req.body.media.audio.dest);
-  var audioExists = req.body.media.audio.dest && fs.existsSync(audioDest);  
+  var audioExists = req.body.media.audio.dest && fs.existsSync(path.join(__dirname, "../media", req.body.media.audio.dest));  
   if (!audioExists) {
     var audioSrc = req.body.media.audio.path;
     if (!fs.existsSync(audioSrc)) {
