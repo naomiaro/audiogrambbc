@@ -59,7 +59,7 @@ function route(req, res) {
     req.body.media.background.dest = backgroundImagePath;
     transports.uploadBackground(backgroundSrc, backgroundImagePath, function(err) {
       if (err) {
-        throw err;
+        return res.status(500).send(err);
       }
       fs.unlinkSync(backgroundSrc);
     });
@@ -73,7 +73,7 @@ function route(req, res) {
     req.body.media.foreground.dest = foregroundImagePath;
     transports.uploadBackground(foregroundSrc, foregroundImagePath, function(err) {
       if (err) {
-        throw err;
+        return res.status(500).send(err);
       }
       fs.unlinkSync(foregroundSrc);
     });
@@ -94,7 +94,7 @@ function route(req, res) {
     transports.uploadAudio(audioSrc, audioPath, function(err) {
       if (err) {
         console.log("RLW routing err", err);
-        throw err;
+        return res.status(500).send(err);
       }
       fs.unlinkSync(audioSrc);
       runJob();
