@@ -7,8 +7,13 @@ var request = require('request');
     }
     var url = `http://apis.labs.jupiter.bbc.co.uk/whois/${email}`;
     request({url, proxy: null }, function(err, adRes, adBody) {
-      var userData = JSON.parse(adBody);
-      var isAdmin = userData.retval.groups ? userData.retval.groups.includes(adminGroup) : false;
+      if (err) return cb(err, null);
+      try {
+        var userData = JSON.parse(adBody);
+        var isAdmin = userData.retval.groups ? userData.retval.groups.includes(adminGroup) : false;
+      } catch {
+        var isAdmin = false;
+      }
       cb(err, isAdmin);
     });
   }

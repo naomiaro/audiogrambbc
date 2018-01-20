@@ -52,6 +52,11 @@ function newProject(e) {
 }
 
 function getProjects() {
+<<<<<<< HEAD
+=======
+  if (jQuery('#landing .saved').hasClass('loading')) return;
+  jQuery('#landing .saved').addClass('loading');
+>>>>>>> 38bd8c096e6abb7a3901ed8da8a7409253813008
   // Load previously saved projects
   $.ajax({
     url: "/getProjects/",
@@ -68,10 +73,10 @@ function getProjects() {
           // If audioId already exists, increment the version number
           var versions = +jQuery("#landing .saved [data-audioId='" +projects[i].audioId +"']").length + 1;
           jQuery("#landing .saved [data-audioId='" +projects[i].audioId +"']:first .version-count").removeClass('hidden').find("span").text(versions);
-          // el.find(".versions").text();
-          // jQuery("#landing .saved [data-audioId='" +projects[i].audioId +"'] .fa-link").removeClass("hidden");
-          // el.find(".fa-link").removeClass("hidden");
-          el.attr("data-hideVersion", true);
+          // Hide this version, unless the previous one is pending/errored
+          if (jQuery("#landing .saved [data-audioId='" + projects[i].audioId + "']:not(.hidden)").length) {
+            el.attr("data-hideVersion", true);
+          }
         }
         if (projects[i].private) el.find(".private").removeClass('hidden');
         if (projects[i].private && projects[i].user!=USER.email) el.attr("data-admin", true);
@@ -90,15 +95,13 @@ function getProjects() {
         el.find('.box-icon').css('width', imageWidth + "px");
         el.find('.info-box-content').css('width', "calc(100% - " + imageWidth + "px - 20px)");
       }
-      if (jQuery("#landing .saved [data-id]:visible").length) {
-          jQuery("#landing .saved .empty").hide();
-      }
       if (jQuery("#landing .saved [data-id][data-admin]").length || jQuery("#landing .saved [data-id][data-finished='false']").length) {
         jQuery("#recent-filter option[value='admin']").remove();
         jQuery("#recent-filter option:last").after('<option value="admin">Admin View</option>');
       }
       utils.tooltips();
       updateFilter();
+      jQuery("#landing .saved").removeClass("loading");
     }
   });
 }
@@ -106,7 +109,7 @@ function getProjects() {
 function updateFilter() {
   var filter = jQuery("#recent-filter").val();
   jQuery("#landing .saved [data-id]").addClass("hidden");
-  jQuery("#landing .saved .empty").show();
+  jQuery("#landing .saved").removeClass('empty');
   if (filter=="all") {
     jQuery("#landing .saved [data-id][data-admin!='true'][data-finished!='false']").removeClass("hidden");
   } else if (filter=='admin') {
@@ -115,8 +118,10 @@ function updateFilter() {
     jQuery("#landing .saved [data-user][data-user='" + USER.email + "'][data-finished!='false']").removeClass("hidden");
   }
   jQuery("#landing .saved [data-id='template']").addClass("hidden");
-  if (jQuery("#landing .saved [data-id]:visible").length) {
-    jQuery("#landing .saved .empty").hide();
+  if (jQuery("#landing .saved [data-id]:not(.hidden)").length) {
+    jQuery("#landing .saved").removeClass("empty");
+  } else {
+    jQuery("#landing .saved").addClass("empty");
   }
 }
 
