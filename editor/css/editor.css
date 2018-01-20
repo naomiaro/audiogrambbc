@@ -401,6 +401,20 @@ body.landing #error {
     display: inline-block;
     text-align: center;
 }
+#transcript-timings.playing .block .box{
+  background: #eee;
+}
+#transcript-timings.playing .block.active .box{
+  cursor: pointer;
+  background: rgba(255, 255, 0, 0.5);
+}
+#transcript-timings.playing .block.staged .box{
+  cursor: pointer;
+  background: #fff;
+}
+#transcript-timings.playing .block.staged .box:hover{
+  background: rgba(255, 255, 0, 0.15);
+}
 #transcript-timings .block .times input {
     font-size: 14px;
     padding: 1px;
@@ -409,6 +423,11 @@ body.landing #error {
     position: absolute;
     text-align: center;
     border-color: transparent;
+    background: transparent;
+}
+#transcript-timings.playing .block:not([data-start]):not(.active):not(.staged) input[name='start'],
+#transcript-timings.playing .block:not([data-end]):not(.active) input[name='end']{
+  display: none;
 }
 #transcript-timings .block .times input[name='start'] {
   top: 8px;

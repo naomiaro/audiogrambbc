@@ -6,6 +6,7 @@ var path = require("path");
 
 var utils = require('./utils');
 var transcript = require('./transcript');
+var transcriptTimings = require('./transcriptTimings');
 var logger = require('./slack');
 var preview = require('./preview');
 var minimap = require('./minimap');
@@ -91,6 +92,7 @@ function initialize(err, themesWithImages) {
   projects.init();
   submit.init();
   transcript.init();
+  transcriptTimings.init();
   vcs.init();
   png.init();
   webcap.init();
