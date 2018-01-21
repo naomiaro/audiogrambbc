@@ -137,12 +137,14 @@ function updateTrim(extent) {
 
 function init() {
     d3.selectAll("#start, #end").on("change", updateTrim);
-    jQuery(document).on('click', '#minimap svg', function(e){
+  jQuery(document).on('click', '#minimap:not(.disabled) svg, #minimap.disabled .disabled', function(e){
+      if (!jQuery('#transcript-timings').hasClass('recording')){
         var pos = e.offsetX / jQuery(this).width();
         var audio = require('./audio');
         var dur = audio.duration();
         var time = pos * dur;
         audio.currentTime(time);
+      }
     });
 }
 

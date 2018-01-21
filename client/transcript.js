@@ -15,7 +15,9 @@ var jQuery = require("jquery"),
 // Highlight selected words 
 function highlight(start, end) {
     jQuery(".transcript-word").removeClass("unused");
-    if (start>=0 && end) {
+    var allAdded = !jQuery(".transcript-word:not(.added)").length;
+    if (!allAdded && start>=0 && end) {
+        console.log('HIGHLIGHT');
         jQuery(".transcript-word").filter(function() {
             var wordStart = jQuery(this).attr("data-start"),
             wordEnd = jQuery(this).attr("data-end"),
@@ -32,6 +34,7 @@ function format() {
         }
         return;
     }
+    console.log('FORMAT');
     // Get selection pos
     var sel = window.getSelection();
     if (sel.focusNode) {
@@ -97,8 +100,10 @@ function format() {
     // Set added word timings
     var extent = audio.extent();
     var duration = audio.duration();
-    var selectionStart = extent[0] * duration;
-    var selectionEnd = extent[1] * duration;
+    // var selectionStart = extent[0] * duration;
+    // var selectionEnd = extent[1] * duration;
+    var selectionStart = +jQuery('#start').val();
+    var selectionEnd = +jQuery('#end').val();
     jQuery('.transcript-word.added').attr('data-start', null).attr('data-end', null);
     jQuery('.transcript-word.added').each(function () {
         if (!jQuery(this).attr('data-start')) {
@@ -108,7 +113,7 @@ function format() {
             var next = jQuery('.transcript-word:not(.added)').filter(function () {
                 return jQuery(this).attr('data-start') > start;
             }).first();
-            var end = next.length ? +next.attr('data-start') || duration : duration;
+            var end = next.length ? +next.attr('data-start') || selectionEnd : selectionEnd;
             var dur = end - start;
             var nextWords = jQuery(this).nextUntil('.transcript-word:not(.added)').filter('.transcript-word');
             var charCount = jQuery(this).text().length;
@@ -126,6 +131,7 @@ function format() {
             });
         }
     });
+    console.log( jQuery('.transcript-word:last').attr('data-end') );
     // Highlight words
     if (!jQuery('.transcript-word:not(.added)').length) {
         highlight(selectionStart, selectionEnd);
@@ -307,6 +313,17 @@ function toSubs() {
             subs.push({speaker, start, end, lines});
         }
     });
+    // If in timings mode
+    if (jQuery('#transcript-timings .block:visible').length) {
+        var max = audio.duration() + 1;
+        subs.forEach(function(sub, i) {
+            var block = jQuery(`#transcript-timings .block:eq(${i})`);
+            var start = block.attr('data-start') || max;
+            var end = block.attr('data-end') || max;
+            subs[i].start = start;
+            subs[i].end = end;
+        });
+    }
     // Remove small gaps between segments
     for (var i = 1; i < subs.length; i++) {
         var mergeGapsSmallerThan = 1;
@@ -318,21 +335,29 @@ function toSubs() {
         }
     }
     // Pad short segments
+    var minSegmentDur = 1;
     for (var i = 0; i < subs.length; i++) {
-        var minSegmentDur = 1;
         var dur = subs[i].end - subs[i].start;
         if (dur < minSegmentDur) {
             // move start time
             var diff = minSegmentDur - dur;
             if (subs[i-1]) {
-                subs[i-1].end = Math.max(subs[i-1].end - diff/2, subs[i-1].start + minSegmentDur);
+                var prevEnd = Math.max(subs[i-1].end - diff/2, subs[i-1].start + minSegmentDur);
+                subs[i-1].end = Math.min(prevEnd, subs[i-1].end);
                 subs[i].start = Math.max(subs[i].start - diff/2, subs[i-1].end);
             }
             // move end time
-            var diff = minSegmentDur - (subs[i].end - subs[i].start);
-            subs[i].end += diff;
+            var remainingDiff = minSegmentDur - (subs[i].end - subs[i].start);
             if (subs[i+1]) {
-                subs[i+1].start += diff;
+                if (subs[i+1].end - subs[i+1].start > minSegmentDur) {
+                    subs[i].end += remainingDiff;
+                    subs[i+1].start += remainingDiff;
+                }
+            } else {
+                var extent = audio.extent();
+                var duration = audio.duration();
+                var selectionEnd = extent[1] * duration;
+                subs[i].end = Math.min(selectionEnd, subs[i].end + remainingDiff);
             }
         }
     }
@@ -973,6 +998,11 @@ function init() {
         if (jQuery(e.target).is('input')) checked = !checked;
         checkbox.prop("checked", checked);
         d3.select('#transcript-pane').classed('disabled', !checked);
+        if (checked) {
+            jQuery('#transcript .transcript-buttons .enabledOnly').show();
+        } else {
+            jQuery('#transcript .transcript-buttons .enabledOnly').hide();
+        }
         var preview = require('./preview');
         preview.redraw();
     });

@@ -591,6 +591,7 @@
                         <div class="page-header">
                             <h1>Audio Source</h1>
                         </div>
+                        <div class="disabled"></div>
                         <svg width="640" height="80" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <clipPath id="clip">
@@ -860,13 +861,13 @@
                                 <!-- <span class='on'>ON</span><span class='off'>OFF</span> -->
                             </button>
                             <span style="color: #ccc; padding: 0 10px;">|</span>
-                            <button id="transcript-btn-timings">
+                            <button id="transcript-btn-timings" class="enabledOnly">
                                 <i class="fa fa-clock-o"></i>Set Timings
                             </button>
-                            <button id="transcript-btn-format" class="subFormatToggle">
+                            <button id="transcript-btn-format" class="subFormatToggle enabledOnly">
                                 <i class="fa fa-align-center"></i>Format
                             </button>
-                            <button id="transcript-btn-reset">
+                            <button id="transcript-btn-reset" class="hidden">
                                 <i class="fa fa-undo"></i>Reset
                             </button>
                             <button id="transcript-btn-import">
@@ -892,7 +893,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <div id="transcript-timings">
+                        <div id="transcript-timings" class="wizard">
                             <div class="transcript-buttons">
                                 <button id="transcript-btn-timings-save" style="border-color: #999;">
                                     Save
@@ -901,7 +902,7 @@
                                     Cancel
                                 </button>
                                 <span style="color: #ccc; padding: 0 10px;">|</span>
-                                <button id="transcript-btn-timings-mode-wizard" class="active">
+                                <button id="transcript-btn-timings-mode-wizard">
                                     <i class="fa fa-magic"></i>Wizard Mode
                                 </button>
                                 <button id="transcript-btn-timings-mode-manual">
@@ -909,17 +910,22 @@
                                 </button>
                             </div>
                             <div id="transcript-timings-wizard-info" class="alert alert-info" role="alert" style="margin-bottom: 10px;">
-                                <p>
-                                    To set timings, preview the audio and click on the next subtitle block when it should appear.
-                                </p>
-                                <p>
-                                    Click on the next block to transition to it immediately.
-                                </p>
-                                <p>
-                                    Alternatively, click on the same block again to hide it until you're ready to click on the next one.
-                                </p>
-                                <hr>
-                                <p style="text-align: center">
+                                <div class="instructions">
+                                    <p>
+                                        To set timings, preview the audio and click on the next subtitle block when it should appear.
+                                    </p>
+                                    <p>
+                                        Click on the next block to transition to it immediately.
+                                    </p>
+                                    <p>
+                                        Alternatively, click on the same block again to hide it until you're ready to click on the next one.
+                                    </p>
+                                    <p>
+                                        You can always use "manual mode" to tweak the timings after.
+                                    </p>
+                                    <hr>
+                                </div>
+                                <p class="buttons-start" style="text-align: center; margin: 0;">
                                     <button id="transcript-btn-timings-wizard-start-on">
                                         <b>Start</b>, with first subtitle block <i>visible</i>
                                     </button>
@@ -927,7 +933,20 @@
                                         <b>Start</b>, with first subtitle block <i>hidden</i>
                                     </button>
                                 </p>
+                                <p class="buttons-stop" style="display: none; text-align: center; margin: 0;">
+                                    <button id="transcript-btn-timings-wizard-restart">
+                                        <i class="fa fa-step-backward"></i>Restart
+                                    </button>
+                                    <button id="transcript-btn-timings-wizard-finish">
+                                        <i class="fa fa-stop"></i>Finish
+                                    </button>
+                                    <button id="transcript-btn-timings-wizard-cancel">
+                                        <i class="fa fa-ban"></i>Cancel
+                                    </button>
+                                </p>
                             </div>
+                            <i id="transcript-timings-tooltip-show" data-toggle="tooltip" data-placement="bottom" title="Click to SHOW" data-animation="false" data-trigger="manual"></i>
+                            <i id="transcript-timings-tooltip-hide" data-toggle="tooltip" data-placement="bottom" title="Click to HIDE" data-animation="false" data-trigger="manual"></i>
                         </div>
                         <div id="transcript-pane">
                             <!-- <input id="input-transcript" name="transcript" type="file" /> -->

@@ -377,17 +377,32 @@ body.landing #error {
     cursor: pointer;
 }
 
+#transcript-timings.manual #transcript-timings-wizard-info {
+  display: none;
+}
+
 #transcript-timings .transcript-buttons {
     padding-bottom: 8px;
     margin-top: 0;
     border-bottom: 1px solid #ccc;
 }
+#transcript-timings.wizard #transcript-btn-timings-mode-wizard,
+#transcript-timings.manual #transcript-btn-timings-mode-manual{
+  cursor: default;
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
 #transcript-timings-wizard-info button {
   padding: 3px 8px;
 }
 
-#transcript-timings .block.template {
-  display: none;
+#transcript-timings [data-toggle="tooltip"] {
+  position: absolute;
+}
+
+#transcript-timings .block.unused {
+  opacity: 0.7;
 }
 #transcript-timings .block {
   text-align: center;
@@ -401,18 +416,21 @@ body.landing #error {
     display: inline-block;
     text-align: center;
 }
-#transcript-timings.playing .block .box{
+#transcript-timings.recording .block .box{
   background: #eee;
 }
-#transcript-timings.playing .block.active .box{
-  cursor: pointer;
+#transcript-timings.playing .block.current .box,
+#transcript-timings.recording .block.active .box{
   background: rgba(255, 255, 0, 0.5);
 }
-#transcript-timings.playing .block.staged .box{
+#transcript-timings.recording .block.active .box{
+  cursor: pointer;
+}
+#transcript-timings.recording .block.staged .box{
   cursor: pointer;
   background: #fff;
 }
-#transcript-timings.playing .block.staged .box:hover{
+#transcript-timings.recording .block.staged .box:hover{
   background: rgba(255, 255, 0, 0.15);
 }
 #transcript-timings .block .times input {
@@ -422,11 +440,16 @@ body.landing #error {
     display: block;
     position: absolute;
     text-align: center;
-    border-color: transparent;
     background: transparent;
 }
-#transcript-timings.playing .block:not([data-start]):not(.active):not(.staged) input[name='start'],
-#transcript-timings.playing .block:not([data-end]):not(.active) input[name='end']{
+#transcript-timings.wizard .block .times input {
+    border-color: transparent;
+    outline: none;
+    pointer-events: none;
+}
+
+#transcript-timings.recording .block:not([data-start]):not(.active):not(.staged) input[name='start'],
+#transcript-timings.recording .block:not([data-end]):not(.active) input[name='end']{
   display: none;
 }
 #transcript-timings .block .times input[name='start'] {
@@ -1049,6 +1072,22 @@ input[type='text'] {
 }
 
 /* Minimap */
+
+#minimap:not(.disabled) .disabled {
+  display: none;
+}
+#minimap.disabled .disabled {
+    width: 100%;
+    height: 80px;
+    background: transparent;
+    margin-bottom: -80px;
+    cursor: crosshair;
+    position: relative;
+    z-index: 999;
+}
+#minimap.disabled input {
+  pointer-events: none;
+}
 
 g.background path {
   fill: #999;
