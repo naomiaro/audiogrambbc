@@ -12,12 +12,21 @@ var jQuery = require("jquery"),
   kaldiPoll,
   formatTimeout;
 
+
+function formatHMS(t) {
+    t = Number(t);
+    var h = Math.floor(t / 3600),
+    m = Math.floor((t % 3600) / 60),
+    s = ((t % 3600) % 60).toFixed(2),
+    string = `00${h}`.slice(-2) + ":" + `00${m}`.slice(-2) + ":" + `00${s}`.slice(-5);
+    return string;
+}
+
 // Highlight selected words 
 function highlight(start, end) {
     jQuery(".transcript-word").removeClass("unused");
     var allAdded = !jQuery(".transcript-word:not(.added)").length;
     if (!allAdded && start>=0 && end) {
-        console.log('HIGHLIGHT');
         jQuery(".transcript-word").filter(function() {
             var wordStart = jQuery(this).attr("data-start"),
             wordEnd = jQuery(this).attr("data-end"),
@@ -34,7 +43,6 @@ function format() {
         }
         return;
     }
-    console.log('FORMAT');
     // Get selection pos
     var sel = window.getSelection();
     if (sel.focusNode) {
@@ -131,7 +139,6 @@ function format() {
             });
         }
     });
-    console.log( jQuery('.transcript-word:last').attr('data-end') );
     // Highlight words
     if (!jQuery('.transcript-word:not(.added)').length) {
         highlight(selectionStart, selectionEnd);
@@ -273,6 +280,12 @@ function format() {
         }
         jQuery(this).find('.transcript-segment').css("border-color", color);
     });
+    // Add word titles
+    jQuery('.transcript-word').each(function(){
+        var start = formatHMS( jQuery(this).attr("data-start") ).replace('00:', '');
+        var end = formatHMS( jQuery(this).attr('data-end') ).replace('00:', '');
+        jQuery(this).attr('title', `${start} - ${end}`);
+    });
 
     return;
 }
@@ -393,6 +406,9 @@ function toJSON() {
                     if (jQuery(this).hasClass('added')) {
                         word.added = true;
                     }
+                    if (jQuery(this).hasClass("time-manual")) {
+                      word.timeManual = true;
+                    }
                     segment.words.push(word);
                 });
                 json.segments.push(segment);
@@ -473,7 +489,8 @@ function load(json) {
                 segment.words.forEach(function(word) {
                     var wordSpan = document.createElement('span');
                     var cl = 'transcript-word';
-                    if (word.added) cl += ' added';
+                    if (word.added) cl += " added";
+                    if (word.timeManual) cl += ' time-manual';
                     wordSpan.setAttribute('class', cl);
                     wordSpan.setAttribute('data-start', word.start);
                     wordSpan.setAttribute('data-end', word.end);
@@ -546,19 +563,6 @@ function generate(blob) {
 }
 
 function exportTranscript() {
-    function formatHMS(t) {
-        t = Number(t);
-        var h = Math.floor(t / 3600),
-        m = Math.floor((t % 3600) / 60),
-        s = ((t % 3600) % 60).toFixed(2),
-        string =
-        `00${h}`.slice(-2) +
-        ':' +
-        `00${m}`.slice(-2) +
-        ':' +
-        `00${s}`.slice(-5);
-        return string;
-    }
     
     var format = this.dataset.format,
     subs = toSubs(),

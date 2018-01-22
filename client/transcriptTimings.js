@@ -59,14 +59,21 @@ function load() {
     });
     var block = jQuery("#transcript-timings .block:last");
     block.find(".subtitles").html(text);
-    block.attr('data-start', sub.start);
-    block.attr('data-end', sub.end);
+    block.attr("data-start", sub.start);
+    block.attr('data-start-orig', sub.start);
+    block.attr("data-end", sub.end);
+    block.attr('data-end-orig', sub.end);
     block.find("input[name='start']").val(formatHMS(sub.start));
     block.find("input[name='end']").val(formatHMS(sub.end));
     var width = block.find(".subtitles").width() + 5;
     if (width > maxWidth) maxWidth = width;
   });
   jQuery("#transcript-timings .block .subtitles").width(maxWidth);
+  var offset = jQuery('#transcript-timings').offset().left;
+  var labelStartLeft = jQuery('#transcript-timings input[name=start]:first').offset().left - offset;
+  var labelEndLeft = jQuery("#transcript-timings input[name=end]:first").offset().left - offset;
+  jQuery("#transcript-timings .label .start").css("left", labelStartLeft);
+  jQuery("#transcript-timings .label .end").css("left", labelEndLeft);
 }
 
 function setStartTime(time, e) {
@@ -116,13 +123,14 @@ function setEndTime(time, e) {
 }
 
 function start(visible) {
+  jQuery("#transcript-timings .block input").removeClass('invalid');
   jQuery("#transcript-timings .block").removeClass("active staged unused");
   jQuery("#transcript-timings .block:first").addClass('staged');
   if (!jQuery("#transcript-timings").hasClass("recording")) {
     jQuery("#transcript-timings .block").each(function () {
       var block = jQuery(this);
-      block.attr('data-start-orig', block.attr('data-start'));
-      block.attr('data-end-orig', block.attr('data-end'));
+      block.attr('data-start-wizard-orig', block.attr('data-start'));
+      block.attr('data-end-wizard-orig', block.attr('data-end'));
     });
   }
   jQuery("#transcript-timings .block").attr('data-start', null).attr('data-end', null);
@@ -151,12 +159,15 @@ function stop() {
   jQuery('#transcript-timings-wizard-info .buttons-stop').hide();
   jQuery("#transcript-timings .block").each(function(){
     var block = jQuery(this);
+    block.attr("data-start-wizard-orig", null);
+    block.attr('data-end-wizard-orig', null);
     var start = block.attr('data-start');
     var end = block.attr('data-end');
     block.find("input[name='start']").val(start ? formatHMS(start) : '');
     block.find("input[name='end']").val(end ? formatHMS(end) : '');
     if (!start) block.addClass('unused');
   });
+  validate();
 }
 
 function tooltip(el, x) {
@@ -170,18 +181,101 @@ function tooltip(el, x) {
   jQuery(`#transcript-timings-tooltip-${type}`).tooltip('show');
 }
 
+function getTimeFromInput(el) {
+  var type = el.is('[name=start') ? 'start' : 'end';
+  return +el.parents('.block:first').attr(`data-${type}`);
+}
+
+function updateTime(el, time) {
+  var type = el.is("[name=start") ? "start" : "end";
+  el.parents(".block:first").attr(`data-${type}`, time);
+  el.val(formatHMS(time));
+}
+
 function validate() {
-  var extent = audio.extent();
-  var duration = audio.duration();
-  var selectionEnd = extent[1] * duration;
-  jQuery('#transcript-timings .block').each(function(){
-    var block = jQuery(this);
-    var start = +block.attr('data-start');
-    var end = +block.attr('data-end');
-    var prev = +block.prevAll('.block:not(.error)').attr('data-end') || 0;
-    var next = +block.nextAll('.block:not(.error)').attr('data-start') || selectionEnd;
-    if (start < prev || end > next) block.addClass('error');
+  var inputs = jQuery('#transcript-timings .block input');
+  var count = inputs.length;
+  inputs.removeClass('invalid');
+  inputs.each(function(i){
+    var time = getTimeFromInput(jQuery(this));
+    var prev = 0;
+    for (let j = i-1; j >=0; j--) {
+      var el = jQuery(`#transcript-timings .block input:eq(${j})`);
+      if (el.length) {
+        prev = getTimeFromInput(el);
+        break;
+      }
+    }
+    var next = Infinity;
+    for (let j = i+1; j < count; j++) {
+      var el = jQuery(`#transcript-timings .block input:eq(${j})`);
+      if (el.length) {
+        next = getTimeFromInput(el);
+        break;
+      }
+    }
+    var invalid = false;
+    // If time is within thenth sec of boundary, move it
+    if (time < prev) {
+      if (Math.round(time * 10) / 10 < Math.round(prev * 10) / 10) {
+        invalid = true;
+      } else {
+        updateTime(jQuery(this), prev);
+      }
+    }
+    if (time > next) {
+      if (Math.round(time * 10) / 10 > Math.round(next * 10) / 10) {
+        invalid = true;
+      } else {
+        updateTime(jQuery(this), next);
+      }
+    }
+    // Otherwise invalidate
+    if (invalid) jQuery(this).addClass('invalid');
   })
+}
+
+function save() {
+  stop();
+  validate();
+  var invalid = jQuery("#transcript-timings .block input.invalid").length;
+  if (invalid) {
+    return alert('Some of your timings are invalid. Fix these (shown in red) first.');
+  } else {
+    console.log('save');
+    jQuery('#transcript-timings .block').each(function(i){
+      var block = jQuery(this);
+      var start = +block.attr("data-start");
+      var end = +block.attr('data-end');
+      var dur = end - start;
+      var origStart = +block.attr("data-start-orig");
+      var origEnd = +block.attr("data-end-orig");
+      if (start != origStart || end != origEnd) {
+        var words = jQuery(`.transcript-editor .transcript-segment:eq(${i}) .transcript-word`);
+        var charCount = 0;
+        words.each(function() {
+          charCount += jQuery(this).text().length;
+        });
+        var secPerChar = dur / charCount;
+        var time = start;
+
+        words.each(function() {
+          var word = jQuery(this);
+          word.attr("data-start-org", word.attr("data-start"));
+          word.attr("data-end-org", word.attr("data-end"));
+          word.attr("data-start", time);
+          var wordDur = secPerChar * word.text().length;
+          word.attr("data-end", time + wordDur);
+          word.removeClass('added');
+          word.addClass("time-manual");
+          time += wordDur;
+        });
+      }
+    });
+    transcript.format();
+    jQuery("#transcript").removeClass("timings");
+    jQuery("#minimap").removeClass("disabled");
+  }
 }
 
 function init() {
@@ -193,6 +287,9 @@ function init() {
     load();
     jQuery("#transcript-timings .block").show();
     utils.stopIt(e);
+  });
+  jQuery(document).on("click", "#transcript-btn-timings-save", function() {
+    save();
   });
   jQuery(document).on("click", "#transcript-btn-timings-cancel", function() {
     stop();
@@ -238,8 +335,8 @@ function init() {
   jQuery(document).on('click', '#transcript-btn-timings-wizard-cancel', function () {
     jQuery("#transcript-timings .block").each(function () {
       var block = jQuery(this);
-      block.attr('data-start', block.attr('data-start-orig'));
-      block.attr('data-end', block.attr('data-end-orig'));
+      block.attr('data-start', block.attr('data-start-wizard-orig'));
+      block.attr('data-end', block.attr('data-end-wizard-orig'));
     });
     stop();
   });
@@ -253,7 +350,6 @@ function init() {
     }
     stop();
   });
-
 
   jQuery("audio").on("timeupdate", function () {
     jQuery('#transcript-timings').addClass('playing');
@@ -297,11 +393,15 @@ function init() {
     jQuery('#transcript-timings [data-toggle="tooltip"]').tooltip('hide');
   });
 
+  var validateTimeout;
   jQuery(document).on('keyup', '#transcript-timings.manual input', function(){
+    clearTimeout(validateTimeout);
     var sec = reverseHMS(jQuery(this).val());
     var type = jQuery(this).is('[name=start]') ? 'start' : 'end';
     jQuery(this).parents('.block:first').attr(`data-${type}`, sec);
-    validate();
+    validateTimeout = setTimeout(function(){
+      validate();
+    }, 750);
   });
   jQuery(document).on('change', '#transcript-timings.manual input', function () {
     var type = jQuery(this).is('[name=start]') ? 'start' : 'end';

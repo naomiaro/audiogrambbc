@@ -401,6 +401,19 @@ body.landing #error {
   position: absolute;
 }
 
+#transcript-timings .label {
+  width: 100%;
+  color: #aaa;
+  display: block;
+  position: relative;
+  height: 20px;
+}
+#transcript-timings .label > span {
+    width: 80px;
+    display: inline-block;
+    position: absolute;
+}
+
 #transcript-timings .block.unused {
   opacity: 0.7;
 }
@@ -441,6 +454,9 @@ body.landing #error {
     position: absolute;
     text-align: center;
     background: transparent;
+}
+#transcript-timings .block .times input.invalid {
+  color: red;
 }
 #transcript-timings.wizard .block .times input {
     border-color: transparent;
@@ -600,6 +616,13 @@ body.landing #error {
 .transcript-word.added:not(.unused).played  {
     background-color: rgba(255, 195, 195, 1);
 }
+.transcript-word.time-manual:not(.unused) {
+      background-color: rgba(92, 184, 92, 0.3);
+}
+.transcript-word.time-manual:not(.unused).played {
+      background-color: rgba(92, 184, 92, 0.8);
+}
+
 
 .transcript-word.unused {
   opacity: 0.5;
