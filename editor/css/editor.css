@@ -377,24 +377,31 @@ body.landing #error {
     cursor: pointer;
 }
 
-#transcript-timings.manual #transcript-timings-wizard-info {
+#transcript-timings.playing .buttons-start,
+#transcript-timings:not(.playing) .buttons-stop {
   display: none;
 }
 
-#transcript-timings .transcript-buttons {
-    padding-bottom: 8px;
-    margin-top: 0;
-    border-bottom: 1px solid #ccc;
+#transcript-timings > .buttons {
+    margin: 0;
+    text-align: center;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    padding: 8px 0;
+    margin-bottom: 8px;
 }
-#transcript-timings.wizard #transcript-btn-timings-mode-wizard,
-#transcript-timings.manual #transcript-btn-timings-mode-manual{
-  cursor: default;
-  color: #333;
-  background-color: #e6e6e6;
-  border-color: #adadad;
-}
-#transcript-timings-wizard-info button {
+#transcript-timings > .buttons button {
   padding: 3px 8px;
+  font-size: 13px;
+}
+
+#transcript:not(.timings) button.timingsOnly,
+#transcript.timings #transcript-btn-timings {
+  display: none !important;
+}
+#transcript.timings > .transcript-buttons button:not(.timingsOnly) {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 #transcript-timings [data-toggle="tooltip"] {
@@ -414,7 +421,7 @@ body.landing #error {
     position: absolute;
 }
 
-#transcript-timings .block.unused {
+#transcript-timings .block:not([data-start]):not([data-end]) {
   opacity: 0.7;
 }
 #transcript-timings .block {
@@ -457,8 +464,9 @@ body.landing #error {
 }
 #transcript-timings .block .times input.invalid {
   color: red;
+  border-color: red;
 }
-#transcript-timings.wizard .block .times input {
+#transcript-timings.playing .block .times input {
     border-color: transparent;
     outline: none;
     pointer-events: none;
@@ -620,7 +628,7 @@ body.landing #error {
       background-color: rgba(92, 184, 92, 0.3);
 }
 .transcript-word.time-manual:not(.unused).played {
-      background-color: rgba(92, 184, 92, 0.8);
+      background-color: rgba(92, 184, 92, 0.6);
 }
 
 
@@ -689,9 +697,7 @@ body.landing #error {
 
 #transcript.loading transcript,
 #transcript.error transcript,
-#transcript.timings .page-header,
 #transcript.timings #transcript-pane,
-#transcript.timings > .transcript-buttons,
 #transcript:not(.timings) #transcript-timings,
 #transcript:not(.loading) .loading,
 #transcript:not(.error) .error {

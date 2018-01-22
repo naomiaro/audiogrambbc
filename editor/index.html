@@ -864,6 +864,12 @@
                             <button id="transcript-btn-timings" class="enabledOnly">
                                 <i class="fa fa-clock-o"></i>Set Timings
                             </button>
+                            <button id="transcript-btn-timings-save" class="timingsOnly" style='font-weight: bold'>
+                                Save
+                            </button>
+                            <button id="transcript-btn-timings-cancel" class="timingsOnly">
+                                Cancel
+                            </button>
                             <button id="transcript-btn-format" class="subFormatToggle enabledOnly">
                                 <i class="fa fa-align-center"></i>Format
                             </button>
@@ -875,7 +881,7 @@
                             </button>
                             <div>
                                 <button id="transcript-btn-export" type="button" data-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa fa-download"></i>Export
+                                    <i class="fa fa-file-text-o"></i>Export
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
                                     <li role="presentation">
@@ -894,22 +900,26 @@
                             </div>
                         </div>
                         <div id="transcript-timings" class="wizard">
-                            <div class="transcript-buttons">
-                                <button id="transcript-btn-timings-save" style="border-color: #999;">
-                                    Save
+                            <p class="buttons buttons-start">
+                                <button id="transcript-btn-timings-wizard-start-on">
+                                    <b>Start Wizard</b>, with first subtitle block <i>visible</i>
                                 </button>
-                                <button id="transcript-btn-timings-cancel">
-                                    Cancel
+                                <button id="transcript-btn-timings-wizard-start-off">
+                                    <b>Start Wizard</b>, with first subtitle block <i>hidden</i>
                                 </button>
-                                <span style="color: #ccc; padding: 0 10px;">|</span>
-                                <button id="transcript-btn-timings-mode-wizard">
-                                    <i class="fa fa-magic"></i>Wizard Mode
+                            </p>
+                            <p class="buttons buttons-stop">
+                                <button id="transcript-btn-timings-wizard-restart">
+                                    <i class="fa fa-step-backward"></i>Restart
                                 </button>
-                                <button id="transcript-btn-timings-mode-manual">
-                                    <i class="fa fa-i-cursor"></i>Manual Mode
+                                <button id="transcript-btn-timings-wizard-finish">
+                                    <i class="fa fa-stop"></i>Finish
                                 </button>
-                            </div>
-                            <div id="transcript-timings-wizard-info" class="alert alert-info" role="alert" style="margin-bottom: 10px;">
+                                <button id="transcript-btn-timings-wizard-cancel">
+                                    <i class="fa fa-ban"></i>Cancel
+                                </button>
+                            </p>
+                            <div id="transcript-timings-wizard-info" class="hidden alert alert-info" role="alert" style="margin-bottom: 10px;">
                                 <div class="instructions">
                                     <p>
                                         To set timings, preview the audio and click on the next subtitle block when it should appear.

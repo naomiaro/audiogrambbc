@@ -1,6 +1,7 @@
 var transcript = require("./transcript");
 var audio = require('./audio');
 var utils = require('./utils');
+var preview = require('./preview');
 
 function reverseHMS(str) {
   var time = str.split(':');
@@ -47,8 +48,16 @@ function insertSubBlock() {
 }
 
 function load() {
+  audio.pause();
+  jQuery("#transcript-timings").removeClass('playing');
   jQuery("#transcript-timings .block").remove();
+  var duration = audio.duration();
+  var overhangers = jQuery('#transcript .transcript-word').filter(function () {
+    return +jQuery(this).attr('data-start') > duration;
+  });
+  overhangers.removeClass('unused');
   var subs = transcript.toSubs();
+  overhangers.addClass('unused');
   var maxWidth = 0;
   subs.forEach(function(sub) {
     insertSubBlock();
@@ -59,12 +68,14 @@ function load() {
     });
     var block = jQuery("#transcript-timings .block:last");
     block.find(".subtitles").html(text);
-    block.attr("data-start", sub.start);
     block.attr('data-start-orig', sub.start);
-    block.attr("data-end", sub.end);
     block.attr('data-end-orig', sub.end);
-    block.find("input[name='start']").val(formatHMS(sub.start));
-    block.find("input[name='end']").val(formatHMS(sub.end));
+    if (sub.start < duration) {
+      block.attr("data-start", sub.start);
+      block.attr("data-end", sub.end);
+      block.find("input[name='start']").val(formatHMS(sub.start));
+      block.find("input[name='end']").val(formatHMS(sub.end));
+    }
     var width = block.find(".subtitles").width() + 5;
     if (width > maxWidth) maxWidth = width;
   });
@@ -74,6 +85,7 @@ function load() {
   var labelEndLeft = jQuery("#transcript-timings input[name=end]:first").offset().left - offset;
   jQuery("#transcript-timings .label .start").css("left", labelStartLeft);
   jQuery("#transcript-timings .label .end").css("left", labelEndLeft);
+  jQuery('#transcript-timings .block:first input:first').select().focus();
 }
 
 function setStartTime(time, e) {
@@ -124,7 +136,7 @@ function setEndTime(time, e) {
 
 function start(visible) {
   jQuery("#transcript-timings .block input").removeClass('invalid');
-  jQuery("#transcript-timings .block").removeClass("active staged unused");
+  jQuery("#transcript-timings .block").removeClass("active staged");
   jQuery("#transcript-timings .block:first").addClass('staged');
   if (!jQuery("#transcript-timings").hasClass("recording")) {
     jQuery("#transcript-timings .block").each(function () {
@@ -135,28 +147,21 @@ function start(visible) {
   }
   jQuery("#transcript-timings .block").attr('data-start', null).attr('data-end', null);
   jQuery("#transcript-timings .block").slideDown();
-  jQuery('#transcript-timings-wizard-info .buttons-start').hide();
-  jQuery('#transcript-timings-wizard-info .buttons-stop').show();
   if (visible) setStartTime(0);
   jQuery("#transcript-timings").addClass("recording");
   jQuery('[data-toggle="tooltip"]').tooltip('hide');
-  jQuery('#transcript-timings-wizard-info .instructions').slideUp(300, function(){
-    audio.restart();
-    var staged = jQuery('#transcript-timings .block.staged .box');
-    var x = staged.offset().left + (staged.width() / 2);
-    tooltip(staged, x);
-  });
+  audio.restart();
+  var staged = jQuery('#transcript-timings .block.staged .box');
+  var x = staged.offset().left + (staged.width() / 2);
+  tooltip(staged, x);
 }
 
 function stop() {
   audio.pause();
   jQuery('[data-toggle="tooltip"]').tooltip('hide');
-  // jQuery('#transcript-timings-wizard-info .instructions').show();
   jQuery("#transcript-timings .block").removeClass("active staged");
   jQuery("#transcript-timings").removeClass("recording");
   jQuery("#transcript-timings .block").slideDown();
-  jQuery('#transcript-timings-wizard-info .buttons-start').show();
-  jQuery('#transcript-timings-wizard-info .buttons-stop').hide();
   jQuery("#transcript-timings .block").each(function(){
     var block = jQuery(this);
     block.attr("data-start-wizard-orig", null);
@@ -165,7 +170,6 @@ function stop() {
     var end = block.attr('data-end');
     block.find("input[name='start']").val(start ? formatHMS(start) : '');
     block.find("input[name='end']").val(end ? formatHMS(end) : '');
-    if (!start) block.addClass('unused');
   });
   validate();
 }
@@ -230,6 +234,11 @@ function validate() {
         updateTime(jQuery(this), next);
       }
     }
+    var lastBlockIndex = +jQuery('#transcript-timings .block[data-end]:last').index();
+    var thisBlockIndex = jQuery(this).parents('.block:first').index();
+    if (jQuery(this).val() === '' && thisBlockIndex <= lastBlockIndex) {
+      invalid = true;
+    }
     // Otherwise invalidate
     if (invalid) jQuery(this).addClass('invalid');
   })
@@ -243,6 +252,7 @@ function save() {
     return alert('Some of your timings are invalid. Fix these (shown in red) first.');
   } else {
     console.log('save');
+    var overhang = audio.duration() + 10;
     jQuery('#transcript-timings .block').each(function(i){
       var block = jQuery(this);
       var start = +block.attr("data-start");
@@ -258,30 +268,37 @@ function save() {
         });
         var secPerChar = dur / charCount;
         var time = start;
-
         words.each(function() {
           var word = jQuery(this);
           word.attr("data-start-org", word.attr("data-start"));
           word.attr("data-end-org", word.attr("data-end"));
-          word.attr("data-start", time);
-          var wordDur = secPerChar * word.text().length;
-          word.attr("data-end", time + wordDur);
+          if (isNaN(time)) {
+            word.attr("data-start", overhang).attr("data-end", overhang);
+          } else {
+            word.attr("data-start", time);
+            var wordDur = secPerChar * word.text().length;
+            word.attr("data-end", time + wordDur);
+            time += wordDur;
+          }
           word.removeClass('added');
           word.addClass("time-manual");
-          time += wordDur;
         });
       }
     });
-    transcript.format();
+    var start = +jQuery('#transcript-timings .block[data-start]:first').attr('data-start');
+    var end = +jQuery('#transcript-timings .block[data-end]:last').attr('data-end');
     jQuery("#transcript").removeClass("timings");
     jQuery("#minimap").removeClass("disabled");
+    transcript.format();
+    transcript.highlight(start, end);
+    audio.currentTime(start);
+    preview.redraw();
   }
 }
 
 function init() {
 
   jQuery(document).on("click", "#transcript-btn-timings", function (e) {
-    jQuery('#transcript-timings-wizard-info .instructions').show();
     jQuery("#transcript").addClass("timings");
     jQuery("#minimap").addClass("disabled");
     load();
@@ -295,17 +312,6 @@ function init() {
     stop();
     jQuery("#transcript").removeClass("timings");
     jQuery("#minimap").removeClass("disabled");
-  });
-  
-  jQuery(document).on('click', '#transcript-btn-timings-mode-manual', function(){
-    stop();
-    jQuery('#transcript-timings').removeClass('manual wizard');
-    jQuery('#transcript-timings').addClass('manual');
-    jQuery('#transcript-timings .block:first input:first').select().focus();
-  });
-  jQuery(document).on('click', '#transcript-btn-timings-mode-wizard', function () {
-    jQuery('#transcript-timings').removeClass('manual wizard');
-    jQuery('#transcript-timings').addClass('wizard');
   });
 
   jQuery(document).on('click', '#transcript-btn-timings-wizard-start-on', function(){
@@ -351,7 +357,7 @@ function init() {
     stop();
   });
 
-  jQuery("audio").on("timeupdate", function () {
+  jQuery("audio").on("play", function () {
     jQuery('#transcript-timings').addClass('playing');
   });
   jQuery("audio").on("timeupdate", function() {
@@ -394,19 +400,20 @@ function init() {
   });
 
   var validateTimeout;
-  jQuery(document).on('keyup', '#transcript-timings.manual input', function(){
+  jQuery(document).on('keyup', '#transcript-timings input', function(){
     clearTimeout(validateTimeout);
-    var sec = reverseHMS(jQuery(this).val());
+    var val = jQuery(this).val();
+    var sec = val==='' ? null : reverseHMS(val);
     var type = jQuery(this).is('[name=start]') ? 'start' : 'end';
     jQuery(this).parents('.block:first').attr(`data-${type}`, sec);
     validateTimeout = setTimeout(function(){
       validate();
     }, 750);
   });
-  jQuery(document).on('change', '#transcript-timings.manual input', function () {
+  jQuery(document).on('change', '#transcript-timings input', function () {
     var type = jQuery(this).is('[name=start]') ? 'start' : 'end';
     var sec = jQuery(this).parents('.block:first').attr(`data-${type}`);
-    var disp = formatHMS(sec);
+    var disp = sec ? formatHMS(sec) : '';
     jQuery(this).val(disp);
   });
 

@@ -254,8 +254,10 @@ function format() {
       sel.collapse(selNode.firstChild, selPos);
     }
     // Set speaker colours
+    var speakerCount = 0;
     jQuery('.transcript-block').each(function () {
         var speaker = jQuery(this).attr('data-speaker');
+        if (+speaker > speakerCount) speakerCount = +speaker;
         var prevSpeaker = jQuery(this).prev().attr('data-speaker');
         jQuery(this).find('.transcript-speaker select').val(speaker);
         if (speaker === prevSpeaker) {
@@ -280,11 +282,21 @@ function format() {
         }
         jQuery(this).find('.transcript-segment').css("border-color", color);
     });
-    // Add word titles
+
+    // Add word titles and mark unused words
     jQuery('.transcript-word').each(function(){
-        var start = formatHMS( jQuery(this).attr("data-start") ).replace('00:', '');
-        var end = formatHMS( jQuery(this).attr('data-end') ).replace('00:', '');
-        jQuery(this).attr('title', `${start} - ${end}`);
+        var start = jQuery(this).attr("data-start");
+        var end = jQuery(this).attr("data-end");
+        var title = '';
+        if (start <= duration) {
+            var dispStart = formatHMS( start ).replace(/00:/g, '');
+            var dispEnd = formatHMS( end ).replace(/00:/g, '');
+            title = `${dispStart} - ${dispEnd}`;
+        }
+        jQuery(this).attr({title});
+        if (jQuery(this).attr("data-start") > selectionEnd) {
+            jQuery(this).addClass('unused');
+        }
     });
 
     return;
@@ -873,7 +885,7 @@ function init() {
     });
     
     // Move playhead when clicking on a word
-    jQuery(document).on('click', '.transcript-word', function (e) {
+    jQuery(document).on('click', '.transcript-word:not(.unused)', function (e) {
         var isPlaying = audio.isPlaying();
         var isAdded = jQuery(this).hasClass('added');
         if (!isPlaying || !isAdded) {
