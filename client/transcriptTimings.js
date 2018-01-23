@@ -72,8 +72,10 @@ function load() {
     block.attr('data-end-orig', sub.end);
     if (sub.start < duration) {
       block.attr("data-start", sub.start);
-      block.attr("data-end", sub.end);
       block.find("input[name='start']").val(formatHMS(sub.start));
+    }
+    if (sub.end < duration) {
+      block.attr("data-end", sub.end);
       block.find("input[name='end']").val(formatHMS(sub.end));
     }
     var width = block.find(".subtitles").width() + 5;
@@ -175,6 +177,7 @@ function stop() {
 }
 
 function tooltip(el, x) {
+  if (!el.length) return;
   var type = el.parent().hasClass('active') ? 'hide' : 'show';
   var top = el.position().top + el.outerHeight() - 3;
   jQuery(`#transcript-timings-tooltip-${type}`).css({top});
@@ -252,11 +255,16 @@ function save() {
     return alert('Some of your timings are invalid. Fix these (shown in red) first.');
   } else {
     console.log('save');
-    var overhang = audio.duration() + 10;
+    var duration = audio.duration();
+    var overhang = duration + 10;
     jQuery('#transcript-timings .block').each(function(i){
       var block = jQuery(this);
       var start = +block.attr("data-start");
       var end = +block.attr('data-end');
+      if (!isNaN(start) && start < duration && isNaN(end)) {
+        end = duration;
+        block.attr("data-end", end);
+      }
       var dur = end - start;
       var origStart = +block.attr("data-start-orig");
       var origEnd = +block.attr("data-end-orig");
@@ -386,9 +394,11 @@ function init() {
   });
   jQuery("audio").on("ended", function () {
     jQuery('#transcript-timings').removeClass('playing');
-    jQuery('#transcript-timings .block').removeClass('current');
+    jQuery("#transcript-timings .block").removeClass("current");
+    jQuery("#transcript-timings .block").slideDown();
     var time = audio.currentTime();
-    jQuery("#transcript-timings .block.active").attr('data-stop', time);
+    jQuery("#transcript-timings .block.active").attr('data-end', time);
+    jQuery("#transcript-timings .block.active input[name=end]").val(formatHMS(time));
     stop();
   });
 
