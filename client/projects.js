@@ -52,11 +52,8 @@ function newProject(e) {
 }
 
 function getProjects() {
-<<<<<<< HEAD
-=======
   if (jQuery('#landing .saved').hasClass('loading')) return;
   jQuery('#landing .saved').addClass('loading');
->>>>>>> 38bd8c096e6abb7a3901ed8da8a7409253813008
   // Load previously saved projects
   $.ajax({
     url: "/getProjects/",
