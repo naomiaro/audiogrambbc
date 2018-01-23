@@ -254,10 +254,8 @@ function format() {
       sel.collapse(selNode.firstChild, selPos);
     }
     // Set speaker colours
-    var speakerCount = 0;
     jQuery('.transcript-block').each(function () {
         var speaker = jQuery(this).attr('data-speaker');
-        if (+speaker > speakerCount) speakerCount = +speaker;
         var prevSpeaker = jQuery(this).prev().attr('data-speaker');
         jQuery(this).find('.transcript-speaker select').val(speaker);
         if (speaker === prevSpeaker) {
@@ -963,6 +961,27 @@ function init() {
         var speaker = jQuery(this).val();
         jQuery(this).parentsUntil('.transcript-content').last().attr('data-speaker', speaker);
         format();
+        // Count speakers
+        var maxSpeaker = 0;
+        jQuery('.transcript-block').each(function(){
+            var blockSpeaker = +jQuery(this).attr('data-speaker');
+            if (blockSpeaker > maxSpeaker) maxSpeaker = blockSpeaker;
+        });
+        var maxAvailable = jQuery(this).find('option').length - 1;
+        if (maxSpeaker === maxAvailable) {
+            // Add extra speaker option
+            console.log('ADD SPEAKER!');
+            var newOpt = document.createElement("option");
+            newOpt.value = maxSpeaker + 1;
+            newOpt.text = `Speaker ${maxSpeaker + 2}`;
+            jQuery('.transcript-speaker select').each(function(){
+                jQuery(this).append(newOpt.cloneNode(true));
+            });
+            var lastColor = jQuery(".subtitle-color-col:last");
+            lastColor.after(lastColor.clone());
+            jQuery(".subtitle-color-col:last");
+            jQuery(".subtitle-color-col:last input").attr("name", `subtitles.color.${maxSpeaker + 1}`);
+        }
     });
     
     d3.selectAll('.subFormatToggle').on('click', function() {
