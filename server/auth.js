@@ -11,7 +11,7 @@ var request = require('request');
       try {
         var userData = JSON.parse(adBody);
         var isAdmin = userData.retval.groups ? userData.retval.groups.includes(adminGroup) : false;
-      } catch {
+      } catch (err) {
         var isAdmin = false;
       }
       cb(err, isAdmin);
