@@ -25,6 +25,7 @@ function navigate(state, msg, log) {
     setClass(cl, msg, log);
     var audio = require('./audio');
     audio.pause();
+    jQuery(".modal-backdrop").remove();
 }
 
 function setClass(cl, msg, log) {
