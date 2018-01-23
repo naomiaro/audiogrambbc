@@ -22,6 +22,18 @@ function formatHMS(t) {
     return string;
 }
 
+function reverseHMS(str) {
+    str = str.replace(',','.');
+    var time = str.split(':');
+    var sec = 0;
+    var place = 0;
+    for (let i = time.length - 1; i >= 0; i--) {
+        sec += +time[i].replace(/[^\d.-]/g, '') * Math.pow(60, place);
+        place++;
+    }
+    return sec;
+}
+
 // Highlight selected words 
 function highlight(start, end) {
     jQuery(".transcript-word").removeClass("unused");
@@ -647,8 +659,65 @@ function exportTranscript() {
 
 function importFromFile() {
     function onReaderLoad(event){
-        var obj = JSON.parse(event.target.result);
-        load(obj);
+        var script = { segments: [] };
+        var result = event.target.result;
+        var fileName = jQuery('#input-transcript').get(0).files[0].name;
+        if (fileName.indexOf('.srt') !== -1) {
+            // SRT
+            var blocks = result.split('\n\n');
+            blocks.forEach(block => {
+                var lines = block.split('\n');
+                var times = lines[1].split(' --> ');
+                var blockStart = reverseHMS(times[0]);
+                var blockEnd = reverseHMS(times[1]);
+                var text = lines.splice(2).join('');
+                script.segments.push({
+                    text,
+                    start: blockStart,
+                    end: blockEnd
+                });
+            });
+        } else if (fileName.indexOf('.xml') !== -1) {
+            // XML
+            var blocks = result.split('<p ').splice(1);
+            blocks.forEach(block => {
+                var times = block.split('">')[0].split('"');
+                var blockStart = reverseHMS(times[1]);
+                var blockEnd = reverseHMS(times[3]);
+                var text = block.split('">').splice(1).join('').replace(/<br\/>/g, '').split('</p>')[0];
+                script.segments.push({
+                    text,
+                    start: blockStart,
+                    end: blockEnd
+                });
+            });
+        }
+
+        // Assign speaker and word timings
+        script.segments.forEach(segment => {
+            segment.speaker = 0;
+            if (segment.text) {
+                var dur = segment.end - segment.start;
+                var charCount = segment.text.replace(/ /g, '').length;
+                var secPerChar = dur / charCount;
+                var time = segment.start;
+                segment.words = [];
+                segment.text.split(' ').forEach(word => {
+                    var start = time;
+                    var end = time + (secPerChar * word.length);
+                    time = end;
+                    segment.words.push({
+                        start: +start.toFixed(2),
+                        end: +end.toFixed(2),
+                        text: word
+                    });
+                });
+                delete segment.text;
+            }
+        });
+
+        console.log(script);
+        
     }
     var reader = new FileReader();
     reader.onload = onReaderLoad;
@@ -956,6 +1025,7 @@ function init() {
     
     d3.selectAll('.transcript-export-btn').on('click', exportTranscript);
     d3.selectAll('#input-transcript').on('change', importFromFile);
+
     // Reformate line-breaks and speakers
     jQuery(document).on('change', '.transcript-speaker select', function() {
         var speaker = jQuery(this).val();
