@@ -125,8 +125,8 @@ function format() {
     var selectionStart = +jQuery('#start').val();
     var selectionEnd = +jQuery('#end').val();
     jQuery('.transcript-word.added').attr('data-start', null).attr('data-end', null);
-    jQuery('.transcript-word.added').each(function () {
-        if (!jQuery(this).attr('data-start')) {
+    jQuery('.transcript-word').each(function (i) {
+        if (jQuery(this).hasClass('added') && !jQuery(this).attr('data-start')) {
             var start = +jQuery(this).prevAll('.transcript-word:not(.added)').first().attr('data-end');
             if (!start) start = +jQuery(this).parentsUntil('.transcript-content').last().prev().find('.transcript-word:last').attr('data-end');
             if (!start) start = selectionStart;
@@ -135,7 +135,16 @@ function format() {
             }).first();
             var end = next.length ? +next.attr('data-start') || selectionEnd : selectionEnd;
             var dur = end - start;
-            var nextWords = jQuery(this).nextUntil('.transcript-word:not(.added)').filter('.transcript-word');
+            var remainingWords = jQuery(`.transcript-word:gt(${i})`);
+            var lastIndex = remainingWords.length;
+            remainingWords.each(function(i){
+                if (!jQuery(this).hasClass('added')) {
+                    lastIndex = i;
+                    return false;
+                }
+            });
+            var nextWords = remainingWords.slice(0, lastIndex);
+            // var nextWords = jQuery(this).nextUntil('.transcript-word:not(.added)').filter('.transcript-word');
             var charCount = jQuery(this).text().length;
             nextWords.each(function () {
                 charCount += jQuery(this).text().length;
@@ -1148,6 +1157,7 @@ function init() {
         var checked = !checkbox.prop("checked");
         if (jQuery(e.target).is('input')) checked = !checked;
         checkbox.prop("checked", checked);
+        jQuery(this).attr('data-enabled', checked);
         d3.select('#transcript-pane').classed('disabled', !checked);
         if (checked) {
             jQuery('#transcript .transcript-buttons .enabledOnly').show();
