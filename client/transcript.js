@@ -27,7 +27,7 @@ function reverseHMS(str) {
     var time = str.split(':');
     var sec = 0;
     var place = 0;
-    for (let i = time.length - 1; i >= 0; i--) {
+    for (var i = time.length - 1; i >= 0; i--) {
         sec += +time[i].replace(/[^\d.-]/g, '') * Math.pow(60, place);
         place++;
     }
@@ -657,15 +657,20 @@ function exportTranscript() {
     logger.info(USER.name + ' exported the transcript (' + format + ')');
 }
 
+function importTranscript() {
+    jQuery("#input-transcript").click();
+}
+
 function importFromFile() {
     function onReaderLoad(event){
         var script = { segments: [] };
         var result = event.target.result;
         var fileName = jQuery('#input-transcript').get(0).files[0].name;
+        jQuery("#input-transcript").val(null);
         if (fileName.indexOf('.srt') !== -1) {
             // SRT
             var blocks = result.split('\n\n');
-            blocks.forEach(block => {
+            blocks.forEach(function(block) {
                 var lines = block.split('\n');
                 var times = lines[1].split(' --> ');
                 var blockStart = reverseHMS(times[0]);
@@ -680,7 +685,7 @@ function importFromFile() {
         } else if (fileName.indexOf('.xml') !== -1) {
             // XML
             var blocks = result.split('<p ').splice(1);
-            blocks.forEach(block => {
+            blocks.forEach(function(block) {
                 var times = block.split('">')[0].split('"');
                 var blockStart = reverseHMS(times[1]);
                 var blockEnd = reverseHMS(times[3]);
@@ -691,10 +696,50 @@ function importFromFile() {
                     end: blockEnd
                 });
             });
+        } else if (fileName.indexOf('.txt') !== -1) {
+            var times = [];
+            if (result.indexOf(" - SPEAKER ") !== -1) {
+              result.split(' - SPEAKER ').forEach(function(line){
+                times.push(line.split('\n\n').pop());
+              });
+              times.pop();
+            }
+            var blocks = result.split('\n\n');
+            var charCount = 0;
+            blocks.forEach(function(block, i) {
+                var lines = block.split('\n');
+                var segment = {};
+                if (times.length) {
+                    segment.text = lines.splice(1).join('');
+                    segment.start = reverseHMS(times[i]);
+                    segment.end = times[i + 1] ? reverseHMS(times[i + 1]) : audio.duration();
+                } else {
+                    segment.text = lines.join('');
+                    charCount += segment.text.replace(/ /g, '').length;
+                }
+                script.segments.push(segment);
+            });
+            if (!times.length) {
+                var dur = audio.duration();
+                var secPerChar = dur / charCount;
+                var time = 0;
+                script.segments.forEach(function(segment) {
+                    segment.start = time;
+                    segment.end = time + secPerChar * segment.text.replace(/ /g, "").length;
+                    time = segment.end;
+                });
+            }
+        } else {
+            return alert("Unsupported file type.");
+        }
+
+        // If empty
+        if (!script.segments.length) {
+            return alert("That file could not be imported.");
         }
 
         // Assign speaker and word timings
-        script.segments.forEach(segment => {
+        script.segments.forEach(function(segment) {
             segment.speaker = 0;
             if (segment.text) {
                 var dur = segment.end - segment.start;
@@ -716,8 +761,8 @@ function importFromFile() {
             }
         });
 
-        console.log(script);
-        
+        // Load
+        load(script);
     }
     var reader = new FileReader();
     reader.onload = onReaderLoad;
@@ -1023,7 +1068,8 @@ function init() {
         }
     });
     
-    d3.selectAll('.transcript-export-btn').on('click', exportTranscript);
+    d3.selectAll(".transcript-export-btn").on("click", exportTranscript);
+    d3.selectAll("#transcript-btn-import").on("click", importTranscript);
     d3.selectAll('#input-transcript').on('change', importFromFile);
 
     // Reformate line-breaks and speakers
