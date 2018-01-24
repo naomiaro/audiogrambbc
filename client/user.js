@@ -50,7 +50,7 @@ module.exports.init = function() {
             logger.info(USER.name + ' logged in.\n`' + navigator.userAgent + '`');
             checkMessages(data.lastLogin);
         } else {
-            logger.error('Unkown user logged in... ' + data);
+            logger.error('Unkown user logged in... ' + JSON.parse(data));
         }
 
         if(!window.location.hostname.startsWith('localhost')){

@@ -346,6 +346,183 @@ body.landing #error {
   width: calc(100% + 30px);
 }
 
+.transcript-buttons {
+    font-size: 13px;
+    margin: -8px 0 8px;
+}
+.transcript-buttons > div {
+    position: relative;
+    display: inline-block;
+}
+.transcript-buttons button {
+    padding: 3px 8px;
+    position: relative;
+}
+.transcript-buttons button input{
+    cursor: pointer;
+}
+.transcript-buttons button.active {
+    cursor: default;
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
+
+#transcript-btn-enabled #input-subtitles {
+  position: absolute;
+  top: 2px;
+  margin-left: -17px;
+}
+
+#transcript-btn-enabled .on,
+#transcript-btn-enabled .off {
+  width: 11px;
+}
+#transcript-btn-enabled .on {
+    color: #3f81cc;
+}
+#transcript-btn-enabled .off {
+    color: #bbbbbb;
+}
+#transcript-btn-enabled[data-enabled='true'] .off,
+#transcript-btn-enabled[data-enabled='false'] .on {
+    display: none;
+}
+.transcript-buttons button select {
+    opacity: 0;
+    background: transparent;
+    border: none;
+    height: 24px;
+    font-size: 13px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+#transcript-timings.recording .buttons-start,
+#transcript-timings:not(.recording) .buttons-stop {
+  display: none;
+}
+
+#transcript-timings > .buttons {
+    margin: 0;
+    text-align: center;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    padding: 8px 0;
+    margin-bottom: 8px;
+}
+#transcript-timings > .buttons button {
+  padding: 3px 8px;
+  font-size: 13px;
+}
+
+#transcript:not(.timings) button.timingsOnly,
+#transcript.timings #transcript-btn-timings {
+  display: none !important;
+}
+#transcript.timings > .transcript-buttons button:not(.timingsOnly) {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+#transcript-timings [data-toggle="tooltip"] {
+  position: absolute;
+}
+
+#transcript-timings .label {
+  width: 100%;
+  color: #aaa;
+  display: block;
+  position: relative;
+  height: 20px;
+}
+#transcript-timings .label > span {
+    width: 80px;
+    display: inline-block;
+    position: absolute;
+}
+
+#transcript-timings:not(.recording) .block:not([data-start]):not([data-end]) {
+  opacity: 0.7;
+}
+#transcript-timings .block {
+  text-align: center;
+}
+#transcript-timings .block .box{
+    border: 1px solid #ccc;
+    margin: 0 auto 5px auto;
+    padding: 10px;
+    clear: both;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+#transcript-timings.recording .block .box{
+  background: #eee;
+}
+#transcript-timings.recording:not(.playing) .block .box{
+  pointer-events: none;
+}
+#transcript-timings.playing .block.current .box,
+#transcript-timings.recording .block.active .box{
+  background: rgba(255, 255, 0, 0.5);
+}
+#transcript-timings.recording .block.active .box{
+  cursor: pointer;
+}
+#transcript-timings.recording .block.staged .box{
+  cursor: pointer;
+  background: #fff;
+}
+#transcript-timings.recording .block.staged .box:hover{
+  background: rgba(255, 255, 0, 0.15);
+}
+#transcript-timings .block .times input {
+    font-size: 14px;
+    padding: 1px;
+    width: 80px;
+    display: block;
+    position: absolute;
+    text-align: center;
+    background: transparent;
+}
+#transcript-timings .block .times input.invalid {
+  color: red;
+  border-color: red;
+}
+#transcript-timings.playing .block .times input,
+#transcript-timings.recording .block .times input {
+    border-color: transparent;
+    outline: none;
+    pointer-events: none;
+}
+
+#transcript-timings.recording .block:not([data-start]):not(.active):not(.staged) input[name='start'],
+#transcript-timings.recording .block:not([data-end]):not(.active) input[name='end']{
+  display: none;
+}
+#transcript-timings .block .times input[name='start'] {
+  top: 8px;
+  left: 8px;
+}
+#transcript-timings .block .times input[name='end'] {
+  bottom: 8px;
+  right: 8px;
+}
+#transcript-timings .block .subtitles{
+  margin: 0 85px;
+  padding: 0 25px;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
 .transcript-speaker select {
   width: 100px;
   margin: -2px 0 !important;
@@ -479,10 +656,21 @@ body.landing #error {
 .transcript-word.added:not(.unused).played  {
     background-color: rgba(255, 195, 195, 1);
 }
+.transcript-word.time-manual:not(.unused) {
+      background-color: rgba(92, 184, 92, 0.3);
+}
+.transcript-word.time-manual:not(.unused).played {
+      background-color: rgba(92, 184, 92, 0.6);
+}
+
 
 .transcript-word.unused {
   opacity: 0.5;
   background-color: #eee;
+}
+
+#transcript-pane.disabled .transcript-word {
+    background-color: #eee;
 }
 
 .transcript-space {
@@ -541,8 +729,8 @@ body.landing #error {
 
 #transcript.loading transcript,
 #transcript.error transcript,
-#transcript.loading .transcript-export,
-#transcript.error .transcript-export,
+#transcript.timings #transcript-pane,
+#transcript:not(.timings) #transcript-timings,
 #transcript:not(.loading) .loading,
 #transcript:not(.error) .error {
   display: none;
@@ -714,42 +902,40 @@ button,
 }
 
 #playbackRate {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-}
-#playbackRate i {
-    position: absolute;
-    z-index: 1;
-    top: 6px;
-    left: 6px;
-    color: #333;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  width: 60px;
+  margin-right: 4px;
+  text-align: left;
 }
 #playbackRate select {
-    background: #e6e6e6;
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    line-height: 12px;
-    font-size: 13px;
-    position: relative;
-    top: 0;
-    margin-right: 1px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    outline: none;
-    text-align: center;
-    padding-left: 22px;
-    cursor: pointer;
+  background: transparent;
+  color: #333;
+  border: none;
+  line-height: 12px;
+  font-size: 13px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  padding-left: 22px;
+  cursor: pointer;
 }
+#playbackRate[data-rate='1'],
 #playbackRate[data-rate='1'] select,
 #playbackRate[data-rate='1'] i {
-    background: #fff;
     color: #333;
 }
+#playbackRate:hover,
 #playbackRate:hover select,
 #playbackRate:hover i{
   color: #333;
+}
+#playbackRate:hover,
+#playbackRate:hover i{
   background-color: #e6e6e6;
   border-color: #adadad;
 }
@@ -945,6 +1131,22 @@ input[type='text'] {
 }
 
 /* Minimap */
+
+#minimap:not(.disabled) .disabled {
+  display: none;
+}
+#minimap.disabled .disabled {
+    width: 100%;
+    height: 80px;
+    background: transparent;
+    margin-bottom: -80px;
+    cursor: crosshair;
+    position: relative;
+    z-index: 999;
+}
+#minimap.disabled input {
+  pointer-events: none;
+}
 
 g.background path {
   fill: #999;

@@ -43,14 +43,6 @@
     </header>
     <div class="wrapper">
 
-        <!--
-      <ul id="progressbar">
-        <li class="complete">Select source</li>
-        <li class="active">Edit/Design</li>
-        <li>Generate</li>
-        <li>Save/Share</li>
-      </ul>
-      -->
         <section class="well breadcrumbs">
             <span id="breadcrumb_home">
                 <a href="#">Home</a>
@@ -60,7 +52,6 @@
                 <a href="#">Edit</a>
             </span>
             <span id="breadcrumb_view">View</span>
-            </ol>
         </section>
 
         <div id="user-messages" class="user-messages modal fade intGEL" role="dialog">
@@ -593,6 +584,7 @@
                         <div class="page-header">
                             <h1>Audio Source</h1>
                         </div>
+                        <div class="disabled"></div>
                         <svg width="640" height="80" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <clipPath id="clip">
@@ -629,14 +621,14 @@
                                 <div id="duration">
                                     <strong></strong> seconds selected
                                 </div>
-                                <div id="playbackRate" data-rate='1' class="tooltip-info" data-placement="left" title="Changing the playback rate is for preview and transcription assistance only.<br/>It will not affect video output.">
+                                <button id="playbackRate" data-rate='1' class="tooltip-info" data-placement="left" title="Changing the playback rate is for preview and transcription assistance only.<br/>It will not affect video output.">
                                     <i class="fa fa-clock-o" aria-hidden="true"></i>
                                     <select>
                                         <option value="0.5">0.5x</option>
                                         <option value="1" selected>1.0x</option>
                                         <option value="1.5">1.5x</option>
                                     </select>
-                                </div>
+                                </button>
                                 <button id="play">
                                     <i class="fa fa-play"></i>Play
                                 </button>
@@ -851,37 +843,130 @@
 
                     <section id="transcript" class="well hidden">
                         <div class="page-header">
-                            <input id="input-subtitles" class="themeConfig" type="checkbox" name="subtitles.enabled" value="true" checked>
                             <h1 style="display: inline-block">
-                                <label for="input-subtitles">
-                                    Overlay Subtitles
-                                </label>
+                                Transcript
                             </h1>
-                            <div class="tip subFormatToggle">
-                                <a href="#">edit formatting</a>
+                        </div>
+                        <div class="transcript-buttons">
+                            <button id="transcript-btn-enabled" data-enabled='true'>
+                                <input id="input-subtitles" class="themeConfig hidden" type="checkbox" name="subtitles.enabled" value="true" checked>
+                                <i class="on fa fa-check-square"></i>
+                                <i class="off fa fa-square-o"></i>
+                                Overlay Subtitles
+                            </button>
+                            <span style="color: #ccc; padding: 0 10px;">|</span>
+                            <button id="transcript-btn-timings" class="enabledOnly">
+                                <i class="fa fa-clock-o"></i>Set Timings
+                            </button>
+                            <button id="transcript-btn-timings-save" class="timingsOnly" style='font-weight: bold'>
+                                Save
+                            </button>
+                            <button id="transcript-btn-timings-cancel" class="timingsOnly">
+                                Cancel
+                            </button>
+                            <button id="transcript-btn-format" class="subFormatToggle enabledOnly">
+                                <i class="fa fa-align-center"></i>Format
+                            </button>
+                            <button id="transcript-btn-reset" class="hidden">
+                                <i class="fa fa-undo"></i>Reset
+                            </button>
+                            <input id="input-transcript" class="hidden" name="transcript" accept=".srt, .xml, .txt, .json" type="file" />                            
+                            <button id="transcript-btn-import">
+                                <i class="fa fa-upload"></i>Import
+                            </button>
+                            <div>
+                                <button id="transcript-btn-export" type="button" data-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa fa-file-text-o"></i>Export
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li role="presentation">
+                                        <a class="transcript-export-btn" data-format="plain" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (script only)</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a class="transcript-export-btn" data-format="plain-timecodes" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (with timecodes)</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a class="transcript-export-btn" data-format="srt" role="menuitem" href="#">Facebook Subs (SRT)</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a class="transcript-export-btn" data-format="ebu" role="menuitem" href="#">BBC Subs (EBU-TT-D)</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-                        <div id="transcript-pane">
-                            <!-- <input id="input-transcript" name="transcript" type="file" /> -->
-
-                            <div class="tip hidden" style="margin: -5px 0 10px 0;">
-                                Highlight text to select the corresponding audio clip. You can edit the transcription manually below.
-                                <br/>
-                                <em>Word(s) within each blue box appear at the same time, so try to edit word by word.</em>
+                        <div id="transcript-timings" class="wizard">
+                            <p class="buttons buttons-start">
+                                <button id="transcript-btn-timings-wizard-start-on">
+                                    <b>Start Wizard</b>, with first subtitle block <i>visible</i>
+                                </button>
+                                <button id="transcript-btn-timings-wizard-start-off">
+                                    <b>Start Wizard</b>, with first subtitle block <i>hidden</i>
+                                </button>
+                            </p>
+                            <p class="buttons buttons-stop">
+                                <button id="transcript-btn-timings-wizard-restart">
+                                    <i class="fa fa-step-backward"></i>Restart
+                                </button>
+                                <button id="transcript-btn-timings-wizard-finish">
+                                    <i class="fa fa-stop"></i>Finish
+                                </button>
+                                <button id="transcript-btn-timings-wizard-cancel">
+                                    <i class="fa fa-ban"></i>Cancel
+                                </button>
+                            </p>
+                            <div id="transcript-timings-wizard-info" class="hidden alert alert-info" role="alert" style="margin-bottom: 10px;">
+                                <div class="instructions">
+                                    <p>
+                                        To set timings, preview the audio and click on the next subtitle block when it should appear.
+                                    </p>
+                                    <p>
+                                        Click on the next block to transition to it immediately.
+                                    </p>
+                                    <p>
+                                        Alternatively, click on the same block again to hide it until you're ready to click on the next one.
+                                    </p>
+                                    <p>
+                                        You can always use "manual mode" to tweak the timings after.
+                                    </p>
+                                    <hr>
+                                </div>
+                                <p class="buttons-start" style="text-align: center; margin: 0;">
+                                    <button id="transcript-btn-timings-wizard-start-on">
+                                        <b>Start</b>, with first subtitle block <i>visible</i>
+                                    </button>
+                                    <button id="transcript-btn-timings-wizard-start-off">
+                                        <b>Start</b>, with first subtitle block <i>hidden</i>
+                                    </button>
+                                </p>
+                                <p class="buttons-stop" style="display: none; text-align: center; margin: 0;">
+                                    <button id="transcript-btn-timings-wizard-restart">
+                                        <i class="fa fa-step-backward"></i>Restart
+                                    </button>
+                                    <button id="transcript-btn-timings-wizard-finish">
+                                        <i class="fa fa-stop"></i>Finish
+                                    </button>
+                                    <button id="transcript-btn-timings-wizard-cancel">
+                                        <i class="fa fa-ban"></i>Cancel
+                                    </button>
+                                </p>
                             </div>
+                            <div class="label">
+                                <span class="start">IN</span>
+                                <span class="end">OUT</span>
+                            </div>
+                            <i id="transcript-timings-tooltip-show" data-toggle="tooltip" data-placement="bottom" title="Click to SHOW" data-animation="false" data-trigger="manual"></i>
+                            <i id="transcript-timings-tooltip-hide" data-toggle="tooltip" data-placement="bottom" title="Click to HIDE" data-animation="false" data-trigger="manual"></i>
+                        </div>
+                        <div id="transcript-pane">
                             <transcript>
+                                <div class="transcript-editor">
+                                    <div class="transcript-btn-select">
+                                        <span>select corresponding audio</span>
+                                    </div>
+                                    <div id='transcript-content' class="transcript-content" contenteditable="true" spellcheck="false">
 
-<div class="transcript-editor">
-    <div class="transcript-btn-select">
-        <span>select corresponding audio</span>
-    </div>
-    <div id='transcript-content' class="transcript-content" contenteditable="true" spellcheck="false">
-
-    </div>
-</div>
-
-
-
+                                    </div>
+                                </div>
                             </transcript>
                             <div class="loading">
                                 <div style="margin: -20px 0 20px 0">
@@ -904,29 +989,6 @@
                             </div>
                             <div class="transcript-export">
                                 <a id="trasncript-export-dummy" href="" target="_blank" style="display: none"></a>
-                                <hr>
-                                <div class="btn-group">
-                                    <div class="dropdown-button right btn-group btn-group" style=" float: right; width: auto;">
-                                        <button class="btn-sm btn-secondary dropdown-toggle btn" title="Create a new document" type="button" data-toggle="dropdown"
-                                            aria-expanded="false">Export Transcript
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li role="presentation">
-                                                <a class="transcript-export-btn" data-format="plain" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (script only)</a>
-                                            </li>
-                                            <li role="presentation">
-                                                <a class="transcript-export-btn" data-format="plain-timecodes" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (with timecodes)</a>
-                                            </li>
-                                            <li role="presentation">
-                                                <a class="transcript-export-btn" data-format="srt" role="menuitem" href="#">Facebook Subs (SRT)</a>
-                                            </li>
-                                            <li role="presentation">
-                                                <a class="transcript-export-btn" data-format="ebu" role="menuitem" href="#">BBC Subs (EBU-TT-D)</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </section>

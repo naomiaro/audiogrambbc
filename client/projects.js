@@ -174,8 +174,14 @@ function loadProject(id) {
       );
     }
     // Load theme
+    jQuery('#transcript-btn-enabled').attr('data-enabled', Boolean(data.theme.subtitles.enabled));
+    if (data.theme.subtitles.enabled) {
+      jQuery('#transcript .transcript-buttons .enabledOnly').show();
+    } else {
+      jQuery('#transcript .transcript-buttons .enabledOnly').hide();
+    }
     jQuery('#input-subtitles')[0].checked = data.theme.subtitles.enabled;
-    d3.select('#transcript-pane').classed('hidden', !data.theme.subtitles.enabled);
+    d3.select('#transcript-pane').classed('disabled', !data.theme.subtitles.enabled);
     jQuery("#input-theme").val(data.theme.name);
     themeHelper.update(data.theme);
     // Load transcript
