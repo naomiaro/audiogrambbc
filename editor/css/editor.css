@@ -393,8 +393,8 @@ body.landing #error {
     cursor: pointer;
 }
 
-#transcript-timings.playing .buttons-start,
-#transcript-timings:not(.playing) .buttons-stop {
+#transcript-timings.recording .buttons-start,
+#transcript-timings:not(.recording) .buttons-stop {
   display: none;
 }
 
@@ -437,7 +437,7 @@ body.landing #error {
     position: absolute;
 }
 
-#transcript-timings .block:not([data-start]):not([data-end]) {
+#transcript-timings:not(.recording) .block:not([data-start]):not([data-end]) {
   opacity: 0.7;
 }
 #transcript-timings .block {
@@ -454,6 +454,9 @@ body.landing #error {
 }
 #transcript-timings.recording .block .box{
   background: #eee;
+}
+#transcript-timings.recording:not(.playing) .block .box{
+  pointer-events: none;
 }
 #transcript-timings.playing .block.current .box,
 #transcript-timings.recording .block.active .box{
@@ -482,7 +485,8 @@ body.landing #error {
   color: red;
   border-color: red;
 }
-#transcript-timings.playing .block .times input {
+#transcript-timings.playing .block .times input,
+#transcript-timings.recording .block .times input {
     border-color: transparent;
     outline: none;
     pointer-events: none;

@@ -330,10 +330,12 @@ function init() {
     stop();
     start(false);
   });
-  jQuery(document).on('click', '#transcript-btn-timings-wizard-restart', function () {
-    audio.pause();
-    var firstStart = +jQuery('#transcript-timings .block:eq(0)').attr('data-start');
-    start(firstStart === 0);
+  jQuery(document).on('click', '#restart, #transcript-btn-timings-wizard-restart', function () {
+    if (jQuery('#transcript-timings:visible').hasClass('recording')) {
+      audio.pause();
+      var firstStart = +jQuery('#transcript-timings .block:eq(0)').attr('data-start');
+      start(firstStart === 0);
+    }
   });
 
   jQuery(document).on('click', '#transcript-timings .block.staged .box', function(e){
