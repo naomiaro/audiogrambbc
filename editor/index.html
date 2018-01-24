@@ -43,14 +43,6 @@
     </header>
     <div class="wrapper">
 
-        <!--
-      <ul id="progressbar">
-        <li class="complete">Select source</li>
-        <li class="active">Edit/Design</li>
-        <li>Generate</li>
-        <li>Save/Share</li>
-      </ul>
-      -->
         <section class="well breadcrumbs">
             <span id="breadcrumb_home">
                 <a href="#">Home</a>
@@ -60,7 +52,6 @@
                 <a href="#">Edit</a>
             </span>
             <span id="breadcrumb_view">View</span>
-            </ol>
         </section>
 
         <div id="user-messages" class="user-messages modal fade intGEL" role="dialog">
@@ -628,14 +619,14 @@
                                 <div id="duration">
                                     <strong></strong> seconds selected
                                 </div>
-                                <div id="playbackRate" data-rate='1' class="tooltip-info" data-placement="left" title="Changing the playback rate is for preview and transcription assistance only.<br/>It will not affect video output.">
+                                <button id="playbackRate" data-rate='1' class="tooltip-info" data-placement="left" title="Changing the playback rate is for preview and transcription assistance only.<br/>It will not affect video output.">
                                     <i class="fa fa-clock-o" aria-hidden="true"></i>
                                     <select>
                                         <option value="0.5">0.5x</option>
                                         <option value="1" selected>1.0x</option>
                                         <option value="1.5">1.5x</option>
                                     </select>
-                                </div>
+                                </button>
                                 <button id="play">
                                     <i class="fa fa-play"></i>Play
                                 </button>
@@ -856,9 +847,10 @@
                         </div>
                         <div class="transcript-buttons">
                             <button id="transcript-btn-enabled" data-enabled='true'>
-                                <input id="input-subtitles" class="themeConfig" type="checkbox" name="subtitles.enabled" value="true" checked>
+                                <input id="input-subtitles" class="themeConfig hidden" type="checkbox" name="subtitles.enabled" value="true" checked>
+                                <i class="on fa fa-check-square"></i>
+                                <i class="off fa fa-square-o"></i>
                                 Overlay Subtitles
-                                <!-- <span class='on'>ON</span><span class='off'>OFF</span> -->
                             </button>
                             <span style="color: #ccc; padding: 0 10px;">|</span>
                             <button id="transcript-btn-timings" class="enabledOnly">
@@ -995,7 +987,6 @@
                             </div>
                             <div class="transcript-export">
                                 <a id="trasncript-export-dummy" href="" target="_blank" style="display: none"></a>
-                                <hr>
                             </div>
                         </div>
                     </section>
