@@ -7,7 +7,7 @@ function reverseHMS(str) {
   var time = str.split(':');
   var sec = 0;
   var place = 0;
-  for (let i = time.length - 1; i >= 0; i--) {
+  for (var i = time.length - 1; i >= 0; i--) {
     sec += +time[i].replace(/[^\d.-]/g, '') * Math.pow(60, place);
     place++;
   }
@@ -29,21 +29,21 @@ function insertSubBlock() {
     blockDiv.setAttribute("class", "block");
     var boxDiv = document.createElement("div");
     boxDiv.setAttribute("class", "box");
-    blockDiv.append(boxDiv);
+    jQuery(blockDiv).append(boxDiv);
     var timesDiv = document.createElement("div");
     timesDiv.setAttribute("class", "times");
-    boxDiv.append(timesDiv);
+    jQuery(boxDiv).append(timesDiv);
     var startEl = document.createElement("input");
     startEl.setAttribute("name", "start");
     startEl.setAttribute("type", "text");
-    timesDiv.append(startEl);
+    jQuery(timesDiv).append(startEl);
     var endEl = document.createElement("input");
     endEl.setAttribute("name", "end");
     endEl.setAttribute("type", "text");
-    timesDiv.append(endEl);
+    jQuery(timesDiv).append(endEl);
     var subDiv = document.createElement("div");
     subDiv.setAttribute("class", "subtitles");
-    boxDiv.append(subDiv);
+    jQuery(boxDiv).append(subDiv);
     jQuery("#transcript-timings").append(blockDiv);
 }
 
@@ -206,7 +206,7 @@ function validate() {
   inputs.each(function(i){
     var time = getTimeFromInput(jQuery(this));
     var prev = 0;
-    for (let j = i-1; j >=0; j--) {
+    for (var j = i-1; j >=0; j--) {
       var el = jQuery(`#transcript-timings .block input:eq(${j})`);
       if (el.length) {
         prev = getTimeFromInput(el);
@@ -214,7 +214,7 @@ function validate() {
       }
     }
     var next = Infinity;
-    for (let j = i+1; j < count; j++) {
+    for (var j = i+1; j < count; j++) {
       var el = jQuery(`#transcript-timings .block input:eq(${j})`);
       if (el.length) {
         next = getTimeFromInput(el);

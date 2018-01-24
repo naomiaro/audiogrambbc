@@ -356,6 +356,15 @@ body.landing #error {
     border-color: #adadad;
 }
 
+#transcript-btn-enabled {
+  padding-left: 25px;
+}
+#transcript-btn-enabled #input-subtitles {
+  position: absolute;
+  top: 2px;
+  margin-left: -17px;
+}
+
 .transcript-btn-enabled[data-enabled='true'] .off,
 .transcript-btn-enabled[data-enabled='false'] .on {
     display: none;
