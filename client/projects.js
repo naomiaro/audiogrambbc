@@ -171,6 +171,7 @@ function loadProject(id) {
       );
     }
     // Load theme
+    jQuery('#transcript-btn-enabled').attr('data-enabled', Boolean(data.theme.subtitles.enabled));
     if (data.theme.subtitles.enabled) {
       jQuery('#transcript .transcript-buttons .enabledOnly').show();
     } else {

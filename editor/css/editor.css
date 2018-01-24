@@ -356,17 +356,24 @@ body.landing #error {
     border-color: #adadad;
 }
 
-#transcript-btn-enabled {
-  padding-left: 25px;
-}
 #transcript-btn-enabled #input-subtitles {
   position: absolute;
   top: 2px;
   margin-left: -17px;
 }
 
-.transcript-btn-enabled[data-enabled='true'] .off,
-.transcript-btn-enabled[data-enabled='false'] .on {
+#transcript-btn-enabled .on,
+#transcript-btn-enabled .off {
+  width: 11px;
+}
+#transcript-btn-enabled .on {
+    color: #3f81cc;
+}
+#transcript-btn-enabled .off {
+    color: #bbbbbb;
+}
+#transcript-btn-enabled[data-enabled='true'] .off,
+#transcript-btn-enabled[data-enabled='false'] .on {
     display: none;
 }
 .transcript-buttons button select {
@@ -879,42 +886,40 @@ button,
 }
 
 #playbackRate {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-}
-#playbackRate i {
-    position: absolute;
-    z-index: 1;
-    top: 6px;
-    left: 6px;
-    color: #333;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  width: 60px;
+  margin-right: 4px;
+  text-align: left;
 }
 #playbackRate select {
-    background: #e6e6e6;
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    line-height: 12px;
-    font-size: 13px;
-    position: relative;
-    top: 0;
-    margin-right: 1px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    outline: none;
-    text-align: center;
-    padding-left: 22px;
-    cursor: pointer;
+  background: transparent;
+  color: #333;
+  border: none;
+  line-height: 12px;
+  font-size: 13px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  padding-left: 22px;
+  cursor: pointer;
 }
+#playbackRate[data-rate='1'],
 #playbackRate[data-rate='1'] select,
 #playbackRate[data-rate='1'] i {
-    background: #fff;
     color: #333;
 }
+#playbackRate:hover,
 #playbackRate:hover select,
 #playbackRate:hover i{
   color: #333;
+}
+#playbackRate:hover,
+#playbackRate:hover i{
   background-color: #e6e6e6;
   border-color: #adadad;
 }
