@@ -1133,12 +1133,19 @@ function init() {
         var block = jQuery(this).parentsUntil('.transcript-content').last();
         block.removeClass('same-speaker');
         format();
-    })
+    });
 
     jQuery(document).on('click', '.transcript-manual', function (e) {
         loadEmpty();
         jQuery("#transcript").removeClass("loading error");
         utils.stopIt(e);
+    });
+
+    jQuery(document).on("click", ".transcript-import", function(e) {
+      loadEmpty();
+      jQuery("#transcript").removeClass("loading error");
+      jQuery("#input-transcript").click();
+      utils.stopIt(e);
     });
 
     var selectedNode = {};

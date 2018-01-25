@@ -729,6 +729,8 @@ body.landing #error {
 
 #transcript.loading transcript,
 #transcript.error transcript,
+#transcript.loading .transcript-buttons,
+#transcript.error .transcript-buttons,
 #transcript.timings #transcript-pane,
 #transcript:not(.timings) #transcript-timings,
 #transcript:not(.loading) .loading,
