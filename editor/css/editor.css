@@ -1,5 +1,6 @@
 .landing .breadcrumbs,
-.loading:not(.generating) .breadcrumbs {
+.loading:not(.generating) .breadcrumbs,
+.offline .breadcrumbs {
   display: none;
 }
 .breadcrumbs {
@@ -1220,7 +1221,21 @@ g.time line {
 }*/
 
 /* Loading styles */
-#loading-message {
+#offline {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 983px;
+    background: #eee;
+    z-index: 9999;
+    text-align: center;
+    color: #de1e3d;
+    margin-top: 60px;
+    padding-top: 40px;
+}
+
+#loading-message,
+#offline-message {
   font-size: 24px;
   text-align: center;
   color: #de1e3d;

@@ -28,6 +28,14 @@ user.init();
 
 jQuery('#version').text('Version: __VERSION__');
 
+jQuery.get("/redis", function(data) {
+  if (!data.error && data.info) {
+    if (data.info.loading == 1) {
+      utils.offline("The Audiogram database is currently restarting and will be back online soon.");
+    }
+  }
+});
+
 d3.json("/settings/themes.json", function(err, themes){
 
   console.log('Parsing themes...');

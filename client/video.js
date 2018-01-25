@@ -12,6 +12,8 @@ function exit() {
 }
 
 function update(url, data) {
+
+  if (jQuery('#offline:visible').length) return;
   
   var timestamp = d3.timeFormat("%Y-%m-%d-%-I:%M%p")(new Date).toLowerCase(),
   filename = "Audiogram" + timestamp + ".mp4",

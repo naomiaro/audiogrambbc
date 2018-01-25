@@ -159,6 +159,14 @@ app.get("/transcript", function(req, res){
     return res.send(text);
 });
 
+// Redis Info
+app.get("/redis", function(req, res){
+  var transports = require("../lib/transports");
+  transports.status(function(err, info) {
+    res.json({ err, info });
+  });
+});
+
 // Serve background images and themes JSON statically
 app.use("/settings/", function(req, res, next) {
 

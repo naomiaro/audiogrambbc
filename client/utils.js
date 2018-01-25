@@ -30,6 +30,15 @@ function navigate(state, msg, log) {
     jQuery(".modal-backdrop").remove();
 }
 
+function offline(msg) {
+    jQuery("#offline-message").text(msg || "Audiogram is currently offline.");
+    jQuery('#offline').show();
+    var exitVideo = require("./video").exit;
+    var stopAudio = require("./audio").pause;
+    exitVideo();
+    stopAudio();
+}
+
 function setClass(cl, msg, log) {
   var error = cl=='error';
   cl = LOADING ? error ? 'landing' : 'loading' : cl;
@@ -44,6 +53,9 @@ function setClass(cl, msg, log) {
   if (cl=='landing') {
     var projects = require('./projects');
     projects.getProjects();
+  }
+  if (cl=='loading') {
+    jQuery("#loading-message").text(msg || 'Loading...');
   }
   // Log warning
   if ((log || (log === undefined && cl == 'error')) && msg) {
@@ -184,6 +196,7 @@ function statusMessage(result) {
 
 module.exports = {
     setClass,
+    offline,
     getURLParams,
     stopIt,
     pad,
