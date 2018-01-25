@@ -11,8 +11,10 @@ function navigate(state, msg, log) {
     if (state == 'home') {
       var projectsInit = require("./projects").init;
       var deleteAllMedia = require("./media").deleteAll;
+      var clearTranscriptTimeouts = require("./transcript").clear;
       projectsInit();
       deleteAllMedia();
+      clearTranscriptTimeouts();
       jQuery("#input-audio").val('');
     }
     if (state != 'view' && jQuery('body').is('.rendered')) {

@@ -542,6 +542,7 @@ function clear() {
     jQuery(".transcript-content").text("");
     jQuery("#transcript").removeClass("loading");
     currentTranscript = null;
+    clearTimeout(formatTimeout);
     clearTimeout(kaldiPoll);
     return currentTranscript;
 }
