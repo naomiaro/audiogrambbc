@@ -4,6 +4,20 @@ var transports = require("../lib/transports"),
     request = require('request'),
     auth = require('./auth');
 
+function statusMiddleware(req, res) {
+  transports.status(function(err, info) {
+    if (info && info.loading==0) {
+      return res.json({
+        error: {
+          message: 'The Audiogram server is currently restarting and will be back online shortly.',
+          info
+        } 
+      });
+    }
+    return adminMiddleware(req, res);
+  });
+}
+
 function adminMiddleware(req, res) {
   var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "localhost@audiogram.newslabs.co";  
   auth.isAdmin(email, function(err, isAdmin){
