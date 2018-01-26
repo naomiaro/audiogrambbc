@@ -80,7 +80,11 @@ function getProjects() {
         el.attr("data-id", projects[i].id);
         el.attr("data-audioId", projects[i].audioId);
         el.attr("data-finished", projects[i].finished);
-        if (!projects[i].finished) el.addClass('hidden');
+        if (projects[i].finished) {
+          el.removeClass('hidden');
+        } else {
+          el.addClass("hidden");          
+        }
         el.find(".name").text( projects[i].title );
         var date = new Date(projects[i].date);
         el.find(".date").text(dateFormat(date, "dd mmm, HH:MM"));
