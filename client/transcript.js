@@ -3,11 +3,7 @@ var jQuery = require("jquery"),
   utils = require("./utils"),
   audio = require("./audio.js"),
   minimap = require("./minimap.js"),
-  ReactDOM = require("react-dom"),
-  React = require("react"),
   uuid = require("uuid/v4"),
-  TranscriptEditor = require("transcript-editor").default,
-  Transcript = require("transcript-model").Transcript,
   currentTranscript,
   kaldiPoll,
   formatTimeout;
@@ -471,15 +467,7 @@ function  loadEmpty() {
 function load(json) {
     clear();
     if (!json) return;
-
-    if (json.hasOwnProperty("commaSegments")) {
-        currentTranscript = Transcript.fromComma(json);
-    } else if (json.hasOwnProperty("kaldi")) {
-        currentTranscript = Transcript.fromKaldi(json.transcript, json.segments);
-    } else {
-        // currentTranscript = Transcript.fromJSON(json);
-        currentTranscript = json;
-    }    
+    currentTranscript = json;
     var script = toJSON();
 
     // Generate speaker dropdown
