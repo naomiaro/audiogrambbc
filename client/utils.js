@@ -180,7 +180,10 @@ function statusMessage(result) {
       }
       var msg = "Generating frames";
       if (result.numFrames) {
-        msg += ", " + Math.round(100 * (result.framesComplete || 0) / result.numFrames) + "% complete";
+        var percentComplete = Math.round(100 * (result.framesComplete || 0) / result.numFrames);
+        if (percentComplete < 100) {
+          msg += ", " + percentComplete + "% complete";
+        }
       }
       return msg;
     case "combine":
