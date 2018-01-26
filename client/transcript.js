@@ -757,7 +757,7 @@ function importFromFile() {
                 var secPerChar = dur / charCount;
                 var time = segment.start;
                 segment.words = [];
-                segment.text.split(' ').forEach(word => {
+                segment.text.split(' ').forEach(function(word) {
                     var start = time;
                     var end = time + (secPerChar * word.length);
                     time = end;

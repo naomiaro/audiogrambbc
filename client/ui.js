@@ -50,7 +50,7 @@ function windowResize() {
         preview.redraw();
         var audio = require('./audio');
         var duration = audio.duration();
-        var extent = audio.extent().map((e) => {
+        var extent = audio.extent().map(function(e) {
             return e * duration;
         });
         var hidden = d3.select('#minimap').classed('hidden');

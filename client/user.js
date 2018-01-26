@@ -15,7 +15,7 @@ function formatDate(input) {
 
 function displayMessages(messages) {
     var i = 1;
-    messages.forEach(message => {
+    messages.forEach(function(message) {
         if (i>1) {
             var div = jQuery(".user-messages.modal .message:last").clone();
             jQuery(".user-messages.modal .message:last").after(div);

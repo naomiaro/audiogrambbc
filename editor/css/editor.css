@@ -1215,6 +1215,13 @@ g.time line {
   display: block;
 }
 
+#browserWarning {
+  margin: -10px 0 30px 0;
+}
+.landing #browserWarning {
+  margin: -10px 0 50px 0;
+}
+
 /*.rendered #download,
 .rendered #return {
   display: inline-block;
