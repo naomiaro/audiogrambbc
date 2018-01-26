@@ -28,12 +28,20 @@ user.init();
 
 jQuery('#version').text('Version: __VERSION__');
 
-jQuery.get("/redis", function(data) {
-  if (!data.error && data.info) {
-    if (data.info.loading == 1) {
-      utils.offline("The Audiogram database is currently restarting and will be back online soon.");
+// Check DB status
+jQuery.ajax({
+  url: "/redis",
+  error: function() {
+    utils.offline("The Audiogram database is currently offline. Please try again shortly.");
+  },
+  success: function(data) {
+    if (!data.error && data.info) {
+      if (data.info.loading == 1) {
+        utils.offline("The Audiogram database is currently restarting and will be back online soon.");
+      }
     }
-  }
+  },
+  timeout: 3000
 });
 
 d3.json("/settings/themes.json", function(err, themes){
