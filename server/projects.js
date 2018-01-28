@@ -1,22 +1,9 @@
 var transports = require("../lib/transports"),
+    stats = require('../lib/stats'),
     fs = require("fs"),
     path = require("path"),
     request = require('request'),
     auth = require('./auth');
-
-function statusMiddleware(req, res) {
-  transports.status(function(err, info) {
-    if (info && info.loading==0) {
-      return res.json({
-        error: {
-          message: 'The Audiogram server is currently restarting and will be back online shortly.',
-          info
-        } 
-      });
-    }
-    return adminMiddleware(req, res);
-  });
-}
 
 function adminMiddleware(req, res) {
   var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : "localhost@audiogram.newslabs.co";  
@@ -70,12 +57,20 @@ function projectList(req, res, admin) {
 function getProject(req, res) {
   var project = { err: "No project found matching that ID." };
   transports.getProjectList(function(err, projects) {
-    if (err) return res.json({ err: err });
+    if (err) {
+      return res.json({ err: err });
+      stats.increment('loadproject.error');
+    }
     for (var i = 0; i < projects.length; i++) {
       if (projects[i].id == req.params.id) {
         project = projects[i];
         break;
       }
+    }
+    if (project.err) {
+      stats.increment('loadproject.notfound');
+    } else {
+      stats.increment('loadproject');      
     }
     return res.json(project);
   });
