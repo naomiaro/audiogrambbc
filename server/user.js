@@ -21,11 +21,16 @@ function scanHeartbeats() {
     }
     if (cursor === "0") {
       var count = _.uniq(activeHeartbeats).length;
-      stats.gauge("users.loggedin", count);
       activeHeartbeats = [];
-      setTimeout(function() {
-        scanHeartbeats();
-      }, 10000);
+      stats.gauge("users.loggedin", count, function(err){
+        if (err) {
+          console.log('StatsD Error:', err.message);
+        } else {
+          setTimeout(function() {
+            scanHeartbeats();
+          }, 10000);
+        }
+      });
       return false;
     }
     return scanHeartbeats();
