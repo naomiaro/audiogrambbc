@@ -12,9 +12,11 @@ function navigate(state, msg, log) {
       var projectsInit = require("./projects").init;
       var deleteAllMedia = require("./media").deleteAll;
       var clearTranscriptTimeouts = require("./transcript").clear;
+      var resetTheme = require('./themeHelper').reset;
       projectsInit();
       deleteAllMedia();
       clearTranscriptTimeouts();
+      resetTheme();
       jQuery("#input-audio").val('');
     }
     if (state != 'view' && jQuery('body').is('.rendered')) {

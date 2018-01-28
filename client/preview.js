@@ -30,7 +30,11 @@ function _img(type, _) {
 }
 
 function _imgInfo(type, _) {
-    return _ ? (imgInfo[type] = _, redraw()) : imgInfo[type];
+    if (arguments.length > 0) {
+        return _ ? (imgInfo[type] = _, redraw()) : imgInfo[type];
+    } else {
+        return imgInfo = {};
+    }
 }
 
 function _theme(_) {

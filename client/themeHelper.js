@@ -16,6 +16,7 @@ function themeReset() {
         name = jQuery('#input-theme').val();
     var sel = jQuery('#input-theme').get(0);
     d3.select(sel.options[sel.selectedIndex]).datum(themes[theme.name]);
+    preview.imgInfo(null);
     update(themes[name]);
 }
 
@@ -280,5 +281,6 @@ d3.select('#videoload a').on('click', setBackground);
 module.exports = {
     raw: _raw,
     update,
+    reset: themeReset,
     updateImage
 }

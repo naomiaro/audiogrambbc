@@ -35,14 +35,15 @@ function submitted() {
         caption = preview.caption(),
         selection = preview.selection(),
         backgroundInfo = preview.imgInfo('background'),
-        audioFile = preview.file();
+        audioFile = preview.file(),
+        mediaInfo = media.get();
 
     if (!audioFile) {
         d3.select('#row-audio').classed('error', true);
         return utils.setClass('error', 'Submit Error: No audio file selected.');
     }
 
-    if (!theme.backgroundImage && !backgroundInfo) {
+    if (!theme.backgroundImage && (!backgroundInfo || !mediaInfo.background)) {
         return utils.setClass('error', "Submit Error: The '" + theme.name + "' theme requires you upload/import a background image or video");
     }
 
@@ -71,7 +72,7 @@ function submitted() {
     // formData.append("background", imgFile.background);
     // formData.append("foreground", imgFile.foreground);
 
-    formData.append('media', JSON.stringify(media.get()));
+    formData.append('media', JSON.stringify(mediaInfo));
 
     formData.append('backgroundInfo', JSON.stringify(backgroundInfo || theme.backgroundImageInfo[theme.orientation]));
     if (selection.start || selection.end) {
