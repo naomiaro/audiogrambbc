@@ -880,7 +880,6 @@ function init() {
             utils.stopIt(e);
         // Backspace
         } else if (e.keyCode === 8) {
-            utils.stopIt(e); 
             var sel = window.getSelection();
             var selNode = sel.focusNode.parentElement;
             var selPos = sel.focusOffset;
