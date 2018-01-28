@@ -41,6 +41,14 @@ function checkMessages(since, force) {
     }.bind(force));
 }
 
+function sendHeartbeat() {
+    jQuery.getJSON('/heartbeat', function(data) {
+        setTimeout(function() {
+            sendHeartbeat();
+        }, 60000);
+    });
+}
+
 module.exports.init = function() {
     jQuery.getJSON('/whoami', function(data) {
         if (data.email) {
@@ -52,6 +60,8 @@ module.exports.init = function() {
         } else {
             logger.error('Unkown user logged in... ' + JSON.parse(data));
         }
+
+        sendHeartbeat();
 
         if(!window.location.hostname.startsWith('localhost')){
             // Piwik Code - for now, replaces Google Analytics

@@ -16,7 +16,7 @@ var whitelist = require("./whitelist.js"),
   status = require("./status.js"),
   projects = require("./projects.js"),
   fonts = require("./fonts.js"),
-  whoami = require("./whoami.js"),
+  user = require("./user.js"),
   messages = require("./messages.js"),
   upload = require("./upload.js"),
   kaldi = require("./kaldi.js"),
@@ -113,8 +113,10 @@ app.get("/getProjects/", projects.getList);
 app.get("/getProject/:id", projects.getProject);
 app.get("/updateProject/:id", projects.updateProject);
 
-// Get user info
-app.get("/whoami/", whoami);
+// User info
+app.get("/whoami/", user.whoami);
+app.get("/heartbeat/", user.heartbeat);
+app.get("/logout/", user.logout);
 
 // User messages
 app.get("/messages/edit", messages.editor);

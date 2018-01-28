@@ -217,5 +217,6 @@ function preloadImages(themes) {
 }
 
 jQuery(window).bind("beforeunload", function() {
-  return media.deleteAll();
+  media.deleteAll();
+  jQuery.getJSON('/logout');
 });
