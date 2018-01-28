@@ -65,6 +65,8 @@ function submitted() {
     var private = +jQuery("#input-private").val();
     formData.append('private', private);
 
+    formData.append("reversion", window.location.pathname.indexOf("ag/") === -1 ? 0 : 1);
+
     // formData.append("audio", audioFile);
     // formData.append("background", imgFile.background);
     // formData.append("foreground", imgFile.foreground);

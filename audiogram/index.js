@@ -2,6 +2,7 @@ var path = require("path"),
     queue = require("d3").queue,
     mkdirp = require("mkdirp"),
     rimraf = require("rimraf"),
+    stats = require('../lib/stats'),
     serverSettings = require("../lib/settings/"),
     transports = require("../lib/transports/"),
     logger = require("../lib/logger/"),
@@ -229,6 +230,12 @@ Audiogram.prototype.render = function(cb) {
 
   var self = this,
       q = queue(1);
+
+  if (+this.settings.reversion) {
+    stats.increment("render.reversion");
+  } else {
+    stats.increment("render.new");
+  }
 
   this.status("audio-download");
 

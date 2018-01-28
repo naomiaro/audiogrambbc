@@ -68,7 +68,7 @@ function getProject(req, res) {
       }
     }
     if (project.err) {
-      stats.increment('loadproject.notfound');
+      stats.increment('loadproject.error');
     } else {
       stats.increment('loadproject');      
     }
