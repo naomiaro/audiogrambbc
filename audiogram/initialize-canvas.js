@@ -25,13 +25,15 @@ function initializeCanvas(theme, cb) {
     }
     renderer.foregroundImage(fg);
   }
-
+  
   // Load background image
   var bg = new Canvas.Image;
   if (!theme.customBackgroundPath && theme.backgroundImage) {
     bg.src = path.join(__dirname, "..", "settings", "backgrounds", theme.backgroundImage);
-  } else {
+  } else if (serverSettings.storagePath && theme.customBackgroundPath) {
     bg.src = path.join(serverSettings.storagePath, theme.customBackgroundPath);
+  } else {
+    return cb('Missing background image');
   }
   renderer.backgroundImage(bg);
 

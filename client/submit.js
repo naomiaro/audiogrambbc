@@ -159,6 +159,9 @@ function poll(id) {
                     logger.success(result);
                 } else if (result.status === 'error') {
                     console.log('RLW status error');
+                    if (result.error.indexOf('frames/000001') !== -1) {
+                        result.error = 'There was an error rendering your video. The issue has been logged.';
+                    }
                     utils.error(result.error);
                 } else {
                     d3.select('#loading-message').text(utils.statusMessage(result));

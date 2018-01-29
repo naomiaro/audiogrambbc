@@ -13,6 +13,9 @@ var dotenv = require("dotenv").config({silent: true}),
 // exit on transports callback
 function cb(err) {
   if (process.env.SPAWNED) {
+    if (err && process.send) {
+      process.send(err);
+    }
     transports.quit();
     return process.exit(err ? -1 : 0);
   }
@@ -42,7 +45,9 @@ transports.getHash(hashId, function(err, hash){
     initializeCanvas(theme, function(err, renderer){
       if (err) return cb(err);
       // Render frames
-      drawFrames(renderer, options, cb);
+      drawFrames(renderer, options, function(err){
+        cb(err);
+      });
     });
 
   }

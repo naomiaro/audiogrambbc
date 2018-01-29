@@ -173,13 +173,22 @@ Audiogram.prototype.drawFrames = function(cb) {
 
   function spawnChild(frames, spawnCb) {
     var child = spawn("bin/frameWorker", [self.id, frames.start, frames.end], {
-                  stdio: "inherit",
                   cwd: path.join(__dirname, ".."),
-                  env: _.extend({}, process.env, { SPAWNED: true })
+                  env: _.extend({}, process.env, { SPAWNED: true }),
+                  stdio: ['pipe', 'pipe', 'pipe', 'ipc']
                 });
     child.on('exit', function (exitCode) {
         var err = exitCode==-1 ? "frameWorker error" : null;
         spawnCb(err);
+    });
+    child.stderr.on('data', function (data) {
+      spawnCb('Error drawing frames: ' + data);
+    });
+    child.stdout.on('data', function (data) {
+      console.log('frameWorker >>> ' + data);
+    });
+    child.on('message', function (err) {
+      spawnCb('Error drawing frames: ' + err);
     });
   }
 

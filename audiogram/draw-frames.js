@@ -64,7 +64,7 @@ function drawFrames(renderer, options, cb) {
 
     drawQueue.defer(loadVideoFrame, options, frameNumber);
     drawQueue.await(function(err){
-      if (err) return cb(err);
+      if (err) return frameCallback(err);
       renderer.drawFrame(context, {
         caption: options.caption,
         subtitles: options.subtitles,
