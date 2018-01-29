@@ -182,13 +182,13 @@ Audiogram.prototype.drawFrames = function(cb) {
         spawnCb(err);
     });
     child.stderr.on('data', function (data) {
-      spawnCb('Error drawing frames: ' + data);
+      spawnCb('Error drawing frames: ' + JSON.stringify(data));
     });
     child.stdout.on('data', function (data) {
       console.log('frameWorker >>> ' + data);
     });
     child.on('message', function (err) {
-      spawnCb('Error drawing frames: ' + err);
+      spawnCb('Error drawing frames: ' + JSON.stringify(err));
     });
   }
 
