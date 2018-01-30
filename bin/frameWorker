@@ -32,8 +32,12 @@ transports.getHash(hashId, function(err, hash){
   } else if (hash) {
 
     // Parse job info
-    var theme = JSON.parse(hash.theme),
-        options = JSON.parse(hash.options);
+    try {
+      var theme = JSON.parse(hash.theme),
+          options = JSON.parse(hash.options);
+    } catch (error) {
+      return cb('jobInfo could not be parsed');
+    }
         
     // Supplement options
     options.frames = frames;

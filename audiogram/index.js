@@ -189,8 +189,12 @@ Audiogram.prototype.drawFrames = function(cb) {
       console.log('frameWorker >>> ' + data);
     });
     child.on('message', function (msg) {
-      var err = JSON.stringify(msg);
-      if (err.length > 10) spawnCb('Error drawing frames: ' + msg);
+      try {
+        var err = JSON.stringify(msg);
+      } catch {
+        var err = msg;
+      }
+      if (err.length && err.length > 10) spawnCb("Error drawing frames: " + err);
     });
   }
 
