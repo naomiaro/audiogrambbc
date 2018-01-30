@@ -307,9 +307,14 @@ Audiogram.prototype.render = function(cb) {
 
     logger.debug(self.profiler.print());
 
-    rimraf(this.dir);
-
-    return cb(err);
+    if (self.dir) {
+      rimraf(self.dir, function(rimrafErr) {
+        if (rimrafErr) console.log(rimrafErr);
+        return cb(err);
+      });
+    } else {
+      return cb(err);      
+    }
 
   });
 
