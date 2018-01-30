@@ -58,7 +58,7 @@ Audiogram.prototype.getWaveform = function(cb) {
     }
 
     self.profiler.size(data.duration);
-    self.set("numFrames", self.numFrames = Math.floor(data.duration * self.settings.theme.framesPerSecond));
+    self.set("numFrames", self.numFrames = Math.floor(data.duration * self.settings.theme.framesPerSecond) - 1);
     self.status("waveform");
 
     getWaveform(self.audioPath, {
