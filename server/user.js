@@ -6,14 +6,16 @@ var redisClient = redis.createClient({ host: redisHost });
 var prefix = "audiogram:";
 
 redisClient.on("error", function(err) {
-	console.log('REDIS ERROR>> ', err);
+	console.log('REDIS ERROR>> \n', err);
 });
 
 var cursor = "0";
 var activeHeartbeats = [];
 function scanHeartbeats() {
   redisClient.scan(cursor, "MATCH", "audiogram:heartbeat:*", function(err, res) {
-    if (err) throw err;
+    if (err) {
+      console.log('HEARTBEAT REDIS ERROR >> \n', err);
+    }
     cursor = res[0];
     var keys = res[1];
     if (keys.length > 0) {
