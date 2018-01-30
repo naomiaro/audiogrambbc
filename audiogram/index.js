@@ -295,7 +295,7 @@ Audiogram.prototype.render = function(cb) {
   q.defer(transports.uploadVideo, this.videoPath, "video/" + this.id + ".mp4");
 
   // Delete working directory
-  q.defer(rimraf, this.dir);
+  // q.defer(rimraf, this.dir);
   // TO DO: also need to remove bg directory
 
   // Final callback, results in a URL where the finished video is accessible
@@ -306,6 +306,8 @@ Audiogram.prototype.render = function(cb) {
     }
 
     logger.debug(self.profiler.print());
+
+    rimraf(this.dir);
 
     return cb(err);
 
