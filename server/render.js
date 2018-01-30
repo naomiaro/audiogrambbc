@@ -186,23 +186,27 @@ function route(req, res) {
       var origWords = 0;
       var editedWords = 0;
       var addedWords = 0;
-      transcript.segments.forEach(segment => {
-        segment.words.forEach(word => {
-          if (!word.orig) {
-            addedWords++;
-          } else if (word.text.toLowerCase() === word.orig.toLowerCase()) {
-            origWords++;
-          } else {
-            editedWords++;
-          }
-        });
-      });
-      var transcriptType = (origWords == 0 && editedWords == 0) ? 'manual' : 'kaldi';
-      stats.increment(`transcript.${transcriptType}`);
-      if (transcriptType==='kaldi') {
-        stats.increment('transcript.kaldi.words.original', origWords);
-        stats.increment('transcript.kaldi.words.edited', editedWords);
-        stats.increment('transcript.kaldi.words.added', addedWords);
+      if (transcript) {
+        transcript.segments.forEach(segment => {
+            segment.words.forEach(word => {
+              if (!word.orig) {
+                addedWords++;
+              } else if (word.text.toLowerCase() === word.orig.toLowerCase()) {
+                origWords++;
+              } else {
+                editedWords++;
+              }
+            });
+          });
+        var transcriptType = (origWords == 0 && editedWords == 0) ? 'manual' : 'kaldi';
+        if (renderType==='new') {
+          stats.increment(`transcript.${transcriptType}`);
+        }
+        if (transcriptType==='kaldi') {
+          stats.increment('transcript.kaldi.words.original', origWords);
+          stats.increment('transcript.kaldi.words.edited', editedWords);
+          stats.increment('transcript.kaldi.words.added', addedWords);
+        }
       }
     }
 
