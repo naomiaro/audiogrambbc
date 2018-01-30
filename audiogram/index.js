@@ -182,7 +182,7 @@ Audiogram.prototype.drawFrames = function(cb) {
         spawnCb(err);
     });
     child.stderr.on('data', function (data) {
-      spawnCb('Error drawing frames: ' + JSON.stringify(data));
+      spawnCb('Error drawing frames: ' + data.toString());
     });
     child.stdout.on('data', function (data) {
       console.log('frameWorker >>> ' + data);
@@ -239,12 +239,6 @@ Audiogram.prototype.render = function(cb) {
 
   var self = this,
       q = queue(1);
-
-  if (+this.settings.reversion) {
-    stats.increment("render.reversion");
-  } else {
-    stats.increment("render.new");
-  }
 
   this.status("audio-download");
 

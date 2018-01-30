@@ -429,7 +429,8 @@ function toJSON() {
                     var text = jQuery(this).text();
                     var start = +jQuery(this).attr('data-start');
                     var end = +jQuery(this).attr('data-end');
-                    var word = {text, start, end};
+                    var orig = jQuery(this).attr('data-text');
+                    var word = {text, orig, start, end};
                     if (jQuery(this).hasClass('added')) {
                         word.added = true;
                     }

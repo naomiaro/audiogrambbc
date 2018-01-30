@@ -1,4 +1,5 @@
 var serverSettings = require("../lib/settings/"),
+stats = require('../lib/stats'),
 spawn = require("child_process").spawn,
 path = require("path"),
 _ = require("underscore"),
@@ -137,7 +138,9 @@ function route(req, res) {
         customForegroundPath: req.body.media.foreground ? req.body.media.foreground.dest: null
       }
     );
-    transports.addJob(_.extend({ id: jobId, created: (new Date()).getTime(), media: req.body.media, theme: themeWithBackgroundImage }, req.body));
+    var job = _.extend({ id: jobId, created: (new Date()).getTime(), media: req.body.media, theme: themeWithBackgroundImage }, req.body);
+    transports.addJob(job);
+    sendStats(job);
     
     res.json({ id: jobId, media: req.body.media });
     
@@ -154,6 +157,55 @@ function route(req, res) {
       });
       
     }
+  }
+
+  function sendStats(job) {
+    
+    console.log('\n\n\n');
+    console.log(job);
+    console.log('\n\n\n');
+
+    // Render
+    var renderType = +job.reversion ? 'reversion' : 'new';
+    stats.increment(`render.${renderType}`);
+
+    // Theme
+    var themeName = job.theme.name.replace(/ /g, '_');
+    stats.increment(`render.theme.${themeName}`);    
+
+    // Waveform
+    stats.increment(`render.waveform.${job.theme.pattern}`);        
+
+    // Subtitles
+    var subsEnabled = +job.theme.subtitles.enabled ? 'on' : 'off';
+    stats.increment(`render.subtitles.${subsEnabled}`);
+
+    // Transcript
+    if (+job.theme.subtitles.enabled) {
+      var transcript = JSON.parse(job.transcript);
+      var origWords = 0;
+      var editedWords = 0;
+      var addedWords = 0;
+      transcript.segments.forEach(segment => {
+        segment.words.forEach(word => {
+          if (!word.orig) {
+            addedWords++;
+          } else if (word.text.toLowerCase() === word.orig.toLowerCase()) {
+            origWords++;
+          } else {
+            editedWords++;
+          }
+        });
+      });
+      var transcriptType = (origWords == 0 && editedWords == 0) ? 'manual' : 'kaldi';
+      stats.increment(`transcript.${transcriptType}`);
+      if (transcriptType==='kaldi') {
+        stats.increment('transcript.kaldi.words.original', origWords);
+        stats.increment('transcript.kaldi.words.edited', editedWords);
+        stats.increment('transcript.kaldi.words.added', addedWords);
+      }
+    }
+
   }
   
 };
