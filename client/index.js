@@ -32,7 +32,7 @@ jQuery('#version').text('Version: __VERSION__');
 jQuery.ajax({
   url: "/redis",
   error: function() {
-    utils.offline("The Audiogram database is currently offline. Please try again shortly.");
+    utils.offline("The Audiogram database is currently offline. It is sometimes rebooted routinely and should only take a few minutes to start up. Please try again shortly.");
   },
   success: function(data) {
     if (!data.error && data.info) {
