@@ -161,8 +161,6 @@ function route(req, res) {
 
   function sendStats(job) {
 
-    console.log(job);
-
     // Render
     var renderType = +job.reversion ? 'reversion' : 'new';
     stats.increment(`render.${renderType}`);
