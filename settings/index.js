@@ -18,6 +18,8 @@
 
 var path = require("path");
 
+var redisHost = process.env.REDIS_PORT ? 'redis' : '127.0.0.1';
+
 module.exports = {
   workingDirectory: path.join(__dirname, "..", "tmp"),
   storagePath: path.join(__dirname, "..", "media"),
@@ -31,5 +33,5 @@ module.exports = {
     { family: "Source Sans Pro", file: path.join(__dirname, "fonts", "SourceSansPro-Italic.ttf"), style: "italic" },
     { family: "Source Sans Pro", file: path.join(__dirname, "fonts", "SourceSansPro-BoldItalic.ttf"), weight: "bold", style: "italic" }
   ],
-  redisHost: "127.0.0.1"
+  redisHost
 };
