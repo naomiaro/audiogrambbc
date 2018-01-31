@@ -18,7 +18,7 @@
 
 var path = require("path");
 
-var redisHost = process.env.REDIS_PORT ? 'redis' : '127.0.0.1';
+var redisHost = process.env.REDIS_MODE === 'docker' ? "redis" : "127.0.0.1";
 
 module.exports = {
   workingDirectory: path.join(__dirname, "..", "tmp"),
