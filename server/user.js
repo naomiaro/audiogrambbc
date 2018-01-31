@@ -13,8 +13,11 @@ var cursor = "0";
 var activeHeartbeats = [];
 function scanHeartbeats() {
   redisClient.scan(cursor, "MATCH", "audiogram:heartbeat:*", function(err, res) {
-    if (err) {
-      console.log('HEARTBEAT REDIS ERROR >> \n', err);
+    if (err || !res) {
+      setTimeout(function() {
+        scanHeartbeats();
+      }, 60000);
+      return console.log('HEARTBEAT REDIS ERROR >> \n', err);
     }
     cursor = res[0];
     var keys = res[1];
@@ -30,7 +33,7 @@ function scanHeartbeats() {
         } else {
           setTimeout(function() {
             scanHeartbeats();
-          }, 10000);
+          }, 30000);
         }
       });
       return false;
