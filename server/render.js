@@ -160,6 +160,9 @@ function route(req, res) {
   }
 
   function sendStats(job) {
+
+    console.log(job);
+
     // Render
     var renderType = +job.reversion ? 'reversion' : 'new';
     stats.increment(`render.${renderType}`);
@@ -172,36 +175,34 @@ function route(req, res) {
     stats.increment(`render.waveform.${job.theme.pattern}`);        
 
     // Subtitles
-    var subsEnabled = +job.theme.subtitles.enabled ? 'on' : 'off';
+    var transcript = JSON.parse(job.transcript);
+    var subsEnabled = transcript && + job.theme.subtitles.enabled ? "on" : "off";
     stats.increment(`render.subtitles.${subsEnabled}`);
 
     // Transcript
-    if (+job.theme.subtitles.enabled) {
-      var transcript = JSON.parse(job.transcript);
+    if (transcript && +job.theme.subtitles.enabled) {
       var origWords = 0;
       var editedWords = 0;
       var addedWords = 0;
-      if (transcript) {
-        transcript.segments.forEach(segment => {
-            segment.words.forEach(word => {
-              if (!word.orig) {
-                addedWords++;
-              } else if (word.text.toLowerCase() === word.orig.toLowerCase()) {
-                origWords++;
-              } else {
-                editedWords++;
-              }
-            });
+      transcript.segments.forEach(segment => {
+          segment.words.forEach(word => {
+            if (!word.orig) {
+              addedWords++;
+            } else if (word.text.toLowerCase() === word.orig.toLowerCase()) {
+              origWords++;
+            } else {
+              editedWords++;
+            }
           });
-        var transcriptType = (origWords == 0 && editedWords == 0) ? 'manual' : 'kaldi';
-        if (renderType==='new') {
-          stats.increment(`transcript.${transcriptType}`);
-        }
-        if (transcriptType==='kaldi') {
-          stats.increment('transcript.kaldi.words.original', origWords);
-          stats.increment('transcript.kaldi.words.edited', editedWords);
-          stats.increment('transcript.kaldi.words.added', addedWords);
-        }
+        });
+      var transcriptType = (origWords == 0 && editedWords == 0) ? 'manual' : 'kaldi';
+      if (renderType==='new') {
+        stats.increment(`transcript.${transcriptType}`);
+      }
+      if (transcriptType==='kaldi') {
+        stats.increment('transcript.kaldi.words.original', origWords);
+        stats.increment('transcript.kaldi.words.edited', editedWords);
+        stats.increment('transcript.kaldi.words.added', addedWords);
       }
     }
 
