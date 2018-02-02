@@ -1,4 +1,4 @@
-FROM ubuntu:16.10
+FROM ubuntu:16.04
 
 # Install server dependencies
 RUN apt-get update --yes && apt-get upgrade --yes \
