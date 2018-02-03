@@ -195,7 +195,8 @@ function update(theme) {
         theme.backgroundImageInfo = jQuery.extend(true, {}, themesRaw[theme.name].backgroundImageInfo);
         theme.foregroundImageFile = jQuery.extend(true, {}, themesRaw[theme.name].foregroundImageFile);
     }
-    var theme = theme || d3.select(this.options[this.selectedIndex]).datum();
+    var sel = jQuery('#input-theme').get(0);
+    var theme = theme || d3.select(sel.options[sel.selectedIndex]).datum();
     preview.theme(theme);
     updateImage();
     if (theme.caption) {
