@@ -168,6 +168,7 @@ Audiogram.prototype.drawFrames = function(cb) {
 
   // Once all workers have exited
   spawnQ.await(function(err){
+    transports.del("jobInfo:" + self.id);
     cb(err);
   });
 
