@@ -945,18 +945,25 @@ function init() {
             var selNode = sel.focusNode.parentElement;
             var selPos = sel.focusOffset;
             if (selPos != sel.focusNode.length) {
-                var word = sel.focusNode.textContent.slice(0, selPos) + ' ';
-                word += sel.focusNode.textContent.slice(3, sel.focusNode.textContent.length);
-                jQuery(selNode).text(word);
+                var word = sel.focusNode.textContent;
+                var splitWord = [word.slice(0, selPos), word.slice(selPos)].join(' ');
+                jQuery(selNode).text(splitWord);
                 format();
             }
             var block = jQuery(selNode).parentsUntil('.transcript-content').last();
             var words = jQuery(selNode).nextAll();
+            var endOfBlock = !words.length;
+            if (endOfBlock) {
+                var words = document.createElement('span');
+                words.setAttribute('class', 'transcript-word added');
+                words.textContent = ' ';
+            }
             var newBlock = block.clone();
             newBlock.find('.transcript-segment').html('').append(words);
             newBlock.addClass('break');
             block.after(newBlock);
-            format();
+            newBlock.next().addClass('break');
+            if (!endOfBlock) format();
             sel.collapse(jQuery(newBlock).find('.transcript-word:first').get()[0], 0);
             utils.stopIt(e);
         }
@@ -986,7 +993,7 @@ function init() {
                 return;
             } 
         }
-        if (e.key!="Meta") {
+        if (e.key!="Meta" && e.keyCode!==13) {
             formatTimeout = setTimeout(function(){
                 format();
                 var preview = require("./preview.js");
@@ -1085,7 +1092,6 @@ function init() {
         var maxAvailable = jQuery(this).find('option').length - 1;
         if (maxSpeaker === maxAvailable) {
             // Add extra speaker option
-            console.log('ADD SPEAKER!');
             var newOpt = document.createElement("option");
             newOpt.value = maxSpeaker + 1;
             newOpt.text = `Speaker ${maxSpeaker + 2}`;
