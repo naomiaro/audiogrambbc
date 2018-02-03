@@ -8,18 +8,21 @@ function list(req, res) {
 	var dir = path.join(__dirname, "../png");
 	var items = [];
 	fs.readdir(dir, function(err, files) {
-		for (var i = 0; i < files.length; i++) {
-			if (files[i].includes('.json')) {
-                var metadata = require('../png/' + files[i]);
-                var file = metadata.file.split('/');
-                file = file[file.length - 1];
-				items.push({
-                    name: metadata.story,
-                    user: metadata.email,
-                    file
-                });
-			}
-		}
+        if (err) return res.json({error: err});
+        if (files && files.length) {
+            for (var i = 0; i < files.length; i++) {
+                if (files[i].includes('.json')) {
+                    var metadata = require('../png/' + files[i]);
+                    var file = metadata.file.split('/');
+                    file = file[file.length - 1];
+                    items.push({
+                        name: metadata.story,
+                        user: metadata.email,
+                        file
+                    });
+                }
+            }
+        }
 		return res.json(items);
 	});
 
