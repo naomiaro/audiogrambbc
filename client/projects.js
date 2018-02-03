@@ -186,7 +186,7 @@ function loadProject(id) {
     }
     jQuery('#input-subtitles')[0].checked = data.theme.subtitles.enabled;
     d3.select('#transcript-pane').classed('disabled', !data.theme.subtitles.enabled);
-    jQuery("#input-theme").val(data.theme.name);
+    jQuery("#input-theme").val(data.theme.name.trim());
     themeHelper.update(data.theme);
     // Load transcript
     q.defer(function(data, cb) {
