@@ -171,6 +171,18 @@ Audiogram.prototype.drawFrames = function(cb) {
     cb(err);
   });
 
+  const increments = new Map();
+  const batchSize = Math.max(Math.round(self.numFrames / 20), 20);
+  function incrementField(field) {
+    let count = (increments.get(field) || 0 ) + 1;
+    if (count >= batchSize) {
+      transports.incrementField(self.id, field, count);
+      increments.set(field, 0);
+    } else {
+      increments.set(field, count);
+    }
+  }
+
   function spawnChild(frames, spawnCb) {
     var child = spawn("bin/frameWorker", [self.id, frames.start, frames.end], {
                   cwd: path.join(__dirname, ".."),
@@ -182,19 +194,20 @@ Audiogram.prototype.drawFrames = function(cb) {
         spawnCb(err);
     });
     child.stderr.on('data', function (data) {
-      console.log("frameWorker >>> " + data);
+      logger.debug("frameWorker >>> " + data);
       spawnCb('Error drawing frames: ' + data + ' - ' + data.toString());
     });
     child.stdout.on('data', function (data) {
-      console.log('frameWorker >>> ' + data);
+      logger.debug('frameWorker >>> ' + data);
     });
-    child.on('message', function (msg) {
-      try {
-        var err = JSON.stringify(msg);
-      } catch(e) {
-        var err = msg;
+    child.on('message', function (data) {
+      if (data.error && data.error.length > 10) {
+        return spawnCb("Error drawing frames: " + data + ' - ' + data.toString());
+      } else if (data.increment) {
+        incrementField(data.increment);
+      } else {
+        logger.debug('frameWorker message >>>' + data + ' - ' + data.toString());
       }
-      if (err.length && err.length > 10) spawnCb("Error drawing frames: " + err);
     });
   }
 

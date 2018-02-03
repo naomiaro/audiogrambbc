@@ -14,7 +14,7 @@ var dotenv = require("dotenv").config({silent: true}),
 function cb(err) {
   if (process.env.SPAWNED) {
     if (err && process.send) {
-      process.send(err);
+      process.send({error: err});
     }
     transports.quit();
     return process.exit(err ? -1 : 0);
@@ -42,7 +42,11 @@ transports.getHash(hashId, function(err, hash){
     // Supplement options
     options.frames = frames;
     options.tick = function() {
-      transports.incrementField(jobId, "framesComplete");
+      if (process.send) {
+        process.send({increment: 'framesComplete'});
+      } else {
+        transports.incrementField(jobId, "framesComplete");
+      }
     }
 
     // Initialise canvase with theme settings

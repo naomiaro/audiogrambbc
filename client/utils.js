@@ -183,7 +183,7 @@ function statusMessage(result) {
       var msg = "Generating frames";
       if (result.numFrames) {
         var percentComplete = Math.round(100 * (result.framesComplete || 0) / result.numFrames);
-        if (percentComplete < 100) {
+        if (percentComplete > 0 && percentComplete < 100) {
           msg += ", " + percentComplete + "% complete";
         }
       }
