@@ -118,7 +118,7 @@ function initialize(err, themesWithImages) {
   utils.tooltips();
 
   // Get initial theme
-  d3.select('#input-theme').each(themeHelper.update);
+  // d3.select('#input-theme').each(themeHelper.update);
 
   // Select default theme
   jQuery(function() {

@@ -45,6 +45,7 @@ function highlight(start, end) {
 }
 
 function format() {
+    if (LOADING) return false;
     if (!jQuery(".transcript-word").length) {
         if (jQuery("transcript:visible").length) {
             loadEmpty();
