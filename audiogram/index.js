@@ -131,8 +131,7 @@ Audiogram.prototype.drawFrames = function(cb) {
 
   this.status("frames");
 
-  var self = this,
-      spawnQ = queue();
+  var self = this;
 
   var options = {
         width: self.settings.theme.width,
@@ -150,12 +149,26 @@ Audiogram.prototype.drawFrames = function(cb) {
         backgroundInfo: self.settings.backgroundInfo
       };
 
+  if (self.method == 'overlay') {
+    console.log('DRAW FRAMES - OVERLAY');
+    options.frames = [0, 25];
+    initializeCanvas(self.settings.theme, function (err, renderer) {
+      if (err) return cb(err);
+      // Render frames
+      drawFrames(renderer, options, function (err) {
+        cb(err);
+      });
+    });
+    return cb(null);
+  }
+
   // Store job info
   transports.setField("jobInfo:" + this.id, "theme", JSON.stringify(this.settings.theme));
   transports.setField("jobInfo:" + this.id, "options", JSON.stringify(options));
 
   // Spawn multiple workers to multithread the frame rendering process
-  var cores = os.cpus().length,
+  var spawnQ = queue(),
+      cores = os.cpus().length,
       framesPerCore = Math.ceil( (self.numFrames+1) / cores ),
       framesPerWorker = Math.max( framesPerCore, 100 ),
       start = -framesPerWorker,
@@ -273,27 +286,46 @@ Audiogram.prototype.render = function(cb) {
     q.defer(this.trimAudio.bind(this), this.settings.start || 0, this.settings.end || null);
   }
 
-  // Process background video
+  // Establish processing method
   this.settings.backgroundInfo = JSON.parse(this.settings.backgroundInfo);
-  if (this.settings.backgroundInfo.type.startsWith("video")) {
-    if (this.settings.media.background.framesDir) {
-      // video already processed
-      this.backgroundFrameDir = this.settings.media.background.framesDir;
-      var fps = 25;
-      this.settings.backgroundInfo.frames = Math.ceil(fps * this.settings.backgroundInfo.duration);
-      this.settings.theme.framesPerSecond = fps;
-    } else {
-      // re-process
-      q.defer(mkdirp, this.backgroundFrameDir);
-      q.defer(this.backgroundVideo.bind(this));
+  const videoBackground = this.settings.backgroundInfo.type.startsWith("video");
+  this.method = videoBackground && this.settings.theme.pattern == 'none' ? 'overlay' : 'frames';
+
+  if (this.method == 'overlay') {
+
+    // OVERLAY METHOD:
+    // generate unique frames only, and composite them over source
+
+    console.log('OVERLAY METHOD');
+    q.defer(this.drawFrames.bind(this));
+
+  } else {
+
+    // FRAMES METHOD:
+    // process each theme, then merge them together
+
+    // Process background video
+    if (videoBackground) {
+      if (this.settings.media.background.framesDir) {
+        // video already processed
+        this.backgroundFrameDir = this.settings.media.background.framesDir;
+        var fps = 25;
+        this.settings.backgroundInfo.frames = Math.ceil(fps * this.settings.backgroundInfo.duration);
+        this.settings.theme.framesPerSecond = fps;
+      } else {
+        // re-process
+        q.defer(mkdirp, this.backgroundFrameDir);
+        q.defer(this.backgroundVideo.bind(this));
+      }
     }
+    // Get the audio waveform data
+    q.defer(this.getWaveform.bind(this));
+    // Draw all the frames
+    q.defer(this.drawFrames.bind(this));
+    // Combine audio and frames together with ffmpeg
+    q.defer(this.combineFrames.bind(this));
+    
   }
-
-  // Get the audio waveform data
-  q.defer(this.getWaveform.bind(this));
-
-  // Draw all the frames
-  q.defer(this.drawFrames.bind(this));
 
   // Save subtitle files
   q.defer(this.saveSubtitles.bind(this), "srt");
@@ -302,15 +334,8 @@ Audiogram.prototype.render = function(cb) {
   // Save preview thumnail
   q.defer(this.saveThumb.bind(this));
 
-  // Combine audio and frames together with ffmpeg
-  q.defer(this.combineFrames.bind(this));
-
   // Upload video to S3 or move to local storage
   q.defer(transports.uploadVideo, this.videoPath, "video/" + this.id + ".mp4");
-
-  // Delete working directory
-  // q.defer(rimraf, this.dir);
-  // TO DO: also need to remove bg directory
 
   // Final callback, results in a URL where the finished video is accessible
   q.await(function(err){
@@ -322,10 +347,11 @@ Audiogram.prototype.render = function(cb) {
     logger.debug(self.profiler.print());
 
     if (self.dir) {
-      rimraf(self.dir, function(rimrafErr) {
-        if (rimrafErr) console.log(rimrafErr);
+      // Delte working directory
+      // rimraf(self.dir, function(rimrafErr) {
+      //   if (rimrafErr) console.log(rimrafErr);
         return cb(err);
-      });
+      // });
     } else {
       return cb(err);      
     }
