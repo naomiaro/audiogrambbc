@@ -1,6 +1,6 @@
 {
   "name": "audiogram",
-  "version": "2.2.14",
+  "version": "2.2.15",
   "description": "An audio to video and subtitling tool",
   "main": "index.js",
   "config": {
