@@ -6,6 +6,7 @@ var fs = require("fs"),
 
 function drawFrames(renderer, options, cb) {
 
+  console.log('drawFrames <<<', options.frames);
   var frameQueue = queue(10),
       canvases = [],
       theme = renderer.theme();
@@ -18,14 +19,24 @@ function drawFrames(renderer, options, cb) {
   //   frameQueue.defer(subtitles.format, {subtitles: options.subtitles, theme: theme, trim: {start: options.start, end: options.end}});
   // }
 
-  for (var i = +options.frames.start; i < +options.frames.end; i++) {
-    frameQueue.defer(drawFrame, i);
+  if (options.method == 'overlay') {
+    console.log(options.subtitles);
+    frameQueue.defer(drawFrame, 0, []);
+    options.subtitles.forEach((subs, i) => {
+      subs.start = 0;
+      subs.end = options.end;
+      frameQueue.defer(drawFrame, i+1, [subs]);
+    });
+  } else {
+    for (var i = +options.frames.start; i < +options.frames.end; i++) {
+      frameQueue.defer(drawFrame, i);
+    }
   }
 
   frameQueue.awaitAll(cb);
 
   function loadVideoFrame(options, frameNumber, imgCb) {
-      if (options.backgroundInfo.type.startsWith("video")) {
+      if (options.method !== 'overlay' && options.backgroundInfo.type.startsWith("video")) {
         // If we're using a background video, load the respective frame still as background iamge
         var bgFrame = (frameNumber + 1) % options.backgroundInfo.frames || options.backgroundInfo.frames;
         var bg = new Canvas.Image;
@@ -56,7 +67,9 @@ function drawFrames(renderer, options, cb) {
       }
   }
 
-  function drawFrame(frameNumber, frameCallback) {
+  function drawFrame(frameNumber, subs, frameCallback) {
+
+    console.log('frame #', frameNumber);
 
     var drawQueue = queue(1);
     var canvas = canvases.pop(),
@@ -66,9 +79,10 @@ function drawFrames(renderer, options, cb) {
     drawQueue.await(function(err){
       if (err) return frameCallback(err);
       renderer.drawFrame(context, {
+        method: options.method,
         caption: options.caption,
-        subtitles: options.subtitles,
-        waveform: options.waveform[frameNumber],
+        subtitles: subs || options.subtitles,
+        waveform: options.waveform ? options.waveform[frameNumber] : null,
         backgroundInfo: options.backgroundInfo,
         start: options.start,
         end: options.end,

@@ -134,6 +134,7 @@ Audiogram.prototype.drawFrames = function(cb) {
   var self = this;
 
   var options = {
+        method: self.method,
         width: self.settings.theme.width,
         height: self.settings.theme.height,
         numFrames: self.numFrames,
@@ -150,79 +151,83 @@ Audiogram.prototype.drawFrames = function(cb) {
       };
 
   if (self.method == 'overlay') {
+
     console.log('DRAW FRAMES - OVERLAY');
-    options.frames = [0, 25];
     initializeCanvas(self.settings.theme, function (err, renderer) {
+      console.log('initializeCanvas');
       if (err) return cb(err);
       // Render frames
       drawFrames(renderer, options, function (err) {
-        cb(err);
+        console.log('drawFrames', err);        
+        return cb(err);
       });
     });
-    return cb(null);
-  }
 
-  // Store job info
-  transports.setField("jobInfo:" + this.id, "theme", JSON.stringify(this.settings.theme));
-  transports.setField("jobInfo:" + this.id, "options", JSON.stringify(options));
+  } else {
 
-  // Spawn multiple workers to multithread the frame rendering process
-  var spawnQ = queue(),
-      cores = os.cpus().length,
-      framesPerCore = Math.ceil( (self.numFrames+1) / cores ),
-      framesPerWorker = Math.max( framesPerCore, 100 ),
-      start = -framesPerWorker,
-      end = 0;
-  while ( end < self.numFrames ) {
-    start += framesPerWorker;
-    end = Math.min(end + framesPerWorker, self.numFrames);
-    spawnQ.defer(spawnChild, {start: start, end: end});
-  }
+    // Store job info
+    transports.setField("jobInfo:" + this.id, "theme", JSON.stringify(this.settings.theme));
+    transports.setField("jobInfo:" + this.id, "options", JSON.stringify(options));
 
-  // Once all workers have exited
-  spawnQ.await(function(err){
-    transports.del("jobInfo:" + self.id);
-    cb(err);
-  });
-
-  const increments = new Map();
-  const batchSize = Math.max(Math.round(self.numFrames / 20), 20);
-  function incrementField(field) {
-    let count = (increments.get(field) || 0 ) + 1;
-    if (count >= batchSize) {
-      transports.incrementField(self.id, field, count);
-      increments.set(field, 0);
-    } else {
-      increments.set(field, count);
+    // Spawn multiple workers to multithread the frame rendering process
+    var spawnQ = queue(),
+        cores = os.cpus().length,
+        framesPerCore = Math.ceil( (self.numFrames+1) / cores ),
+        framesPerWorker = Math.max( framesPerCore, 100 ),
+        start = -framesPerWorker,
+        end = 0;
+    while ( end < self.numFrames ) {
+      start += framesPerWorker;
+      end = Math.min(end + framesPerWorker, self.numFrames);
+      spawnQ.defer(spawnChild, {start: start, end: end});
     }
-  }
 
-  function spawnChild(frames, spawnCb) {
-    var child = spawn("bin/frameWorker", [self.id, frames.start, frames.end], {
-                  cwd: path.join(__dirname, ".."),
-                  env: _.extend({}, process.env, { SPAWNED: true }),
-                  stdio: ['pipe', 'pipe', 'pipe', 'ipc']
-                });
-    child.on('exit', function (exitCode) {
-        var err = exitCode==-1 ? "frameWorker error" : null;
-        spawnCb(err);
+    // Once all workers have exited
+    spawnQ.await(function(err){
+      transports.del("jobInfo:" + self.id);
+      cb(err);
     });
-    child.stderr.on('data', function (data) {
-      logger.debug("frameWorker >>> " + data);
-      spawnCb('Error drawing frames: ' + data + ' - ' + data.toString());
-    });
-    child.stdout.on('data', function (data) {
-      logger.debug('frameWorker >>> ' + data);
-    });
-    child.on('message', function (data) {
-      if (data.error && data.error.length > 10) {
-        return spawnCb("Error drawing frames: " + data + ' - ' + data.toString());
-      } else if (data.increment) {
-        incrementField(data.increment);
+
+    const increments = new Map();
+    const batchSize = Math.max(Math.round(self.numFrames / 20), 20);
+    function incrementField(field) {
+      let count = (increments.get(field) || 0 ) + 1;
+      if (count >= batchSize) {
+        transports.incrementField(self.id, field, count);
+        increments.set(field, 0);
       } else {
-        logger.debug('frameWorker message >>>' + data + ' - ' + data.toString());
+        increments.set(field, count);
       }
-    });
+    }
+
+    function spawnChild(frames, spawnCb) {
+      var child = spawn("bin/frameWorker", [self.id, frames.start, frames.end], {
+                    cwd: path.join(__dirname, ".."),
+                    env: _.extend({}, process.env, { SPAWNED: true }),
+                    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+                  });
+      child.on('exit', function (exitCode) {
+          var err = exitCode==-1 ? "frameWorker error" : null;
+          spawnCb(err);
+      });
+      child.stderr.on('data', function (data) {
+        logger.debug("frameWorker >>> " + data);
+        spawnCb('Error drawing frames: ' + data + ' - ' + data.toString());
+      });
+      child.stdout.on('data', function (data) {
+        logger.debug('frameWorker >>> ' + data);
+      });
+      child.on('message', function (data) {
+        if (data.error && data.error.length > 10) {
+          return spawnCb("Error drawing frames: " + data + ' - ' + data.toString());
+        } else if (data.increment) {
+          incrementField(data.increment);
+        } else {
+          logger.debug('frameWorker message >>>' + data + ' - ' + data.toString());
+        }
+      });
+    }
+  
   }
 
 };

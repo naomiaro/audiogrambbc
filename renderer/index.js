@@ -68,7 +68,7 @@ module.exports = function(t) {
     context.fillRect(0, 0, theme.width, theme.height);
 
     // BACKGROUND IMAGE
-    if (backgroundImage && options.backgroundInfo) {
+    if (options.method !== 'overlay' && backgroundImage && options.backgroundInfo) {
 
       var x, y,
           h, w, r,
