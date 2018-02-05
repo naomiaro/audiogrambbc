@@ -206,9 +206,9 @@ function loadProject(id) {
       minimap.updateTrim([data.start, data.end]);
       video.update(path.join("/video/", id + ".mp4"), data);
       utils.navigate('edit');
-      preview.redraw();
       LOADING = false;
       transcript.format();
+      preview.redraw();
       utils.navigate("view");
       history.replaceState(null, null, `/ag/${id}`);
     });

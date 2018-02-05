@@ -25,14 +25,12 @@ function themeSave() {
     // Prompt for theme name
     var newName = prompt('Save theme with these settings.\nNOTE: The theme will be public to all users.\n\nEnter a theme name.\nUsing an existing theme name will overwrite that theme.', theme.name);
     if (newName != null) {
-        var formData = new FormData();
         // Get theme config
-        var themes = themesRaw,
+        var body = {},
+            themes = themesRaw,
             themeJSON = JSON.stringify(theme),
             newTheme = JSON.parse(themeJSON),
-            newThemeFullJSON = JSON.stringify(newTheme),
-            background = preview.img('background'),
-            foreground = preview.img('foreground');
+            newThemeFullJSON = JSON.stringify(newTheme);
         if (themes[newName] && USER.email !== themes[newName].author) {
             utils.setClass('error', "You can't overwrite the existing '" + newName + "' theme because you weren't the one to orignally create it. Chosse anothe name.");
         } else {
@@ -45,31 +43,33 @@ function themeSave() {
                 delete newTheme.caption;
             }
             // Upload image files
-            if (background) {
-                formData.append('background', imgFile.background);
+            var files = media.get();
+            if (files.background && !files.background.mimetype.startsWith('video')) {
+                body.background = files.background.path;
+            } else if (files.background) {
+                if (!confirm("You can't save themes with background videos. The theme will be saved, but with no placeholder background.")) return;
             }
-            if (foreground) {
-                formData.append('foreground', imgFile.foreground);
+            if (files.foreground) {
+                body.foreground = files.foreground.path;
             }
             // Add name/author
             newTheme.name = newName;
             newTheme.author = USER.email;
             // Post
-            formData.append('theme', JSON.stringify(newTheme));
+            body.theme = JSON.stringify(newTheme);
             $.ajax({
-                url: '/themes/add/',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                dataType: 'json',
-                cache: false,
-                processData: false,
-                success: function(data) {
-                    utils.setClass('success', "The theme '" + newName + "' has been saved, and will be available next time you use Audiogram.");
-                    var msg = themes[newName] ? USER.name + " updated the theme '" + newName + "'" : USER.name + " added a new theme: '" + newName + "'";
-                    logger.info(msg);
-                },
-                error: error
+              url: "/themes/add/",
+              type: "POST",
+              data: JSON.stringify(body),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              cache: false,
+              success: function(data) {
+                utils.setClass("success", "The theme '" + newName + "' has been saved, and will be available next time you use Audiogram." );
+                var msg = themes[newName] ? USER.name + " updated the theme '" + newName + "'" : USER.name + " added a new theme: '" + newName + "'";
+                logger.info(msg);
+              },
+              error: error
             });
         }
     }
