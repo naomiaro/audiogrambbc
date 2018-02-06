@@ -4,10 +4,12 @@ var utils = require('./utils');
 function updateList() {
     jQuery.getJSON("/png/list", function (list) {
         jQuery("#new-png table tbody").text('');
-        list.forEach(function (item) {
+        if (!list) return;
+        for (let i = 0; i < list.length; i++) {
+            var item = list[i];
             var el = `<tr><td><input type="radio" name="png-import" value="${item.file}" data-title="${item.name}"></td><td>${item.name}</td><td>${item.user}</td></tr>`;
             jQuery("#new-png table tbody").append(el);
-        });
+        }
         jQuery("#new-png input[name=png-import]:first").attr("checked", true);
     });
 }
