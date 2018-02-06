@@ -28,7 +28,7 @@ function add(req, res) {
 			var filename = uuidv4();
 			var dest = path.join(__dirname, '../settings/backgrounds/', filename);
 			fs.copySync(backgroundPath, dest);
-			newTheme.backgroundImage = { landscape: filename, portrait: filename, square: filename }; 					
+			newTheme.backgroundImage = Array.isArray(newTheme.backgroundImage) ? filename : { landscape: filename, portrait: filename, square: filename }; 					
 		}
 	} else if (newTheme.backgroundImage) {
 		newTheme.backgroundImage = Array.isArray(newTheme.backgroundImage) ? newTheme.backgroundImage : { landscape: newTheme.backgroundImage, portrait: newTheme.backgroundImage, square: newTheme.backgroundImage };
@@ -42,7 +42,7 @@ function add(req, res) {
       var filename = uuidv4();
       var dest = path.join(__dirname, "../settings/backgrounds/", filename);
       fs.copySync(foregroundPath, dest);
-      newTheme.foregroundImage = { landscape: filename, portrait: filename, square: filename };
+      newTheme.foregroundImage = Array.isArray(newTheme.backgroundImage) ? filename : { landscape: filename, portrait: filename, square: filename };
     }
   } else if (newTheme.foregroundImage) {
 		newTheme.foregroundImage = Array.isArray(newTheme.foregroundImage) ? newTheme.foregroundImage : { landscape: newTheme.foregroundImage, portrait: newTheme.foregroundImage, square: newTheme.foregroundImage };
