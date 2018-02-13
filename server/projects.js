@@ -31,11 +31,11 @@ function projectList(req, res, admin) {
           orientation = projects[i].theme.orientation,
           mediaPath = path.join(__dirname, "../media/video", id + ".mp4"),
           finished = fs.existsSync(mediaPath);
-        // Don't returned expired projects (>5 days)
+        // Don't returned expired projects (>7 days)
         var diffDays = Math.round(
           Math.abs((now - date) / (24 * 60 * 60 * 1000))
         );
-        if (diffDays < 5) {
+        if (diffDays < 8) {
           list.push({
             id,
             title,
