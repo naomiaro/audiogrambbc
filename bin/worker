@@ -39,12 +39,14 @@ function render(job) {
   audiogram.settings = job;
 
   audiogram.render(function(err){
-
     if (err) {
       console.log("RLW: ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ");
-      err.path = __dirname.replace("/bin","");
+      if (typeof err !== 'string') {
+        err.path = __dirname.replace("/bin","");
+        err = JSON.stringify(err, Object.getOwnPropertyNames(err));
+      }
       audiogram.status("error");
-      audiogram.set("error", JSON.stringify(err, Object.getOwnPropertyNames(err)));
+      audiogram.set("error", err);
       throw err;
     }
 
