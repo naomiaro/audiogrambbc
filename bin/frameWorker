@@ -14,7 +14,10 @@ var dotenv = require("dotenv").config({silent: true}),
 function cb(err) {
   if (process.env.SPAWNED) {
     if (err && process.send) {
-      process.send({error: err});
+      var error = JSON.stringify(err, Object.getOwnPropertyNames(err));
+      error = JSON.parse(error);
+      var stack = error.stack.split('\n');
+      process.send({ error: `${error.message}, ${stack[1].trim()}`});
     }
     transports.quit();
     return process.exit(err ? -1 : 0);

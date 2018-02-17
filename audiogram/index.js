@@ -202,16 +202,23 @@ Audiogram.prototype.drawFrames = function(cb) {
       logger.debug('frameWorker >>> ' + data);
     });
     child.on('message', function (data) {
-      if (data.error && data.error.length > 10) {
-        return spawnCb("Error drawing frames: " + data + ' - ' + data.toString());
-      } else if (data.increment) {
+      if (data.increment) {
         incrementField(data.increment);
       } else {
-        logger.debug('frameWorker message >>>' + data + ' - ' + data.toString());
+        try {
+          var msg = JSON.stringify(data.error || data);
+        } catch (error) {
+          var msg = data.toString();
+        }
+      if (data.error && data.error.length > 10) {
+          return spawnCb(`Error drawing frames: ${msg}`);
+      } else {
+          logger.debug('frameWorker message >>>' + msg);
+        }
       }
     });
   }
-
+  
 };
 
 // Save subtitles
