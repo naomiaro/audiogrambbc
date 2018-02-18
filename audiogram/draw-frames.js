@@ -68,6 +68,10 @@ function drawFrames(renderer, options, cb) {
   }
 
   function drawFrame(frameNumber, subs, frameCallback) {
+    if (!frameCallback) {
+      frameCallback = subs;
+      subs = null;
+    }
 
     console.log('frame #', frameNumber);
 

@@ -226,9 +226,9 @@ Audiogram.prototype.drawFrames = function(cb) {
           } catch (error) {
             var msg = data.toString();
           }
-        if (data.error && data.error.length > 10) {
+          if (data.error && data.error.length > 10) {
             return spawnCb(`Error drawing frames: ${msg}`);
-        } else {
+          } else {
             logger.debug('frameWorker message >>>' + msg);
           }
         }
@@ -271,6 +271,10 @@ Audiogram.prototype.combineFrames = function(cb) {
   this.status("combine");
 
   combineFrames({
+    method: this.method,
+    backgroundVideoPath: this.backgroundVideoPath,
+    subtitles: JSON.parse(this.settings.subtitles),
+    size: { width: this.settings.theme.width, height: this.settings.theme.height },
     framePath: path.join(this.frameDir, "%06d.jpg"),
     audioPath: this.audioPath,
     videoPath: this.videoPath,
@@ -309,7 +313,9 @@ Audiogram.prototype.render = function(cb) {
     // generate unique frames only, and composite them over source
 
     console.log('OVERLAY METHOD');
+    this.backgroundVideoPath = path.join(serverSettings.storagePath, this.settings.theme.customBackgroundPath);
     q.defer(this.drawFrames.bind(this));
+    q.defer(this.combineFrames.bind(this));
 
   } else {
 
