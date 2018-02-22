@@ -1,3 +1,5 @@
+'use strict';
+
 var media = require('./media');
 var utils = require('./utils');
 
