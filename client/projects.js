@@ -38,6 +38,7 @@ function newProject(e) {
         .attr("data-type")
     : e;
   if (!type) return false;
+  utils.stats("increment", `user_activity.new.${type}`);
   if (type == "upload") {
     jQuery("#input-audio").click();
   } else {
@@ -162,7 +163,9 @@ function loadProject(id) {
   }
   fetchProject(id, function(data) {
     if (data.err) {
+      console.log(data.err);
       utils.error(data.err);
+      LOADING = false;
       return;
     }
     var q = d3.queue(1);
@@ -227,7 +230,10 @@ function init() {
     _title(name);
     utils.navigate("new");
   });
-  jQuery(document).on("change", "#recent-filter", updateFilter);
+  jQuery(document).on("change", "#recent-filter", function(){
+    utils.stats("increment", `user_activity.logstore.filter`);
+    updateFilter();
+  });
   jQuery(document).on("change", "#sharing-private", function(){
     var private = jQuery(this).val();
     var id = jQuery(this).attr('data-id');

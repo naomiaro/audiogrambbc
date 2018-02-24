@@ -1,3 +1,4 @@
+var utils = require('./utils');
 
 function sendMessage(payload) {
 	// Whitelist logging is done direclty within whitelist.html, so update the webook there too if it changes
@@ -35,6 +36,7 @@ function info(msg,fields,fallback) {
 }
 
 function error(msg,err) {
+	utils.stats("increment", "user_activity.error");
 	var stack = err ? err.stack : null,
 		trace = stack ? stack.replace(/    at /g, '').replace(/    at /g, '').split("\n")[2].replace(err.path,"") : null,
 		user = USER.email ? "<http://ad-lookup.bs.bbc.co.uk/adlookup.php?q=" + USER.email + "|" + USER.name + ">" : USER.name,
@@ -65,6 +67,7 @@ function error(msg,err) {
 }
 
 function warn(msg,err) {
+	utils.stats("increment", "user_activity.warning");
 	var stack = err.stack,
 		trace = stack ? stack.replace(/    at /g, '').replace(/    at /g, '').split("\n")[2].replace(window.location.href,"/") : null,
 		url = window.location.href + trace.match(/\(?\/(.*):(.*):/)[1];

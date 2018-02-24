@@ -199,26 +199,35 @@ function init() {
             }
         }
     });
-    d3.selectAll('#play, #pause').on('click', function() {
-        d3.event.preventDefault();
-        toggle();
+    
+    d3.selectAll("#play").on("click", function() {
+      d3.event.preventDefault();
+      toggle();
+      utils.stats("increment", "user_activity.playback.play");
+    });
+    d3.selectAll("#pause").on("click", function() {
+      d3.event.preventDefault();
+      toggle();
+      utils.stats("increment", "user_activity.playback.pause");
     });
 
     d3.select('#restart').on('click', function() {
-        d3.event.preventDefault();
-        restart();
+      d3.event.preventDefault();
+      restart();
+      utils.stats("increment", "user_activity.playback.restart");
     });
     
     d3.select('#controls .tip a').on('click', function() {
-        jQuery('#shortcuts').toggleClass('hidden');
-        utils.stopIt(d3.event);
+      jQuery('#shortcuts').toggleClass('hidden');
+      utils.stopIt(d3.event);
     });
 
     jQuery(document).on('change', '#playbackRate select', function(e){
-        var rate = jQuery(this).val();
-        audio.playbackRate = rate;
-        jQuery('#playbackRate').attr('data-rate', rate);
-        jQuery('#playbackRate').tooltip('destroy');
+      var rate = jQuery(this).val();
+      audio.playbackRate = rate;
+      jQuery('#playbackRate').attr('data-rate', rate);
+      jQuery('#playbackRate').tooltip('destroy');
+      utils.stats("increment", "user_activity.playback.rate");
     });
 
 }

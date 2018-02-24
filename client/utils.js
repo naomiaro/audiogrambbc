@@ -1,5 +1,3 @@
-var logger = require('./slack');
-
 function navigate(state, msg, log) {
     var classMap = {
       home: "landing",
@@ -67,6 +65,7 @@ function setClass(cl, msg, log) {
     var err = new Error();
     console.log(err.stack);
     // Log
+    var logger = require("./slack");
     logger.warn(msg, err, USER);
   }
   if (cl=='landing') {
@@ -121,6 +120,7 @@ function error(err) {
     if (!error.message) {
         error.message = 'Unknown error';
     }
+    var logger = require('./slack');
     logger.error(error.message, error, USER);
     d3.select('#loading-message').text('Loading...');
     setClass('error', error.message, false);
@@ -199,6 +199,10 @@ function statusMessage(result) {
   }
 }
 
+function stats(type, metric, value, sampleRate) {
+  jQuery.post("/stats", { type, metric, value, sampleRate });
+}
+
 module.exports = {
     setClass,
     offline,
@@ -209,5 +213,6 @@ module.exports = {
     setBreadcrumb,
     statusMessage,
     navigate,
-    tooltips
+    tooltips,
+    stats
 }

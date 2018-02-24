@@ -315,20 +315,24 @@ function init() {
   });
   jQuery(document).on("click", "#transcript-btn-timings-save", function() {
     save();
+    utils.stats("increment", 'user_activity.transcript.timings.save');
   });
   jQuery(document).on("click", "#transcript-btn-timings-cancel", function() {
     stop();
     jQuery("#transcript").removeClass("timings");
     jQuery("#minimap").removeClass("disabled");
+    utils.stats("increment", "user_activity.transcript.timings.cancel");
   });
 
   jQuery(document).on('click', '#transcript-btn-timings-wizard-start-on', function(){
     stop();
     start(true);
+    utils.stats("increment", "user_activity.transcript.timings.wizard");
   });
   jQuery(document).on('click', '#transcript-btn-timings-wizard-start-off', function () {
     stop();
     start(false);
+    utils.stats("increment", "user_activity.transcript.timings.wizard");
   });
   jQuery(document).on('click', '#restart, #transcript-btn-timings-wizard-restart', function () {
     if (jQuery('#transcript-timings:visible').hasClass('recording')) {

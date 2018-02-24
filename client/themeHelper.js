@@ -65,6 +65,7 @@ function themeSave() {
               dataType: "json",
               cache: false,
               success: function(data) {
+                utils.stats("increment", "user_activity.theme.save");
                 utils.setClass("success", "The theme '" + newName + "' has been saved, and will be available next time you use Audiogram." );
                 var msg = themes[newName] ? USER.name + " updated the theme '" + newName + "'" : USER.name + " added a new theme: '" + newName + "'";
                 logger.info(msg);

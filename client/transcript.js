@@ -595,6 +595,8 @@ function exportTranscript() {
     projectTitle = projects.title().split('.')[0],
     text = '';
 
+    utils.stats("increment", `user_activity.transcript.export.${format}`);
+
     var blocks = jQuery('.transcript-block').filter(function () {
         return jQuery(this).find('.transcript-word:not(.unused)').length;
     });
@@ -662,6 +664,7 @@ function importTranscript() {
 }
 
 function importFromFile() {
+    utils.stats("increment", "user_activity.transcript.import");
     function onReaderLoad(event){
         var script = { segments: [] };
         var result = event.target.result;
@@ -1108,6 +1111,7 @@ function init() {
     
     d3.selectAll('.subFormatToggle').on('click', function() {
         jQuery('#transcript .subFormatToggle, #transcript-settings').toggleClass('hidden');
+        utils.stats("increment", "user_activity.transcript.format");
     });
     d3.selectAll('.subFormatAlias').on('click', function() {
         if (jQuery('#transcript-settings:visible').length) {

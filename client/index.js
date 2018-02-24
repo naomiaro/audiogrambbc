@@ -1,3 +1,5 @@
+var startTime = Date.now();
+
 global.d3 = require("d3");
 global.jQuery  = require("jquery");
 global.$ = jQuery;
@@ -129,6 +131,8 @@ function initialize(err, themesWithImages) {
   });
 
   jQuery(function() {
+    var duration = Date.now() - startTime;
+    utils.stats('timing', 'load_time', duration);
     var path = window.location.pathname.split('/');
     if (path[1]=='ag') {
       var id = path[2];
