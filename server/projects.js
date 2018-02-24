@@ -55,7 +55,7 @@ function projectList(req, res, admin) {
 }
 
 function getProject(req, res) {
-  var project = { err: "No project found matching that ID." };
+  var project = { err: "That project either doesn't exist, or has expired." };
   transports.getProjectList(function(err, projects) {
     if (err) {
       return res.json({ err: err });
