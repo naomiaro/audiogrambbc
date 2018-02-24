@@ -6,7 +6,8 @@ var express = require("express"),
     uuid = require("node-uuid"),
     mkdirp = require("mkdirp"),
     bodyParser = require("body-parser"),
-    auth = require('./auth.js');
+    auth = require('./auth.js'),
+    stats = require('../lib/stats');
 
 // Routes and middleware
 var whitelist = require("./whitelist.js"),
@@ -168,6 +169,21 @@ app.get("/redis", function(req, res){
   transports.status(function(err, info) {
     res.json({ err, info });
   });
+});
+
+// Stats
+app.post("/stats", function(req, res){
+  var type = req.body.type;
+  var metric = req.body.metric;
+  var value = req.body.value;
+  var sampleRate = req.body.sampleRate;
+  try {
+    stats[type](metric, value, sampleRate);
+  } catch (e) {
+    console.log(e.toString());
+    return res.json({error: e.toString()});
+  }
+  return res.json(req.body);
 });
 
 // Serve background images and themes JSON statically
