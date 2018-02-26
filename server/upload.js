@@ -18,7 +18,11 @@ module.exports.delete = function(req, res) {
     if (pid) {
       process.kill(pid);
     }
-    rimraf.sync(framesPath);
+    try {
+      rimraf.sync(framesPath);
+    } catch (error) {
+      return res.json({error});
+    }
   }
 
 	res.json({deleted: id});
