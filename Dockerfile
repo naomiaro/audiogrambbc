@@ -5,8 +5,13 @@ RUN apt-get update --yes && apt-get upgrade --yes \
 && apt-get install --fix-missing git vim \
 libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev libpng-dev build-essential g++ \
 ffmpeg \
+software-properties-common --yes \
 redis-server --yes \
 python --yes
+
+RUN add-apt-repository ppa:jonathonf/ffmpeg-3 -y
+RUN apt-get update --yes && apt-get upgrade --yes
+RUN apt-get install ffmpeg -y
 
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
