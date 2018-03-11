@@ -17,6 +17,7 @@ function combineFrames(options, cb) {
       } else {
         err = data;
       }
+      console.log('FFMPEG :: ', line);
     });
     command.on('exit', function() {
       if (err.toString().startsWith('[aac')) err = null;
