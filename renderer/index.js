@@ -64,8 +64,10 @@ module.exports = function(t) {
 
     context.patternQuality = "best";
     context.clearRect(0, 0, theme.width, theme.height);
-    context.fillStyle = theme.backgroundColor;
-    context.fillRect(0, 0, theme.width, theme.height);
+    if (options.method !== 'overlay') {
+      context.fillStyle = theme.backgroundColor;
+      context.fillRect(0, 0, theme.width, theme.height);
+    }
 
     // BACKGROUND IMAGE
     if (options.method !== 'overlay' && backgroundImage && options.backgroundInfo) {
@@ -117,18 +119,19 @@ module.exports = function(t) {
 
     }
 
-
-    // FOREGROUND IMAGE
-    if (foregroundImage) {
-      context.drawImage(foregroundImage, 0, 0, theme.width, theme.height);
-    }
-    
-    // WAVE
-    if (theme.pattern!="none") patterns[theme.pattern || "wave"](context, options.waveform, theme);
-
-    // CAPTION
-    if (options.caption) {
-      drawCaption(context, options.caption);
+    if (options.method !== 'overlay' || options.frame == 0){
+      // FOREGROUND IMAGE
+      if (foregroundImage) {
+        context.drawImage(foregroundImage, 0, 0, theme.width, theme.height);
+      }
+      
+      // WAVE
+      if (theme.pattern!="none") patterns[theme.pattern || "wave"](context, options.waveform, theme);
+  
+      // CAPTION
+      if (options.caption) {
+        drawCaption(context, options.caption);
+      }
     }
 
     // SUBTITLES
@@ -138,13 +141,15 @@ module.exports = function(t) {
       subtitles.draw(context, theme, options.subtitles, time);
     }
 
-    // BBC WATERMARK
-    var A, h, w, o;
-    A = 0.0075 * (theme.width*theme.height);
-    h = Math.sqrt(A/3.5);
-    w = h*3.5;
-    o = h/1.5;
-    context.drawImage(bbcDog, o, o, w, h);
+    if (options.method !== 'overlay' || options.frame == 0) {
+      // BBC WATERMARK
+      var A, h, w, o;
+      A = 0.0075 * (theme.width*theme.height);
+      h = Math.sqrt(A/3.5);
+      w = h*3.5;
+      o = h/1.5;
+      context.drawImage(bbcDog, o, o, w, h);
+    }
 
     return this;
 

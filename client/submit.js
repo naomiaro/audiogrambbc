@@ -8,6 +8,7 @@ var transcript = require('./transcript');
 var logger = require('./slack');
 
 var title = 'Untitled';
+var timing = null;
 
 function submit() {
     var audio = media.get('audio');
@@ -16,8 +17,8 @@ function submit() {
 }
 
 function validate() {
-    d3.select('#loading-message').text('Uploading files...');
     utils.setClass('loading');
+    d3.select('#loading-message').text('Uploading files...');
     var data = media.get();
     for (var type in data) {
         if (!data[type].path) {
@@ -104,6 +105,7 @@ function submitted() {
         cutDuration = Math.round(+jQuery('#duration strong').text() * 10, 2) / 10;
     info.duration = fullDuration == cutDuration ? fullDuration + 's' : cutDuration + 's (cut from ' + fullDuration + 's)';
 
+    timing = performance.now();
     $.ajax({
         url: '/submit/',
         type: 'POST',
@@ -139,8 +141,11 @@ function submitted() {
 
 function reUploadMedia() {
     var blobs = media.blobs();
-    for (var type in blobs) {
-        media.upload(type, blobs[type]);
+    var meta = media.get();
+    for (var type in meta) {
+        if (blobs[type]) {
+            media.upload(type, blobs[type]);
+        }
     }
     validate();
 }
@@ -153,6 +158,7 @@ function poll(id) {
             dataType: 'json',
             success: function(result) {
                 if (result && result.status && result.status === 'ready' && result.url) {
+                    console.log('RENDER TIMING... ' + (performance.now() - timing)/1000 + 's');
                     video.update(result.url, {theme: preview.theme()});
                     utils.setClass('rendered');
                     history.replaceState(null, null, `/ag/${id}`);
@@ -167,6 +173,10 @@ function poll(id) {
                     d3.select('#loading-message').text(utils.statusMessage(result));
                     poll(id);
                 }
+            },
+            error: function (err) {
+                console.log(err);
+                utils.error(err.responseText);
             }
         });
     }, 2500);

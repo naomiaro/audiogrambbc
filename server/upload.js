@@ -51,23 +51,23 @@ module.exports.post = function(req, res) {
     mimetype
   };
 
-  // Process video file
-  if (req.body.type == "background" && mimetype.startsWith("video")) {
+  // // Process video file
+  // if (req.body.type == "background" && mimetype.startsWith("video")) {
 
-		var framesPath = path.join(__dirname, "../tmp/frames/");
-    if (!fs.existsSync(framesPath)) {
-      fs.mkdirSync(framesPath);
-		}
+	// 	var framesPath = path.join(__dirname, "../tmp/frames/");
+  //   if (!fs.existsSync(framesPath)) {
+  //     fs.mkdirSync(framesPath);
+	// 	}
 		
-		var framesDir = path.join(framesPath, id);
-		if (!fs.existsSync(framesDir)) {
-			fs.mkdirSync(framesDir);
-		}
+	// 	var framesDir = path.join(framesPath, id);
+	// 	if (!fs.existsSync(framesDir)) {
+	// 		fs.mkdirSync(framesDir);
+	// 	}
 
-		backgroundVideo.splitFrames({ id ,origin: dest, destination: framesDir });
+	// 	backgroundVideo.splitFrames({ id ,origin: dest, destination: framesDir });
 
-    response.frames = id;
-  }
+  //   response.frames = id;
+  // }
 
   res.json(response);
 };

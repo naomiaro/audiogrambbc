@@ -75,14 +75,14 @@ function themeSave() {
     }
 }
 
-function setBackground() {
+function useVideoAsBackground() {
     d3.select('#loading-message').text('Loading video...');
     utils.setClass('loading');
     $('#videoload a').attr('data-used', true);
     if ($('#input-audio')[0].files.length) {
         // $('#input-background')[0].files = $('#input-audio')[0].files;
         var blob = $("#input-audio")[0].files[0];
-        updateImage(null, 'background', blob, function(){
+        updateImage('useVideoAsBackground', 'background', blob, function(){
             utils.setClass(null);
             var filename = jQuery('#input-audio')
                 .val()
@@ -111,6 +111,7 @@ function updateImage(event, type, blob, cb) {
         var types = type ? [type] : ['background', 'foreground'];
         types.forEach(function(type) {
             preview.img(type, null);
+            preview.imgInfo(type, null);
             jQuery("#input-" + type).val('');
             // var input = jQuery('#input-' + type);
             // input.replaceWith(input.val('').clone(true));
@@ -122,7 +123,13 @@ function updateImage(event, type, blob, cb) {
     }
 
     var imgFile = blob || this.files[0];
-    media.upload(type, imgFile);
+    if (event == 'useVideoAsBackground') {
+        var obj = media.get('audio');
+        obj.type = 'background';
+        media.set(obj, 'background');
+    } else {
+        media.upload(type, imgFile);
+    }
     var filename = blob
         ? 'blob'
         : jQuery('#input-' + type)
@@ -277,7 +284,7 @@ d3.selectAll('.themeConfig').on('change', updateThemeConfig);
 
 d3.selectAll('#theme-reset').on('click', themeReset);
 d3.selectAll('#theme-save').on('click', themeSave);
-d3.select('#videoload a').on('click', setBackground);
+d3.select('#videoload a').on('click', useVideoAsBackground);
 
 module.exports = {
     raw: _raw,

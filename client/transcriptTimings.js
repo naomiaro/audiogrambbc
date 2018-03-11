@@ -254,7 +254,6 @@ function save() {
   if (invalid) {
     return alert('Some of your timings are invalid. Fix these (shown in red) first.');
   } else {
-    console.log('save');
     var duration = audio.duration();
     var overhang = duration + 10;
     jQuery('#transcript-timings .block').each(function(i){

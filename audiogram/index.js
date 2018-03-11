@@ -1,4 +1,7 @@
+'use strict';
+
 var path = require("path"),
+    fs = require("fs"),
     queue = require("d3").queue,
     mkdirp = require("mkdirp"),
     rimraf = require("rimraf"),
@@ -77,29 +80,57 @@ Audiogram.prototype.getWaveform = function(cb) {
 };
 
 // Trim the audio by the start and end time specified
-Audiogram.prototype.trimAudio = function(start, end, cb) {
-
-  var self = this;
+Audiogram.prototype.trimMedia = function(start, end, cb) {
 
   this.status("trim");
+  var self = this;
 
-  // FFmpeg needs an extension to sniff
-  var trimmedPath = this.audioPath + "-trimmed.mp3";
+  function hms(t, round) {
+    t = Number(t);
+    var h = Math.floor(t / 3600);
+    var m = Math.floor((t % 3600) / 60);
+    var s = ((t % 3600) % 60).toFixed(1);
+    if (round) s = Math.round(s);
+    var string = '00:' + `00${m}`.slice(-2) + ":" + `00${s}`.slice(round ? -2 : -4);
+    return string;
+  }
+  
+  if (self.method == 'overlay') {
 
-  trimAudio({
-    origin: this.audioPath,
-    destination: trimmedPath,
-    startTime: start,
-    endTime: end
-  }, function(err){
-    if (err) {
-      return cb(err);
+    if (Math.round(start*10)/10 == 0 && Math.round(end*10) == Math.round(self.settings.backgroundInfo.duration*10)) {
+      return cb(null);
     }
+    var src = self.backgroundVideoPath;
+    var dest = self.backgroundVideoPath.split('.')[0] + '-trimmed.mp4';
+    var dur = end - start;
+    var startHMS = hms(start);
+    var durHMS = hms(dur);
+    var args = ["-loglevel", "panic", "-y", "-i", src, "-ss", startHMS, "-t", durHMS, "-async", "1", dest];
+    var command = spawn("ffmpeg", args, { shell: true });
+    command.on('exit', function () {
+      self.backgroundVideoPath = dest;
+      self.settings.backgroundInfo.duration = dur;
+      return cb(null);
+    });
 
-    self.audioPath = trimmedPath;
+  } else {
 
-    return cb(null);
-  });
+    // FFmpeg needs an extension to sniff
+    var trimmedPath = this.audioPath + "-trimmed.mp3";
+    trimAudio({
+      origin: this.audioPath,
+      destination: trimmedPath,
+      startTime: start,
+      endTime: end
+    }, function(err){
+      if (err) {
+        return cb(err);
+      }
+      self.audioPath = trimmedPath;
+      return cb(null);
+    });
+
+  }
 
 };
 
@@ -152,13 +183,10 @@ Audiogram.prototype.drawFrames = function(cb) {
 
   if (self.method == 'overlay') {
 
-    console.log('DRAW FRAMES - OVERLAY');
     initializeCanvas(self.settings.theme, function (err, renderer) {
-      console.log('initializeCanvas');
       if (err) return cb(err);
       // Render frames
       drawFrames(renderer, options, function (err) {
-        console.log('drawFrames', err);        
         return cb(err);
       });
     });
@@ -258,10 +286,21 @@ Audiogram.prototype.saveSubtitles = function(type,cb) {
 Audiogram.prototype.saveThumb = function(cb) {
 
   var self = this;
+  if (self.method != 'overlay') {
+    transports.uploadVideo(path.join(self.frameDir, "000001.jpg"), "video/" + self.id + ".jpg", function(err){
+      return cb(err);
+    });
+  } else {
+    var dest = path.join(self.dir, self.id + '.jpg');
+    var args = ["-loglevel", "panic", "-i", self.videoPath, "-vframes", "1", "-f", "image2", "'" + dest + "'"];
+    var command = spawn("ffmpeg", args, { shell: true });
+    command.on('exit', function () {
+      transports.uploadVideo(dest, "video/" + self.id + ".jpg", function (err) {
+        return cb(err);
+      });
+    });
+  }
   
-  transports.uploadVideo(path.join(self.frameDir, "000001.jpg"), "video/" + self.id + ".jpg", function(err){
-    return cb(err);
-  });
 
 };
 
@@ -270,12 +309,24 @@ Audiogram.prototype.combineFrames = function(cb) {
 
   this.status("combine");
 
+  const frameType = this.method == 'overlay' ? 'png' : 'jpg';
+  const key = this.id;
+
   combineFrames({
     method: this.method,
+    progress: function(percent) {
+      transports.setField(key, 'combineProgress', percent);
+    },
+    trim: {
+      start: this.settings.start || 0,
+      end: this.settings.end
+    },
     backgroundVideoPath: this.backgroundVideoPath,
+    backgroundInfo: this.settings.backgroundInfo,
+    backgroundPosition: this.settings.theme.backgroundPosition,
     subtitles: JSON.parse(this.settings.subtitles),
     size: { width: this.settings.theme.width, height: this.settings.theme.height },
-    framePath: path.join(this.frameDir, "%06d.jpg"),
+    framePath: path.join(this.frameDir, `%06d.${frameType}`),
     audioPath: this.audioPath,
     videoPath: this.videoPath,
     framesPerSecond: this.settings.theme.framesPerSecond
@@ -297,22 +348,22 @@ Audiogram.prototype.render = function(cb) {
   // Download the stored audio file
   q.defer(transports.downloadAudio, this.settings.theme.audioPath, this.audioPath);
 
-  // If the audio needs to be clipped, clip it first and update the path
-  if (this.settings.start || this.settings.end) {
-    q.defer(this.trimAudio.bind(this), this.settings.start || 0, this.settings.end || null);
-  }
-
   // Establish processing method
   this.settings.backgroundInfo = JSON.parse(this.settings.backgroundInfo);
-  const videoBackground = this.settings.backgroundInfo.type.startsWith("video");
+  // const videoBackground = this.settings.backgroundInfo.type.startsWith("video");
+  const videoBackground = this.settings.media.background && this.settings.media.background.mimetype.startsWith("video");
   this.method = videoBackground && this.settings.theme.pattern == 'none' ? 'overlay' : 'frames';
+
+  // If the source needs to be clipped, clip it first and update the path
+  if (this.settings.start || this.settings.end) {
+    q.defer(this.trimMedia.bind(this), this.settings.start || 0, this.settings.end || null);
+  }
 
   if (this.method == 'overlay') {
 
     // OVERLAY METHOD:
     // generate unique frames only, and composite them over source
 
-    console.log('OVERLAY METHOD');
     this.backgroundVideoPath = path.join(serverSettings.storagePath, this.settings.theme.customBackgroundPath);
     q.defer(this.drawFrames.bind(this));
     q.defer(this.combineFrames.bind(this));
@@ -324,6 +375,7 @@ Audiogram.prototype.render = function(cb) {
 
     // Process background video
     if (videoBackground) {
+      console
       if (this.settings.media.background.framesDir) {
         // video already processed
         this.backgroundFrameDir = this.settings.media.background.framesDir;
@@ -352,6 +404,17 @@ Audiogram.prototype.render = function(cb) {
   // Save preview thumnail
   q.defer(this.saveThumb.bind(this));
 
+  function getFileSize(cb){
+    const fs = require('fs');
+    const stats = fs.statSync(this.videoPath);
+    const fileSizeInBytes = stats.size;
+    //Convert the file size to megabytes (optional)
+    const fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
+    transports.setField(this.id, "size", fileSizeInMegabytes);
+    cb(null);
+  }
+  q.defer(getFileSize.bind(this));
+
   // Upload video to S3 or move to local storage
   q.defer(transports.uploadVideo, this.videoPath, "video/" + this.id + ".mp4");
 
@@ -365,11 +428,15 @@ Audiogram.prototype.render = function(cb) {
     logger.debug(self.profiler.print());
 
     if (self.dir) {
-      // Delte working directory
-      // rimraf(self.dir, function(rimrafErr) {
-      //   if (rimrafErr) console.log(rimrafErr);
+      // Delete trimmed source
+      if (self.backgroundVideoPath && self.backgroundVideoPath.endsWith('-trimmed.mp4')) {
+        if (fs.existsSync(self.backgroundVideoPath)) fs.unlinkSync(self.backgroundVideoPath);
+      }
+      // Delete working directory
+      rimraf(self.dir, function(rimrafErr) {
+        if (rimrafErr) console.log(rimrafErr);
         return cb(err);
-      // });
+      });
     } else {
       return cb(err);      
     }

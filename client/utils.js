@@ -161,13 +161,13 @@ function statusMessage(result) {
         " in queue"
       );
     case "audio-download":
-      return "Downloading audio for processing";
+      return "Downloading media for processing";
     case "trim":
-      return "Trimming audio";
+      return "Trimming source media";
     case "video":
       return "Processing background video";
     case "probing":
-      return "Probing audio file";
+      return "Probing media file";
     case "waveform":
       return "Analyzing waveform";
     case "renderer":
@@ -189,7 +189,12 @@ function statusMessage(result) {
       }
       return msg;
     case "combine":
-      return "Combining frames with audio";
+      var msg = "Compositing video layers";
+      if (result.combineProgress && result.combineProgress > 0 && result.combineProgress < 1) {
+        var perc = Math.round(+result.combineProgress * 100);
+        msg += ', ' + perc + '% complete';
+      }
+      return msg;
     case "subtitles":
       return "Overlaying subtitles";
     case "ready":

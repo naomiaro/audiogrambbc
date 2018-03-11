@@ -168,15 +168,6 @@ function loadProject(id) {
     var q = d3.queue(1);
     // Set title
     _title(data.title);
-    // Load media
-    for (var type in data.media) {
-      media.set(data.media);
-      q.defer(
-        media.loadFromURL,
-        type,
-        path.join("/media/", data.media[type].dest)
-      );
-    }
     // Load theme
     jQuery('#transcript-btn-enabled').attr('data-enabled', Boolean(data.theme.subtitles.enabled));
     if (data.theme.subtitles.enabled) {
@@ -188,6 +179,14 @@ function loadProject(id) {
     d3.select('#transcript-pane').classed('disabled', !data.theme.subtitles.enabled);
     jQuery("#input-theme").val(data.theme.name.trim());
     themeHelper.update(data.theme);
+    // Load media
+    for (var type in data.media) {
+      q.defer(
+        media.loadFromURL,
+        type,
+        path.join("/media/", data.media[type].dest)
+      );
+    }
     // Load transcript
     q.defer(function(data, cb) {
       var script = JSON.parse(data.transcript);
@@ -203,6 +202,7 @@ function loadProject(id) {
     jQuery("#input-private").val(data.private);
     // Update trim, and finish load
     q.awaitAll(function(err) {
+      media.set(data.media);
       minimap.updateTrim([data.start, data.end]);
       video.update(path.join("/video/", id + ".mp4"), data);
       utils.navigate('edit');

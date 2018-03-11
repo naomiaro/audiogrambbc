@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require("fs"),
     path = require("path"),
     Canvas = require("canvas"),
@@ -6,7 +8,6 @@ var fs = require("fs"),
 
 function drawFrames(renderer, options, cb) {
 
-  console.log('drawFrames <<<', options.frames);
   var frameQueue = queue(10),
       canvases = [],
       theme = renderer.theme();
@@ -20,7 +21,6 @@ function drawFrames(renderer, options, cb) {
   // }
 
   if (options.method == 'overlay') {
-    console.log(options.subtitles);
     frameQueue.defer(drawFrame, 0, []);
     options.subtitles.forEach((subs, i) => {
       subs.start = 0;
@@ -73,8 +73,6 @@ function drawFrames(renderer, options, cb) {
       subs = null;
     }
 
-    console.log('frame #', frameNumber);
-
     var drawQueue = queue(1);
     var canvas = canvases.pop(),
         context = canvas.getContext("2d");
@@ -94,19 +92,40 @@ function drawFrames(renderer, options, cb) {
         frame: frameNumber
       });
 
-      var out = fs.createWriteStream(path.join(options.frameDir, zeropad(frameNumber + 1, 6) + ".jpg"));
-      var stream = canvas.createJPEGStream({
-        bufsize: 2048,
-        quality: 80
-      });
-      stream.pipe(out);
-      out.on('finish', function(){
-        if (options.tick) {
-          options.tick();
-        }
-        canvases.push(canvas);
-        return frameCallback(null);
-      });
+      const fileType = (options.method == 'overlay') ? 'png' : 'jpg';
+      const destination = path.join(options.frameDir, zeropad(frameNumber + 1, 6) + `.${fileType}`);
+
+      if (options.method == 'overlay') {
+        canvas.toBuffer(function (err, buf) {
+          if (err) {
+            return cb(err);
+          }
+          fs.writeFile(destination, buf, function (writeErr) {
+            if (writeErr) {
+              return frameCallback(writeErr);
+            }
+            if (options.tick) {
+              options.tick();
+            }
+            canvases.push(canvas);
+            return frameCallback(null);
+          });
+        });
+      } else {
+        var out = fs.createWriteStream(destination);
+        var stream = canvas.createJPEGStream({
+          bufsize: 2048,
+          quality: 80
+        });
+        stream.pipe(out);
+        out.on('finish', function(){
+          if (options.tick) {
+            options.tick();
+          }
+          canvases.push(canvas);
+          return frameCallback(null);
+        });
+      }
 
     });
 
@@ -116,7 +135,7 @@ function drawFrames(renderer, options, cb) {
 
 function zeropad(str, len) {
 
-  str = str.toString();
+  str = str ? str.toString() : "0";
 
   while (str.length < len) {
     str = "0" + str;

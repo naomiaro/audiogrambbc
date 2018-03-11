@@ -70,11 +70,12 @@ function route(req, res) {
       var backgroundExt = req.body.media.background.mimetype.split("/").pop();
       var backgroundImagePath = "background/" + backgroundId + "." + backgroundExt;
       req.body.media.background.dest = backgroundImagePath;
+      if (req.body.media.background.path == req.body.media.audio.path) req.body.media.audio.dest = backgroundImagePath;
       transports.uploadBackground(backgroundSrc, backgroundImagePath, function(err) {
         if (err) {
           return res.status(500).send(err);
         }
-        fs.unlinkSync(backgroundSrc);
+        if (fs.existsSync(backgroundSrc)) fs.unlinkSync(backgroundSrc);
       });
     }
   }
@@ -122,7 +123,7 @@ function route(req, res) {
         console.log("RLW routing err", err);
         return res.status(500).send(err);
       }
-      fs.unlinkSync(audioSrc);
+      if (fs.existsSync(audioSrc)) fs.unlinkSync(audioSrc);
       runJob();
     });
   } else {
@@ -164,6 +165,10 @@ function route(req, res) {
     // Render
     var renderType = +job.reversion ? 'reversion' : 'new';
     stats.increment(`render.${renderType}`);
+
+    // Method
+    var method = job.media.background && job.media.background.mimetype.startsWith("video") && job.theme.pattern == 'none' ? 'overlay' : 'frames';
+    stats.increment(`render.method.${method}`); 
 
     // Theme
     var themeName = job.theme.name.replace(/ /g, '_');
