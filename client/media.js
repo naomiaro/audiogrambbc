@@ -12,8 +12,13 @@ function _get(type) {
     return type ? MEDIA[type] : MEDIA;
 }
 
-function _set(obj) {
-    return MEDIA = obj;
+function _set(obj, type) {
+    if (type) {
+        MEDIA[type] = obj
+    } else {
+        MEDIA = obj;
+    }
+    return MEDIA;
 }
 
 function _blobs(type) {
@@ -117,9 +122,14 @@ function deleteMedia(type, id) {
 }
 
 function upload(type, blob) {  // Reset
+    var oldId = MEDIA[type] ? MEDIA[type].id : null;
     deleteMedia(type);
-    if (!blob) return;
-    MEDIA[type] = {name: blob.name || "blob", size: blob.size};
+    if (!blob || LOADING) return;
+    MEDIA[type] = { 
+        id: oldId,
+        name: blob.name || "blob",
+        size: blob.size
+    };
     BLOBS[type] = blob;
     // Prepare payload
     var formData = new FormData();
@@ -135,9 +145,14 @@ function upload(type, blob) {  // Reset
         dataType: 'json',
         cache: false,
         processData: false,
-        success: function(data) {
-            if (MEDIA[data.type] && data.name == MEDIA[data.type].name && data.size == MEDIA[data.type].size) {
-                MEDIA[data.type] = data;
+        success: function(res) {
+            if (MEDIA[res.type] && res.name == MEDIA[res.type].name && res.size == MEDIA[res.type].size) {
+                for (var type in MEDIA) {
+                    if (MEDIA[res.type].id == MEDIA[type].id && type !== res.type) {
+                        MEDIA[type] = Object.assign({}, res, { type });
+                    }
+                }
+                MEDIA[res.type] = res;
             }
         },
         error: error
