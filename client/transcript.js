@@ -6,7 +6,9 @@ var jQuery = require("jquery"),
   uuid = require("uuid/v4"),
   currentTranscript,
   kaldiPoll,
-  formatTimeout;
+  formatTimeout,
+  kaldiTimer,
+  kaldiDuration;
 
 
 function formatHMS(t) {
@@ -539,7 +541,8 @@ function clear() {
 
 function poll(job) {
     kaldiPoll = setTimeout(function(){
-        jQuery.getJSON( "/kaldi/" + job, function( data ) {
+        var pollUrl = `/kaldi/${job}?time=${kaldiTimer}&duration=${kaldiDuration}`;
+        jQuery.getJSON( pollUrl, function( data ) {
             if (data.status=="SUCCESS" && !data.error) {
                 load({segments: data.script});
                 jQuery("#transcript").removeClass("loading");
@@ -573,6 +576,8 @@ function generate(blob) {
         processData: false,
         type: 'POST',
         success: function(data){
+            kaldiTimer = Date.now();
+            kaldiDuration = audio.duration();
             poll(data.job);
         },
         error: function(jqXHR, textStatus, errorThrown){

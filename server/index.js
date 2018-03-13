@@ -131,6 +131,7 @@ app.get("/status/:id/", status);
 
 // Handle kaldi transcripts
 app.post("/kaldi/", [multer(fileOptions).fields([{ name: 'audio', maxCount: 1 }]), kaldi.post]);
+app.get("/kaldi/stats/", kaldi.stats);
 app.get("/kaldi/:job/", kaldi.get);
 
 // ichef
