@@ -577,7 +577,7 @@ function generate(blob) {
         type: 'POST',
         success: function(data){
             kaldiTimer = Date.now();
-            kaldiDuration = audio.duration();
+            kaldiDuration = +jQuery("#minimap #end").val();
             poll(data.job);
         },
         error: function(jqXHR, textStatus, errorThrown){
