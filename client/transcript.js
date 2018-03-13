@@ -7,8 +7,7 @@ var jQuery = require("jquery"),
   currentTranscript,
   kaldiPoll,
   formatTimeout,
-  kaldiTimer,
-  kaldiDuration;
+  kaldiTimer;
 
 
 function formatHMS(t) {
@@ -541,7 +540,8 @@ function clear() {
 
 function poll(job) {
     kaldiPoll = setTimeout(function(){
-        var pollUrl = `/kaldi/${job}?time=${kaldiTimer}&duration=${kaldiDuration}`;
+        var duration = +jQuery("#minimap #end").val();
+        var pollUrl = `/kaldi/${job}?time=${kaldiTimer}&duration=${duration}`;
         jQuery.getJSON( pollUrl, function( data ) {
             if (data.status=="SUCCESS" && !data.error) {
                 load({segments: data.script});
@@ -577,7 +577,6 @@ function generate(blob) {
         type: 'POST',
         success: function(data){
             kaldiTimer = Date.now();
-            kaldiDuration = +jQuery("#minimap #end").val();
             poll(data.job);
         },
         error: function(jqXHR, textStatus, errorThrown){
