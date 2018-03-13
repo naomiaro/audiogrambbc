@@ -31,10 +31,11 @@ function _img(type, _) {
 
 function _imgInfo(type, _) {
     if (arguments.length > 0) {
-        return _ ? (imgInfo[type] = _, redraw()) : imgInfo[type];
+        var res = (_!==undefined) ? (imgInfo[type] = _, redraw()) : imgInfo[type];
     } else {
-        return imgInfo = {};
+        var res = imgInfo = {};
     }
+    return res;
 }
 
 function _theme(_) {

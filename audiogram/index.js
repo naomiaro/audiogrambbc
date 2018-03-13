@@ -1,4 +1,7 @@
+'use strict';
+
 var path = require("path"),
+    fs = require("fs"),
     queue = require("d3").queue,
     mkdirp = require("mkdirp"),
     rimraf = require("rimraf"),
@@ -77,29 +80,57 @@ Audiogram.prototype.getWaveform = function(cb) {
 };
 
 // Trim the audio by the start and end time specified
-Audiogram.prototype.trimAudio = function(start, end, cb) {
-
-  var self = this;
+Audiogram.prototype.trimMedia = function(start, end, cb) {
 
   this.status("trim");
+  var self = this;
 
-  // FFmpeg needs an extension to sniff
-  var trimmedPath = this.audioPath + "-trimmed.mp3";
+  function hms(t, round) {
+    t = Number(t);
+    var h = Math.floor(t / 3600);
+    var m = Math.floor((t % 3600) / 60);
+    var s = ((t % 3600) % 60).toFixed(1);
+    if (round) s = Math.round(s);
+    var string = '00:' + `00${m}`.slice(-2) + ":" + `00${s}`.slice(round ? -2 : -4);
+    return string;
+  }
+  
+  if (self.method == 'overlay') {
 
-  trimAudio({
-    origin: this.audioPath,
-    destination: trimmedPath,
-    startTime: start,
-    endTime: end
-  }, function(err){
-    if (err) {
-      return cb(err);
+    if (Math.round(start*10)/10 == 0 && Math.round(end*10) == Math.round(self.settings.backgroundInfo.duration*10)) {
+      return cb(null);
     }
+    var src = self.backgroundVideoPath;
+    var dest = self.backgroundVideoPath.split('.')[0] + '-trimmed.mp4';
+    var dur = end - start;
+    var startHMS = hms(start);
+    var durHMS = hms(dur);
+    var args = ["-loglevel", "panic", "-y", "-i", src, "-ss", startHMS, "-t", durHMS, "-async", "1", dest];
+    var command = spawn("ffmpeg", args, { shell: true });
+    command.on('exit', function () {
+      self.backgroundVideoPath = dest;
+      self.settings.backgroundInfo.duration = dur;
+      return cb(null);
+    });
 
-    self.audioPath = trimmedPath;
+  } else {
 
-    return cb(null);
-  });
+    // FFmpeg needs an extension to sniff
+    var trimmedPath = this.audioPath + "-trimmed.mp3";
+    trimAudio({
+      origin: this.audioPath,
+      destination: trimmedPath,
+      startTime: start,
+      endTime: end
+    }, function(err){
+      if (err) {
+        return cb(err);
+      }
+      self.audioPath = trimmedPath;
+      return cb(null);
+    });
+
+  }
 
 };
 
@@ -131,10 +162,10 @@ Audiogram.prototype.drawFrames = function(cb) {
 
   this.status("frames");
 
-  var self = this,
-      spawnQ = queue();
+  var self = this;
 
   var options = {
+        method: self.method,
         width: self.settings.theme.width,
         height: self.settings.theme.height,
         numFrames: self.numFrames,
@@ -150,73 +181,88 @@ Audiogram.prototype.drawFrames = function(cb) {
         backgroundInfo: self.settings.backgroundInfo
       };
 
-  // Store job info
-  transports.setField("jobInfo:" + this.id, "theme", JSON.stringify(this.settings.theme));
-  transports.setField("jobInfo:" + this.id, "options", JSON.stringify(options));
+  if (self.method == 'overlay') {
 
-  // Spawn multiple workers to multithread the frame rendering process
-  var cores = os.cpus().length,
-      framesPerCore = Math.ceil( (self.numFrames+1) / cores ),
-      framesPerWorker = Math.max( framesPerCore, 100 ),
-      start = -framesPerWorker,
-      end = 0;
-  while ( end < self.numFrames ) {
-    start += framesPerWorker;
-    end = Math.min(end + framesPerWorker, self.numFrames);
-    spawnQ.defer(spawnChild, {start: start, end: end});
-  }
+    initializeCanvas(self.settings.theme, function (err, renderer) {
+      if (err) return cb(err);
+      // Render frames
+      drawFrames(renderer, options, function (err) {
+        return cb(err);
+      });
+    });
 
-  // Once all workers have exited
-  spawnQ.await(function(err){
-    transports.del("jobInfo:" + self.id);
-    cb(err);
-  });
+  } else {
 
-  const increments = new Map();
-  const batchSize = Math.max(Math.round(self.numFrames / 20), 20);
-  function incrementField(field) {
-    let count = (increments.get(field) || 0 ) + 1;
-    if (count >= batchSize) {
-      transports.incrementField(self.id, field, count);
-      increments.set(field, 0);
-    } else {
-      increments.set(field, count);
+    // Store job info
+    transports.setField("jobInfo:" + this.id, "theme", JSON.stringify(this.settings.theme));
+    transports.setField("jobInfo:" + this.id, "options", JSON.stringify(options));
+
+    // Spawn multiple workers to multithread the frame rendering process
+    var spawnQ = queue(),
+        cores = os.cpus().length,
+        framesPerCore = Math.ceil( (self.numFrames+1) / cores ),
+        framesPerWorker = Math.max( framesPerCore, 100 ),
+        start = -framesPerWorker,
+        end = 0;
+    while ( end < self.numFrames ) {
+      start += framesPerWorker;
+      end = Math.min(end + framesPerWorker, self.numFrames);
+      spawnQ.defer(spawnChild, {start: start, end: end});
     }
-  }
 
-  function spawnChild(frames, spawnCb) {
-    var child = spawn("bin/frameWorker", [self.id, frames.start, frames.end], {
-                  cwd: path.join(__dirname, ".."),
-                  env: _.extend({}, process.env, { SPAWNED: true }),
-                  stdio: ['pipe', 'pipe', 'pipe', 'ipc']
-                });
-    child.on('exit', function (exitCode) {
-        var err = exitCode==-1 ? "frameWorker error" : null;
-        spawnCb(err);
+    // Once all workers have exited
+    spawnQ.await(function(err){
+      transports.del("jobInfo:" + self.id);
+      cb(err);
     });
-    child.stderr.on('data', function (data) {
-      logger.debug("frameWorker >>> " + data);
-      spawnCb('Error drawing frames: ' + data + ' - ' + data.toString());
-    });
-    child.stdout.on('data', function (data) {
-      logger.debug('frameWorker >>> ' + data);
-    });
-    child.on('message', function (data) {
-      if (data.increment) {
-        incrementField(data.increment);
+
+    const increments = new Map();
+    const batchSize = Math.max(Math.round(self.numFrames / 20), 20);
+    function incrementField(field) {
+      let count = (increments.get(field) || 0 ) + 1;
+      if (count >= batchSize) {
+        transports.incrementField(self.id, field, count);
+        increments.set(field, 0);
       } else {
-        try {
-          var msg = JSON.stringify(data.error || data);
-        } catch (error) {
-          var msg = data.toString();
-        }
-      if (data.error && data.error.length > 10) {
-          return spawnCb(`Error drawing frames: ${msg}`);
-      } else {
-          logger.debug('frameWorker message >>>' + msg);
-        }
+        increments.set(field, count);
       }
-    });
+    }
+
+    function spawnChild(frames, spawnCb) {
+      var child = spawn("bin/frameWorker", [self.id, frames.start, frames.end], {
+                    cwd: path.join(__dirname, ".."),
+                    env: _.extend({}, process.env, { SPAWNED: true }),
+                    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+                  });
+      child.on('exit', function (exitCode) {
+          var err = exitCode==-1 ? "frameWorker error" : null;
+          spawnCb(err);
+      });
+      child.stderr.on('data', function (data) {
+        logger.debug("frameWorker >>> " + data);
+        spawnCb('Error drawing frames: ' + data + ' - ' + data.toString());
+      });
+      child.stdout.on('data', function (data) {
+        logger.debug('frameWorker >>> ' + data);
+      });
+      child.on('message', function (data) {
+        if (data.increment) {
+          incrementField(data.increment);
+        } else {
+          try {
+            var msg = JSON.stringify(data.error || data);
+          } catch (error) {
+            var msg = data.toString();
+          }
+          if (data.error && data.error.length > 10) {
+            return spawnCb(`Error drawing frames: ${msg}`);
+          } else {
+            logger.debug('frameWorker message >>>' + msg);
+          }
+        }
+      });
+    }
+  
   }
   
 };
@@ -240,10 +286,21 @@ Audiogram.prototype.saveSubtitles = function(type,cb) {
 Audiogram.prototype.saveThumb = function(cb) {
 
   var self = this;
+  if (self.method != 'overlay') {
+    transports.uploadVideo(path.join(self.frameDir, "000001.jpg"), "video/" + self.id + ".jpg", function(err){
+      return cb(err);
+    });
+  } else {
+    var dest = path.join(self.dir, self.id + '.jpg');
+    var args = ["-loglevel", "panic", "-i", self.videoPath, "-vframes", "1", "-f", "image2", "'" + dest + "'"];
+    var command = spawn("ffmpeg", args, { shell: true });
+    command.on('exit', function () {
+      transports.uploadVideo(dest, "video/" + self.id + ".jpg", function (err) {
+        return cb(err);
+      });
+    });
+  }
   
-  transports.uploadVideo(path.join(self.frameDir, "000001.jpg"), "video/" + self.id + ".jpg", function(err){
-    return cb(err);
-  });
 
 };
 
@@ -252,8 +309,24 @@ Audiogram.prototype.combineFrames = function(cb) {
 
   this.status("combine");
 
+  const frameType = this.method == 'overlay' ? 'png' : 'jpg';
+  const key = this.id;
+
   combineFrames({
-    framePath: path.join(this.frameDir, "%06d.jpg"),
+    method: this.method,
+    progress: function(percent) {
+      transports.setField(key, 'combineProgress', percent);
+    },
+    trim: {
+      start: this.settings.start || 0,
+      end: this.settings.end
+    },
+    backgroundVideoPath: this.backgroundVideoPath,
+    backgroundInfo: this.settings.backgroundInfo,
+    backgroundPosition: this.settings.theme.backgroundPosition,
+    subtitles: JSON.parse(this.settings.subtitles),
+    size: { width: this.settings.theme.width, height: this.settings.theme.height },
+    framePath: path.join(this.frameDir, `%06d.${frameType}`),
     audioPath: this.audioPath,
     videoPath: this.videoPath,
     framesPerSecond: this.settings.theme.framesPerSecond
@@ -275,32 +348,54 @@ Audiogram.prototype.render = function(cb) {
   // Download the stored audio file
   q.defer(transports.downloadAudio, this.settings.theme.audioPath, this.audioPath);
 
-  // If the audio needs to be clipped, clip it first and update the path
-  if (this.settings.start || this.settings.end) {
-    q.defer(this.trimAudio.bind(this), this.settings.start || 0, this.settings.end || null);
-  }
-
-  // Process background video
+  // Establish processing method
   this.settings.backgroundInfo = JSON.parse(this.settings.backgroundInfo);
-  if (this.settings.backgroundInfo.type.startsWith("video")) {
-    if (this.settings.media.background.framesDir) {
-      // video already processed
-      this.backgroundFrameDir = this.settings.media.background.framesDir;
-      var fps = 25;
-      this.settings.backgroundInfo.frames = Math.ceil(fps * this.settings.backgroundInfo.duration);
-      this.settings.theme.framesPerSecond = fps;
-    } else {
-      // re-process
-      q.defer(mkdirp, this.backgroundFrameDir);
-      q.defer(this.backgroundVideo.bind(this));
-    }
+  // const videoBackground = this.settings.backgroundInfo.type.startsWith("video");
+  const videoBackground = this.settings.media.background && this.settings.media.background.mimetype.startsWith("video");
+  this.method = videoBackground && this.settings.theme.pattern == 'none' ? 'overlay' : 'frames';
+
+  // If the source needs to be clipped, clip it first and update the path
+  if (this.settings.start || this.settings.end) {
+    q.defer(this.trimMedia.bind(this), this.settings.start || 0, this.settings.end || null);
   }
 
-  // Get the audio waveform data
-  q.defer(this.getWaveform.bind(this));
+  if (this.method == 'overlay') {
 
-  // Draw all the frames
-  q.defer(this.drawFrames.bind(this));
+    // OVERLAY METHOD:
+    // generate unique frames only, and composite them over source
+
+    this.backgroundVideoPath = path.join(serverSettings.storagePath, this.settings.theme.customBackgroundPath);
+    q.defer(this.drawFrames.bind(this));
+    q.defer(this.combineFrames.bind(this));
+
+  } else {
+
+    // FRAMES METHOD:
+    // process each theme, then merge them together
+
+    // Process background video
+    if (videoBackground) {
+      console
+      if (this.settings.media.background.framesDir) {
+        // video already processed
+        this.backgroundFrameDir = this.settings.media.background.framesDir;
+        var fps = 25;
+        this.settings.backgroundInfo.frames = Math.ceil(fps * this.settings.backgroundInfo.duration);
+        this.settings.theme.framesPerSecond = fps;
+      } else {
+        // re-process
+        q.defer(mkdirp, this.backgroundFrameDir);
+        q.defer(this.backgroundVideo.bind(this));
+      }
+    }
+    // Get the audio waveform data
+    q.defer(this.getWaveform.bind(this));
+    // Draw all the frames
+    q.defer(this.drawFrames.bind(this));
+    // Combine audio and frames together with ffmpeg
+    q.defer(this.combineFrames.bind(this));
+    
+  }
 
   // Save subtitle files
   q.defer(this.saveSubtitles.bind(this), "srt");
@@ -309,15 +404,19 @@ Audiogram.prototype.render = function(cb) {
   // Save preview thumnail
   q.defer(this.saveThumb.bind(this));
 
-  // Combine audio and frames together with ffmpeg
-  q.defer(this.combineFrames.bind(this));
+  function getFileSize(cb){
+    const fs = require('fs');
+    const stats = fs.statSync(this.videoPath);
+    const fileSizeInBytes = stats.size;
+    //Convert the file size to megabytes (optional)
+    const fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
+    transports.setField(this.id, "size", fileSizeInMegabytes);
+    cb(null);
+  }
+  q.defer(getFileSize.bind(this));
 
   // Upload video to S3 or move to local storage
   q.defer(transports.uploadVideo, this.videoPath, "video/" + this.id + ".mp4");
-
-  // Delete working directory
-  // q.defer(rimraf, this.dir);
-  // TO DO: also need to remove bg directory
 
   // Final callback, results in a URL where the finished video is accessible
   q.await(function(err){
@@ -329,6 +428,11 @@ Audiogram.prototype.render = function(cb) {
     logger.debug(self.profiler.print());
 
     if (self.dir) {
+      // Delete trimmed source
+      if (self.backgroundVideoPath && self.backgroundVideoPath.endsWith('-trimmed.mp4')) {
+        if (fs.existsSync(self.backgroundVideoPath)) fs.unlinkSync(self.backgroundVideoPath);
+      }
+      // Delete working directory
       rimraf(self.dir, function(rimrafErr) {
         if (rimrafErr) console.log(rimrafErr);
         return cb(err);
