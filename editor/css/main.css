@@ -6270,7 +6270,7 @@ button.close {
     position: absolute;
     z-index: 1070;
     display: block;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "ReithSans";
     font-style: normal;
     font-weight: 400;
     letter-spacing: normal;
@@ -6404,7 +6404,7 @@ button.close {
     display: none;
     max-width: 276px;
     padding: 1px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "ReithSans";
     font-style: normal;
     font-weight: 400;
     letter-spacing: normal;
@@ -7066,7 +7066,6 @@ button.close {
 
 .global-header header h1 {
     color: #fefefe;
-    font-family: 'Gill Sans', 'Helvetica Neue';
     font-weight: 300;
     position: relative;
     line-height: 2.3;
@@ -7126,11 +7125,12 @@ html {
 
 body {
     height: 100%;
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif
+    font-family: "ReithSerif";
 }
 
 body h1, body h2 {
-    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif
+    font-family: "ReithSans";
+    font-weight: 600;
 }
 
 .context_uri {
