@@ -56,9 +56,17 @@ function windowResize() {
         var hidden = d3.select('#minimap').classed('hidden');
         d3.select('#minimap').classed('hidden', false);
         minimap.width(jQuery('#minimap svg').parent().width());
-        // minimap.width(500);
         minimap.updateTrim(extent);
         d3.select('#minimap').classed('hidden', hidden);
+        // Transcript height
+        if (jQuery('.transcript-editor').is(':visible')) {
+            var current = jQuery('.transcript-editor').css('height','').outerHeight();
+            var diff = jQuery(document).height() - jQuery(window).height();
+            var full = current - diff;
+            var min = 300;
+            var target = Math.min(current, Math.max(min, full));
+            jQuery('.transcript-editor').css('height', target);
+        }
     }
 }
 

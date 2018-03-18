@@ -28,6 +28,8 @@ function navigate(state, msg, log) {
     var audio = require('./audio');
     audio.pause();
     jQuery(".modal-backdrop").remove();
+    var ui = require('./ui.js');
+    ui.windowResize();
 }
 
 function offline(msg) {

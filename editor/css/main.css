@@ -7322,6 +7322,7 @@ header .headerLinks a:hover {
 }
 
 .footer {
+    margin-top: 10px;
     background-color: #eee
 }
 
@@ -8453,7 +8454,6 @@ video {
     text-align: center;
     font-weight: 300;
     font-size: 14px;
-    font-family: Roboto,sans-serif;
     line-height: 1.5em;
 }
 

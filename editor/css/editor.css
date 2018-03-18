@@ -549,6 +549,7 @@ body.landing #error {
   border: 1px solid #ddd;
   padding: 15px;
   cursor: text;
+  overflow-y: scroll;
 }
 
 .transcript-btn-select {
@@ -1102,6 +1103,7 @@ input[type='text'] {
 /* Preview canvas */
 #canvas-wrapper {
   border-top: 3px solid #b60000;
+  margin: 0;
 }
 
 #canvas {
@@ -1125,6 +1127,10 @@ input[type='text'] {
 }
 
 /* Minimap */
+
+#minimap {
+  margin-bottom: 10px;
+}
 
 #minimap:not(.disabled) .disabled {
   display: none;
@@ -1344,4 +1350,22 @@ g.time line {
     transform: scaleY(1.0);
     -webkit-transform: scaleY(1.0);
   }
+}
+
+/* Editor Tabs */
+#editor-wrapper .well {
+  box-shadow: none;
+  margin: 0;
+  padding: 12px 0 0 0;
+}
+
+.nav-tabs > li a {
+  border-top: 3px solid transparent !important;
+  border-bottom: none !important;
+}
+.nav-tabs > li.active a {
+  border-color: #b60000 !important;
+}
+.nav-tabs > li {
+  font-family: "ReithSans";
 }
