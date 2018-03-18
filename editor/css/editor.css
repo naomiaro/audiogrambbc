@@ -29,6 +29,10 @@
   text-decoration: none !important;
 }
 
+.intGEL .well {
+  border: none;
+}
+
 
 #progressbar {
   margin-bottom: 30px;
@@ -130,7 +134,7 @@ body.landing #error {
 }
 
 #landing {
-  margin-top: -30px;
+  margin-top: 0;
 }
 
 #landing h2 {
@@ -798,10 +802,10 @@ body {
 div.wrapper {
   flex: 1 0 auto;
   width: 100%;
-  max-width: 1500px;
-  padding: 20px;
+  /* max-width: 1500px; */
+  padding: 0 20px;
   margin-bottom: 60px;
-  margin: 1rem auto 0 auto;
+  margin: 10px auto;
 }
 
 h1 {
@@ -909,8 +913,8 @@ button,
   display: inline-block;
   cursor: pointer;
   width: 60px;
-  margin-right: 4px;
   text-align: left;
+  padding: 3px 22px;
 }
 #playbackRate select {
   background: transparent;
@@ -920,12 +924,13 @@ button,
   font-size: 13px;
   position: absolute;
   top: 0;
-  left: 0;
   -webkit-appearance: none;
   -moz-appearance: none;
   outline: none;
-  padding-left: 22px;
+  padding-left: 37px;
   cursor: pointer;
+  margin-left: -37px;
+  width: 100%;
 }
 #playbackRate[data-rate='1'],
 #playbackRate[data-rate='1'] select,
@@ -985,24 +990,6 @@ input[type='submit']:active {
   right: 15px;
 }
 
-#duration {
-  font-size: 13px;
-  line-height: 13px;
-  margin-bottom: 5px;
-}
-
-#duration .red{
-  background: #c00;
-  color: white;
-  padding: 0 4px;
-}
-
-#duration .red:before {
-   font-family: FontAwesome;
-   content: "\f071";
-   padding-right: 3px;
-}
-
 #shortcuts {
   text-align: left;
 }
@@ -1025,17 +1012,17 @@ input[type='submit']:active {
   width: 66px;
 }
 
-#controls {
+.controls {
   text-align: right;
 }
 
-#controls #timecodes {
+#minimap .timecodes {
   position: relative;
   text-align: left;
   margin: 10px 0;
 }
 
-#controls #timecodes input{
+#minimap .timecodes input{
   width: 75px;
   font-size: 13px;
   text-align: center;
@@ -1050,7 +1037,7 @@ input[type='submit']:active {
   left: 565px;
 }
 
-#controls i.fa {
+.controls i.fa {
   margin-right: 4px;
 }
 
@@ -1063,7 +1050,7 @@ i.fa-play {
     bottom: 1px;
 }
 
-#controls button {
+.controls button {
   padding: 3px 6px;
   font-size: 13px;
 }
@@ -1113,6 +1100,10 @@ input[type='text'] {
 }
 
 /* Preview canvas */
+#canvas-wrapper {
+  border-top: 3px solid #b60000;
+}
+
 #canvas {
   position: relative;
 }
@@ -1149,6 +1140,59 @@ input[type='text'] {
 }
 #minimap.disabled input {
   pointer-events: none;
+}
+
+#minimap .map {
+  width: calc(100% - 270px);
+  float: left;
+}
+
+#minimap .map svg {
+  transform: scaleY(1.15);
+  height: 92px;
+  position: relative;
+  top: 6px;
+}
+
+#minimap .controls {
+  width: 250px;
+  float: right;
+  text-align: left;
+  padding-bottom: 7px;
+}
+
+#minimap .controls hr {
+  margin: 1px 0 5px;
+}
+
+#minimap .controls #loop i {
+  color: #3f81cc;
+}
+
+#duration {
+  width: 111px;
+  display: inline-block;
+  text-align: center;
+  font-size: 13px;
+  line-height: 13px;
+}
+
+#duration .red{
+  background: #c00;
+  color: white;
+  padding: 0 4px;
+}
+
+#duration .red:before {
+   font-family: FontAwesome;
+   content: "\f071";
+   padding-right: 3px;
+}
+
+#minimap .controls button {
+  width: 111px;
+  display: inline-block;
+  margin-bottom: 4px;
 }
 
 g.background path {

@@ -54,24 +54,30 @@ function update() {
   if (audio.duration) {
 
     var pos = audio.currentTime / audio.duration;
+    var trim = [
+      extent[0] * audio.duration,
+      extent[1] * audio.duration
+    ]
 
     if (stopAt && pos >= stopAt/audio.duration) {
       pause();
       if (pos >= extent[1]) {
-        audio.currentTime = extent[1] * audio.duration;
+        audio.currentTime = trim[1];
       } else {
-        audio.currentTime = extent[0] * audio.duration;
+        audio.currentTime = trim[0];
       }
     } else if (audio.ended || pos >= extent[1] || audio.duration * extent[0] - audio.currentTime > 0.2) {
       // Need some allowance at the beginning because of frame imprecision (esp. FF)
       if (isPlaying()) {
-        play(extent[0] * audio.duration);
+        play(trim[0]);
       }
       // pause(extent[0] * audio.duration);
     }
 
     minimap.time(pos);
     if (isPlaying()) {
+      var currentTimeStr = utils.formatHMS(audio.currentTime - trim[0]).slice(1);
+      jQuery('#duration .current').text(currentTimeStr);
       var preview = require("./preview");
       preview.redraw();
     }
@@ -217,7 +223,7 @@ function init() {
       utils.stats("increment", "user_activity.playback.restart");
     });
     
-    d3.select('#controls .tip a').on('click', function() {
+    d3.select('#minimap .controls .tip a').on('click', function() {
       jQuery('#shortcuts').toggleClass('hidden');
       utils.stopIt(d3.event);
     });

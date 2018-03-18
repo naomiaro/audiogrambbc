@@ -1,4 +1,5 @@
 var d3 = require("d3"),
+    utils = require("./utils.js"),
     audio = require("./audio.js"),
     video = require("./video.js"),
     minimap = require("./minimap.js"),
@@ -108,7 +109,8 @@ minimap.onBrush(function (extent) {
         .property("value", Math.round(100 * (selection.end || selection.duration)) / 100)
         .style("left", x2 + "px");
 
-    d3.select("#duration strong").text(Math.round(10 * selection.duration) / 10)
+    var durationStr = utils.formatHMS(selection.duration);
+    d3.select("#duration strong").text(durationStr.slice(1))
         .classed("red", theme && theme.maxDuration && theme.maxDuration < selection.duration);
 
     redraw();
@@ -133,6 +135,9 @@ function resize(width, height) {
 
     d3.select("canvas")
         .attr("width", wrapperWidth)
+        .attr("height", wrapperWidth * (height / width));
+    
+    d3.select("#canvas")
         .attr("height", wrapperWidth * (height / width));
 
     d3.select("video")

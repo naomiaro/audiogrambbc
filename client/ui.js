@@ -55,7 +55,8 @@ function windowResize() {
         });
         var hidden = d3.select('#minimap').classed('hidden');
         d3.select('#minimap').classed('hidden', false);
-        minimap.width(jQuery('#minimap .page-header').width());
+        minimap.width(jQuery('#minimap svg').parent().width());
+        // minimap.width(500);
         minimap.updateTrim(extent);
         d3.select('#minimap').classed('hidden', hidden);
     }

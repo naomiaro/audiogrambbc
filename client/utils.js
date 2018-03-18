@@ -39,6 +39,16 @@ function offline(msg) {
     stopAudio();
 }
 
+function formatHMS(t, round) {
+  t = Number(t);
+  var h = Math.floor(t / 3600);
+  var m = Math.floor((t % 3600) / 60);
+  var s = ((t % 3600) % 60).toFixed(1);
+  if (round) s = Math.round(s);
+  var string = `00${m}`.slice(-2) + ":" + `00${s}`.slice(round ? -2 : -4);
+  return string;
+}
+
 function setClass(cl, msg, log) {
   var error = cl=='error';
   cl = LOADING ? error ? 'landing' : 'loading' : cl;
@@ -219,5 +229,6 @@ module.exports = {
     statusMessage,
     navigate,
     tooltips,
-    stats
+    stats,
+    formatHMS
 }

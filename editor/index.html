@@ -61,7 +61,7 @@
             <strong>Yay!</strong> It works :)
         </div>
 
-        <section class="well breadcrumbs">
+        <section class="well breadcrumbs hidden">
             <span id="breadcrumb_home">
                 <a href="#">Home</a>
             </span>
@@ -118,9 +118,6 @@
                 <a href="https://medium.com/@WNYC/socialaudio-e648e8a5f2e9#.7se6rlrt8" target="_blank">original work by NPR's WNYC</a> in New York. You can read about why we built it, and how, in our
                 <a href="https://medium.com/bbc-news-labs/visualising-audio-bbc-news-labs-audiogram-generator-4ce97ee3da51" target="_blank">Medium blog</a>.
             </p>
-            <!-- <p style="color: #b60000; font-size: 0.9em">
-          <b>This is a prototype.</b> The tool and its infrastructure may present errors or be unavailable at times.
-        </p> -->
 
             <h2>New Project</h2>
             <div class="row new">
@@ -531,10 +528,108 @@
         <!-- #loading -->
         <div id="loaded" class="intGEL">
 
+            <section id="minimap">
+                <div class="map well">
+                    <div class="disabled"></div>
+                    <svg width="640" height="80" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <clipPath id="clip">
+                                <rect height="80" width="640" x="0" y="0"></rect>
+                            </clipPath>
+                        </defs>
+                        <g class="waveform background">
+                            <line x1="0" x2="640" y1="40" y2="40"></line>
+                            <path></path>
+                        </g>
+                        <g class="waveform foreground" clip-path="url(#clip)">
+                            <line x1="0" x2="640" y1="40" y2="40"></line>
+                            <path></path>
+                        </g>
+                        <g class="brush"></g>
+                        <g class="time">
+                            <line x1="0" x2="0" y1="0" y2="80"></line>
+                        </g>
+                    </svg>
+                    <div class="timecodes hidden">
+                        <input id="start" type="text">
+                        <input id="end" type="text">
+                    </div>
+                </div>
+                <div class="controls well">
+                    <button id="play">
+                        <i class="fa fa-play"></i>Play
+                    </button>
+                    <button id="pause" class="hidden">
+                        <i class="fa fa-pause"></i>Pause
+                    </button>
+                    <button id="restart">
+                        <i class="fa fa-step-backward"></i>Restart
+                    </button>
+                    <button id="playbackRate" data-rate='1' class="tooltip-info" data-placement="left" title="Changing the playback rate is for preview and transcription assistance only.<br/>It will not affect video output.">
+                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        <select>
+                            <option value="0.5">0.5x</option>
+                            <option value="1" selected>1.0x</option>
+                            <option value="1.5">1.5x</option>
+                        </select>
+                    </button>
+                    <button id="loop">
+                        <i class="on fa fa-check-square"></i>
+                        <i class="off fa fa-square-o hidden"></i>
+                        Loop
+                    </button>
+                    <hr>
+                    <button id="trim">
+                        <i class="fa fa-cut"></i>Trim
+                    </button>
+                    <div id="duration">
+                        <span class="current">0:00.0</span><span class="separator"> / </span><strong class="duration"></strong>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div id="shortcuts" class="hidden">
+                    <hr>
+                    <div class="col">
+                        <div>
+                            <kbd>space</kbd> &nbsp; - &nbsp; toggle playback
+                        </div>
+                        <div>
+                            <kbd>&#8594;</kbd> /
+                            <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 0.1s
+                        </div>
+                        <div>
+                            <kbd>ctrl</kbd> /
+                            <kbd>&#8984;</kbd> +
+                            <kbd>&#8594;</kbd> /
+                            <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 1s
+                        </div>
+                        <div>
+                            <kbd>shift</kbd> +
+                            <kbd>&#8594;</kbd> /
+                            <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 10s
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div>
+                            <kbd>q</kbd> /
+                            <kbd>w</kbd> &nbsp; - &nbsp; go to IN/OUT
+                        </div>
+                        <div>
+                            <kbd>i</kbd> /
+                            <kbd>o</kbd> &nbsp; - &nbsp; mark IN/OUT
+                        </div>
+                        <div>
+                            <kbd>5</kbd> &nbsp; - &nbsp; play from IN for 1s
+                        </div>
+                        <div>
+                            <kbd>6</kbd> &nbsp; - &nbsp; play from 1s before OUT
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </section>
 
             <div class="row">
-
-
 
                 <div class="col-md-7">
 
@@ -582,7 +677,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <div id="videoload" class="hidden alert alert-info" role="alert" style="margin: 10px 0">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -591,109 +686,7 @@
                         <br/>
                         <a href="#" style="text-decoration: underline">Click here to use the video background as well.</a>
                     </div>
-
-                    <section id="minimap" class="well">
-                        <div class="page-header">
-                            <h1>Audio Source</h1>
-                        </div>
-                        <div class="disabled"></div>
-                        <svg width="640" height="80" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <clipPath id="clip">
-                                    <rect height="80" width="640" x="0" y="0"></rect>
-                                </clipPath>
-                            </defs>
-                            <g class="waveform background">
-                                <line x1="0" x2="640" y1="40" y2="40"></line>
-                                <path></path>
-                            </g>
-                            <g class="waveform foreground" clip-path="url(#clip)">
-                                <line x1="0" x2="640" y1="40" y2="40"></line>
-                                <path></path>
-                            </g>
-                            <g class="brush"></g>
-                            <g class="time">
-                                <line x1="0" x2="0" y1="0" y2="80"></line>
-                            </g>
-                        </svg>
-                        <div id="controls">
-                            <div id="timecodes">
-                                <input id="start" type="text">
-                                <input id="end" type="text">
-                            </div>
-                            <hr/>
-                            <div style="float: left;">
-                                <div class="tip">
-                                    Click and drag over the waveform to clip audio, enter
-                                    <br> timecodes above, or use the
-                                    <a href="#">advanced keyboard shortcuts</a>.
-                                </div>
-                            </div>
-                            <div style="float: right;">
-                                <div id="duration">
-                                    <strong></strong> seconds selected
-                                </div>
-                                <button id="playbackRate" data-rate='1' class="tooltip-info" data-placement="left" title="Changing the playback rate is for preview and transcription assistance only.<br/>It will not affect video output.">
-                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
-                                    <select>
-                                        <option value="0.5">0.5x</option>
-                                        <option value="1" selected>1.0x</option>
-                                        <option value="1.5">1.5x</option>
-                                    </select>
-                                </button>
-                                <button id="play">
-                                    <i class="fa fa-play"></i>Play
-                                </button>
-                                <button id="pause" class="hidden">
-                                    <i class="fa fa-pause"></i>Pause
-                                </button>
-                                <button id="restart">
-                                    <i class="fa fa-step-backward"></i>Restart
-                                </button>
-                            </div>
-                            <div class="clear"></div>
-                            <div id="shortcuts" class="hidden">
-                                <hr>
-                                <div class="col">
-                                    <div>
-                                        <kbd>space</kbd> &nbsp; - &nbsp; toggle playback
-                                    </div>
-                                    <div>
-                                        <kbd>&#8594;</kbd> /
-                                        <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 0.1s
-                                    </div>
-                                    <div>
-                                        <kbd>ctrl</kbd> /
-                                        <kbd>&#8984;</kbd> +
-                                        <kbd>&#8594;</kbd> /
-                                        <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 1s
-                                    </div>
-                                    <div>
-                                        <kbd>shift</kbd> +
-                                        <kbd>&#8594;</kbd> /
-                                        <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 10s
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div>
-                                        <kbd>q</kbd> /
-                                        <kbd>w</kbd> &nbsp; - &nbsp; go to IN/OUT
-                                    </div>
-                                    <div>
-                                        <kbd>i</kbd> /
-                                        <kbd>o</kbd> &nbsp; - &nbsp; mark IN/OUT
-                                    </div>
-                                    <div>
-                                        <kbd>5</kbd> &nbsp; - &nbsp; play from IN for 1s
-                                    </div>
-                                    <div>
-                                        <kbd>6</kbd> &nbsp; - &nbsp; play from 1s before OUT
-                                    </div>
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                        </div>
-                    </section>
+                    
 
 
 
@@ -1010,10 +1003,7 @@
                 </div>
                 <div class="col-md-5">
 
-                    <section class="well">
-                        <div class="page-header">
-                            <h1>Preview</h1>
-                        </div>
+                    <section id="canvas-wrapper" class="well">
                         <div id="canvas" style="width: 100%">
                             <canvas width="640" height="360"></canvas>
                             <!-- <div id="preview-label">Preview</div> -->
