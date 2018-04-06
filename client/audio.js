@@ -69,9 +69,16 @@ function update() {
     } else if (audio.ended || pos >= extent[1] || audio.duration * extent[0] - audio.currentTime > 0.2) {
       // Need some allowance at the beginning because of frame imprecision (esp. FF)
       if (isPlaying()) {
-        play(trim[0]);
+        if (jQuery('button#loop .on').is(':visible')) {
+          // Loop
+          play(trim[0]);
+        } else {
+          // Stop
+          pause();
+          audio.currentTime = trim[0];
+        }
+        // pause(extent[0] * audio.duration);
       }
-      // pause(extent[0] * audio.duration);
     }
 
     minimap.time(pos);
@@ -225,6 +232,11 @@ function init() {
     
     d3.select('#minimap .controls .tip a').on('click', function() {
       jQuery('#shortcuts').toggleClass('hidden');
+      utils.stopIt(d3.event);
+    });
+    
+    d3.select("#minimap .controls #loop").on("click", function() {
+      jQuery(this).find('i').toggleClass('hidden');
       utils.stopIt(d3.event);
     });
 
