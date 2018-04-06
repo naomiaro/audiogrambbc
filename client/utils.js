@@ -51,6 +51,18 @@ function formatHMS(t, round) {
   return string;
 }
 
+function getSeconds(hms){
+  if (!hms.includes(':')) {
+    return parseFloat(hms);
+  }
+  var sec = 0;
+  hms = hms.split(':');
+  sec += +hms[hms.length - 1];
+  sec += +hms[hms.length - 2] * 60;
+  if (hms[hms.length - 3]) sec += +hms[hms.length - 3] * 3600;
+  return sec;
+}
+
 function setClass(cl, msg, log) {
   var error = cl=='error';
   cl = LOADING ? error ? 'landing' : 'loading' : cl;
@@ -232,5 +244,6 @@ module.exports = {
     navigate,
     tooltips,
     stats,
-    formatHMS
+    formatHMS,
+    getSeconds
 }

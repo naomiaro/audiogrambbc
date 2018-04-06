@@ -546,6 +546,7 @@ body.landing #error {
 }
 
 .transcript-editor {
+  position: relative;
   border: 1px solid #ddd;
   padding: 15px;
   cursor: text;
@@ -587,6 +588,37 @@ body.landing #error {
 
 .transcript-content {
     outline: none;
+}
+
+.transcript-more {
+  padding-left: 100px;
+  width: 100%;
+  position: relative;
+  z-index: 9;
+}
+
+.transcript-more.before {
+  background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+  margin: 10px 0 -40px 0;
+  padding-bottom: 20px;
+}
+.transcript-more.before a {
+  top: -15px;
+}
+
+.transcript-more.after {
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); 
+  margin: -40px 0 10px 0;
+  padding-top: 20px;
+}
+.transcript-more.after a {
+  bottom: -5px;
+}
+
+.transcript-more a {
+  position: relative;
+  display: inline-block;
+  text-align: center;
 }
 
 .transcript-block {
@@ -1017,16 +1049,32 @@ input[type='submit']:active {
   text-align: right;
 }
 
+#minimap.trimmed:hover .timecodes {
+  -webkit-opacity: 1;
+  -moz-opacity: 1;
+  opacity: 1;
+}
+
 #minimap .timecodes {
-  position: relative;
+  -webkit-opacity: 0;
+  -moz-opacity: 0;
+  opacity: 0;
+  -webkit-transition: all 0.25s ease;
+  -moz-transition: all 0.25s ease;
+  -ms-transition: all 0.25s ease;
+  -o-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+  position: absolute;
+  top: 83px;
   text-align: left;
-  margin: 10px 0;
+  width: 100%;
 }
 
 #minimap .timecodes input{
   width: 75px;
   font-size: 13px;
   text-align: center;
+  padding: 3px;
 }
 
 #start {
@@ -1199,6 +1247,11 @@ input[type='text'] {
   width: 111px;
   display: inline-block;
   margin-bottom: 4px;
+}
+
+#minimap.trimmed .controls button#trim,
+#minimap:not(.trimmed) .controls button#trim_clear {
+  display: none;
 }
 
 g.background path {

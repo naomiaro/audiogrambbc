@@ -49,6 +49,15 @@ function restart() {
   play(extent[0] * audio.duration);
 }
 
+function setTimestamp(currentPos) {
+  if (!currentPos) {
+    var offset = extent[0] * audio.duration;
+    currentPos = audio.currentTime - offset;
+  } 
+  var currentTimeStr = utils.formatHMS(currentPos).slice(1);
+  jQuery("#duration .current").text(currentTimeStr);
+}
+
 function update() {
 
   if (audio.duration) {
@@ -83,8 +92,7 @@ function update() {
 
     minimap.time(pos);
     if (isPlaying()) {
-      var currentTimeStr = utils.formatHMS(audio.currentTime - trim[0]).slice(1);
-      jQuery('#duration .current').text(currentTimeStr);
+      setTimestamp();
       var preview = require("./preview");
       preview.redraw();
     }
@@ -260,5 +268,6 @@ module.exports = {
   extent: _extent,
   currentTime: _currentTime,
   duration: _duration,
+  setTimestamp,
   init
 };

@@ -99,19 +99,35 @@ minimap.onBrush(function (extent) {
         x2 -= diff / 2;
     }
 
-    transcript.highlight((selection.start || 0), (selection.end || selection.duration));
     transcript.format();
+    transcript.highlight((selection.start || 0), (selection.end || selection.duration));
+
+    var startDisp = utils.formatHMS(selection.start);
+    if (startDisp.startsWith('00:')) startDisp = startDisp.slice(3);
+    var endDisp = utils.formatHMS(selection.end);
+    if (endDisp.startsWith('00:')) endDisp = endDisp.slice(3);
 
     d3.select("#start")
-        .property("value", Math.round(100 * (selection.start || 0)) / 100)
+        .property("value", startDisp)
         .style("left", x1 + "px");
     d3.select("#end")
-        .property("value", Math.round(100 * (selection.end || selection.duration)) / 100)
+        .property("value", endDisp)
         .style("left", x2 + "px");
 
     var durationStr = utils.formatHMS(selection.duration);
     d3.select("#duration strong").text(durationStr.slice(1))
         .classed("red", theme && theme.maxDuration && theme.maxDuration < selection.duration);
+
+    jQuery("#duration .current").text("0:00.0");
+
+    if (extent[0] == 0 && extent[1] == 1) {
+        jQuery('#minimap').removeClass('trimmed');
+        setTimeout(() => {
+            transcript.format();
+        }, 500); 
+    } else {
+        jQuery("#minimap").addClass("trimmed");        
+    }
 
     redraw();
 

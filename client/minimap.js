@@ -116,13 +116,10 @@ function _onBrushEnd(_) {
 
 function updateTrim(extent) {
     extent = extent || [];
-    var start = extent[0] || parseFloat(d3.select('#start').property('value'));
-    var end = extent[1] || parseFloat(d3.select('#end').property('value'));
+    var start = extent[0] || utils.getSeconds(d3.select('#start').property('value'));
+    var end = extent[1] || utils.getSeconds(d3.select('#end').property('value'));
     if (!isNaN(start) && !isNaN(end)) {
-        if (start > end) {
-            end = extent[0] || parseFloat(d3.select('#start').property('value'));
-            start = extent[1] || parseFloat(d3.select('#end').property('value'));
-        }
+        if (start > end) [start, end] = [end, start];
         var audio = require('./audio');
         var duration = Math.round(100 * audio.duration()) / 100;
         if (start < 0.1) start = 0;
@@ -137,7 +134,7 @@ function updateTrim(extent) {
 
 function init() {
     d3.selectAll("#start, #end").on("change", updateTrim);
-  jQuery(document).on('click', '#minimap:not(.disabled) svg, #minimap.disabled .disabled', function(e){
+    jQuery(document).on('click', '#minimap:not(.disabled) svg, #minimap.disabled .disabled', function(e){
       if (!jQuery('#transcript-timings').hasClass('recording')){
         var pos = e.offsetX / jQuery(this).width();
         var audio = require('./audio');
@@ -145,6 +142,20 @@ function init() {
         var time = pos * dur;
         audio.currentTime(time);
       }
+      audio.setTimestamp();
+    });
+    jQuery(document).on("click", "#minimap button#trim", function() {
+      drawBrush({ start: 0.33, end: 0.66 });
+      jQuery("#start").focus();
+    });
+    jQuery(document).on("click", "#minimap button#trim_clear", function() {
+      drawBrush({start: 0, end: 0});
+    });
+    jQuery(document).on("mousedown", "#minimap", function() {
+      console.log("BRUSH DOWN");
+    });
+    jQuery(document).on("mouseup", "#minimap", function() {
+      console.log("BRUSH UP");
     });
 }
 

@@ -42,7 +42,65 @@ function highlight(start, end) {
             wordMiddle = wordEnd - (wordEnd-wordStart)/2;
             return wordEnd < start || wordStart > end;
         }).addClass("unused");
+        // hideunused();
+        scrollIntoView();
     }
+}
+
+function scrollIntoView() {
+    var first = jQuery(".transcript-word:not(.unused):first").position().top;
+    var last = jQuery(".transcript-word:not(.unused):last").position().top;
+    var viewHeight = jQuery(".transcript-editor").height();
+    if (viewHeight - first < 0 || viewHeight - last > viewHeight) {
+        console.log('OUT OF VIEW');
+        var current = jQuery(".transcript-editor").scrollTop();
+        var diff = current + first - 50;
+        jQuery(".transcript-editor").scrollTop(diff);
+    } else {
+        console.log('IN VIEW');
+    }
+}
+
+function hideUnused() {
+    jQuery(".transcript-block").removeClass("hidden");
+    jQuery(".transcript-more").remove();
+    jQuery(".transcript-word:not(.unused):first")
+      .parents(".transcript-block")
+      .prev()
+      .prevAll()
+      .addClass("hidden");
+    jQuery(".transcript-word:not(.unused):last")
+      .parents(".transcript-block")
+      .next()
+      .nextAll()
+      .addClass("hidden");
+    var first = jQuery(".transcript-block:not(.hidden):first");
+    var last = jQuery('.transcript-block:not(.hidden):last');
+    if (!first.is(':first-child')) {
+        first.before("<div class='transcript-more before' contenteditable='false'><a href='#'>Show more</a></div>");
+        jQuery(".transcript-more.before a").width(getBlockWidth(first));
+    }
+    if (!first.is(":last-child")) {
+        last.after("<div class='transcript-more after' contenteditable='false'><a href='#'>Show more</a></div>");
+        jQuery(".transcript-more.after a").width(getBlockWidth(last));        
+    }
+    jQuery(".transcript-word:not(.unused):first").parents(".transcript-block").removeClass("same-speaker");
+}
+
+function getBlockWidth() {
+    var max = 0;
+    jQuery(".transcript-block").each(function(){
+        var block = jQuery(this);
+        var line = block.find(".transcript-line:first");
+        if (line.length) {
+            var word = line.prevAll(".transcript-word:first");
+        } else {
+            var word = block.find(".transcript-word:last");
+        }
+        var width = word.position().left + word.width() - block.find('.transcript-speaker').width();
+        max = Math.max(max, width);
+    });
+    return max;
 }
 
 function format() {
