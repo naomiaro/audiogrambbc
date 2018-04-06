@@ -151,12 +151,6 @@ function init() {
     jQuery(document).on("click", "#minimap button#trim_clear", function() {
       drawBrush({start: 0, end: 0});
     });
-    jQuery(document).on("mousedown", "#minimap", function() {
-      console.log("BRUSH DOWN");
-    });
-    jQuery(document).on("mouseup", "#minimap", function() {
-      console.log("BRUSH UP");
-    });
 }
 
 module.exports = {

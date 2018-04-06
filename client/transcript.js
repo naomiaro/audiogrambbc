@@ -52,12 +52,9 @@ function scrollIntoView() {
     var last = jQuery(".transcript-word:not(.unused):last").position().top;
     var viewHeight = jQuery(".transcript-editor").height();
     if (viewHeight - first < 0 || viewHeight - last > viewHeight) {
-        console.log('OUT OF VIEW');
         var current = jQuery(".transcript-editor").scrollTop();
         var diff = current + first - 50;
         jQuery(".transcript-editor").scrollTop(diff);
-    } else {
-        console.log('IN VIEW');
     }
 }
 
