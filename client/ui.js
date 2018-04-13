@@ -70,8 +70,38 @@ function windowResize() {
     }
 }
 
+function sizeButtonSelect() {
+    jQuery('button.button-select').each(function(){
+        var tmp = document.createElement("div");
+        tmp.setAttribute("class", "intGEL");
+        var clone = jQuery(this).clone();
+        jQuery(tmp).append(clone);
+        jQuery("body").append(tmp);
+        var buttonWidth = clone.width();
+        var labelWidth = clone.find('label').outerWidth();
+        var selectWidth = clone.find('select').outerWidth();
+        jQuery(this).width(buttonWidth);
+        jQuery(this).find('select').css('padding-left', (labelWidth + 10) + 'px');
+        jQuery(this).find('select').css('margin-left', -(labelWidth + 10) + 'px');
+        jQuery(this).find('select').css('width', '100%');
+        jQuery(tmp).remove();
+    });
+}
+
+function sizeSliders() {
+    jQuery('.slider-wrapper').each(function(){
+        var offset = 0;
+        jQuery(this).find('.ui-slider').prevAll().each(function () {
+            offset += jQuery(this).outerWidth();
+        });
+        jQuery(this).find(".ui-slider").css({ 'width': `calc(100% - ${offset + 30}px)` });;
+    });
+}
+
 function init() {
     initializeSliders();
+    sizeButtonSelect();
+    sizeSliders();
     d3.select('#group-theme-advanced button').on('click', showAdvancedConfig);
     d3.select(window).on("resize", windowResize);
 }

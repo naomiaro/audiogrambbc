@@ -333,8 +333,7 @@ body.landing #error {
 
 #input-image-pid,
 #input-webcap-link {
-  line-height: 35px;
-  font-size: 0.9em;
+  font-size: 13px;
   border-bottom: 1px dotted;
   text-decoration: none;
 }
@@ -1174,6 +1173,14 @@ input[type='text'] {
   margin-right: auto;
 }
 
+#preview-footnote {
+  margin: 5px 0 0 0;
+  font-size: 12px;
+  line-height: 12px;
+  text-align: left;
+  color: #888;
+}
+
 /* Minimap */
 
 #minimap {
@@ -1428,9 +1435,55 @@ g.time line {
   margin-bottom: -12px;
 }
 
+#editor-tab-design input[type="file"] {
+  line-height: 13px;
+  font-size: 11px;
+}
+
 #editor-tab-design button {
     padding: 3px 8px;
     position: relative;
+    font-size: 13px;
+}
+
+#editor-tab-design button.button-select {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  /* width: 180px; */
+  text-align: left;
+}
+#editor-tab-design button.button-select label {
+  font-weight: bold;
+  font-size: 13px;
+  padding-right: 5px;
+  margin: 0;
+}
+#editor-tab-design button.button-select select {
+  background: transparent;
+  color: #333;
+  border: none;
+  line-height: 24px;
+  font-size: 13px;
+  position: absolute;
+  top: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  /* padding-left: 48px;
+  margin-left: -48px; */
+  /* width: 100%; */
+}
+#editor-tab-design button.button-select:after {
+    font-family: FontAwesome;
+    font-size: 15px;
+    content: "\f0dd";
+    position: absolute;
+    right: 7px;
+    top: -1px;
+    pointer-events: none;
 }
 
 #section-theme {
@@ -1488,7 +1541,25 @@ g.time line {
 }
 
 .design-block .body {
-    padding: 10px;
+    padding: 10px 10px 15px 140px;
     border-top: 1px solid #eee;
     margin: 0 12px;
+}
+
+.design-block .slider-wrapper {
+  position: relative;
+}
+.design-block .slider-wrapper:not(:last-child) {
+  margin-bottom: 5px;
+}
+.design-block .slider-wrapper .ui-slider {
+    width: 100px;
+    position: absolute;
+    right: 0;
+    top: 7.5px;
+}
+
+#input-background-type-detail {
+  display: inline-block;
+  margin-left: 15px;
 }

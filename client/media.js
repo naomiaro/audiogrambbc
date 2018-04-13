@@ -18,6 +18,12 @@ function _set(obj, type) {
     } else {
         MEDIA = obj;
     }
+    var sourceIsVideo = MEDIA.audio.mimetype.startsWith("video");
+    if (sourceIsVideo) {
+        jQuery("#input-background-type option[value='source']").attr("disabled", false);
+    } else {
+        jQuery("#input-background-type option[value='source']").attr("disabled", true);
+    }
     return MEDIA;
 }
 
@@ -58,23 +64,11 @@ function update(blob, cb) {
         return true;
     }
 
-    var filename = blob
-        ? 'blob'
-        : jQuery('#input-audio')
-              .val()
-              .split('\\')
-              .pop();
+    var filename = blob ? 'blob' : jQuery('#input-audio').val().split('\\').pop();
     var size = audioFile.size / 1000000;
 
     if (size >= 150) {
-        utils.setClass(
-            'error',
-            'Maximum upload size is 150MB. (Audio: ' +
-                filename +
-                ' - ' +
-                Math.round(size * 10) / 10 +
-                'MB)'
-        );
+        utils.setClass( 'error', 'Maximum upload size is 150MB. (Audio: ' + filename + ' - ' + Math.round(size * 10) / 10 + 'MB)' );
         return;
     }
 

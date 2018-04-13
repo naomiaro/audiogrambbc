@@ -76,27 +76,57 @@ function themeSave() {
     }
 }
 
+function backgroundType() {
+    jQuery("#input-background-type-detail").children().hide();
+    var type = jQuery("#input-background-type").val();
+    if (type == "source") {
+        useVideoAsBackground();
+    } else if (type == "file") {
+        jQuery("#input-background").show().click();
+    } else if (type == "pid") {
+        jQuery("#input-image-pid").show().click();
+    } else {
+        updateImage();
+    }
+}
+
+function loadImagePid() {
+    var pid = prompt("Enter a valid image pid:", "p04zwtlb");
+    if (pid != null) {
+        utils.setClass("loading");
+        updateImage(null, "background");
+        var url = "/ichef/" + pid;
+        var blob = null;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.responseType = "blob";
+        xhr.onload = function(data) {
+            if (xhr.status == 200) {
+                updateImage(null, "background", xhr.response);
+                utils.setClass(null);
+                logger.info(USER.name + " imported an image pid from iChef (" + pid + ")");
+            } else {
+                utils.setClass("error", "There was an error (" + xhr.status + ") fetching image '" + pid + "' form iChef.");
+            }
+        };
+        xhr.send();
+    }
+}
+
 function useVideoAsBackground() {
     d3.select('#loading-message').text('Loading video...');
     utils.setClass('loading');
     $('#videoload a').attr('data-used', true);
-    if ($('#input-audio')[0].files.length) {
-        // $('#input-background')[0].files = $('#input-audio')[0].files;
-        var blob = $("#input-audio")[0].files[0];
-        updateImage('useVideoAsBackground', 'background', blob, function(){
-            utils.setClass(null);
-            var filename = jQuery('#input-audio')
-                .val()
-                .split('\\')
-                .pop();
-            logger.info(USER.name + ' used their audio source file (' + filename + ') as the background video');
-        });
+    var sourceBlob = media.blobs('audio');
+    if (sourceBlob && sourceBlob.type.startsWith('video')) {
+      updateImage("useVideoAsBackground", "background", sourceBlob, function() {
+        utils.setClass(null);
+        logger.info(USER.name + " used their audio source file as the background video");
+      });
     } else {
-        var id = $('#videoload a').attr('data-id');
-        var mediaSelector = require('./mediaSelector');
-        mediaSelector.poll(id, "video", {
-          processStart: performance.now()
-        });
+      var id = $("#videoload a").attr("data-id");
+      var mediaSelector = require("./mediaSelector");
+      mediaSelector.poll(id, "video", { processStart: performance.now() });
     }
     d3.select('#videoload').classed('hidden', true);
 }
@@ -290,9 +320,15 @@ function init() {
     jQuery(document).on('click', '#section-design .design-block .heading', function(e){
         jQuery("#section-design .design-block .heading").not(this).each(function(){
             jQuery(this).parent().find('.body').slideUp();
+            jQuery(this).find(".fa-minus").hide();
+            jQuery(this).find(".fa-plus").show();
         });
         jQuery(this).parent().find('.body').slideToggle();
+        jQuery(this).find(".fa-minus").toggle();
+        jQuery(this).find(".fa-plus").toggle();
     });
+    jQuery(document).on("click", "#input-image-pid", loadImagePid);
+    jQuery(document).on("change", "#input-background-type", backgroundType);
 }
 
 module.exports = {

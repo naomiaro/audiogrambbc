@@ -998,24 +998,49 @@
                                             <div class="title">Background</div>
                                             <div class="summary">Video: R4export.mp4</div>
                                             <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
                                         </div>
                                         <div class="body" style="display: none;">
-                                            <input id="input-background" name="background" type="file" accept="image/*,video/*" style="width:calc(100% + 15px)" />
-                                            <a id="input-image-pid" href="#">or Image PID</a>
 
-                                            <select class="form-control themeConfig" name="backgroundPosition.align.x" style="text-align: center;">
-                                                <option value="left">left</option>
-                                                <option value="center">center</option>
-                                                <option value="right">right</option>
-                                            </select>
-                                            <div class="background-slider" name="horizontal" style="margin: 10px 0;"></div>
 
-                                            <select class="form-control themeConfig" name="backgroundPosition.align.y" style="text-align: center;">
-                                                <option value="top">top</option>
-                                                <option value="middle">middle</option>
-                                                <option value="bottom">bottom</option>
-                                            </select>
+                                            <button class="button-select">
+                                                <label>Type:</label>
+                                                <select id="input-background-type">
+                                                    <option value="default">Theme Default</option>
+                                                    <option value="source" disabled>Same As Audio Source</option>
+                                                    <option value="file" selected>Image/Video File</option>
+                                                    <option value="pid">Image PID</option>
+                                                </select>
+                                            </button>
+                                            <div id="input-background-type-detail">
+                                                <input id="input-background" name="background" type="file" accept="image/*,video/*" />
+                                                <a id="input-image-pid" href="#" style="display: none;">Update Image PID</a>
+                                            </div>
 
+                                            <hr>
+
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>H Align:</label>
+                                                    <select class="themeConfig" name="backgroundPosition.align.x">
+                                                        <option value="left">left</option>
+                                                        <option value="center">center</option>
+                                                        <option value="right">right</option>
+                                                    </select>
+                                                </button>
+                                                <div class="background-slider" name="horizontal"></div>
+                                            </div>
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>V Align:</label>
+                                                    <select class="themeConfig" name="backgroundPosition.align.y">
+                                                        <option value="top">top</option>
+                                                        <option value="middle">middle</option>
+                                                        <option value="bottom">bottom</option>
+                                                    </select>
+                                                </button>
+                                                <div class="background-slider" name="vertical"></div>
+                                            </div>
 
                                         </div>
                                     </div>
@@ -1024,6 +1049,7 @@
                                             <div class="title">Overlay</div>
                                             <div class="summary">None</div>
                                             <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
                                         </div>
                                         <div class="body" style="display: none;">
                                             Blah blah yaaaaass
@@ -1034,6 +1060,7 @@
                                             <div class="title">Waveform</div>
                                             <div class="summary">Bricks</div>
                                             <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
                                         </div>
                                         <div class="body" style="display: none;">
                                             Blah blah yaaaaass
@@ -1044,6 +1071,7 @@
                                             <div class="title">Caption</div>
                                             <div class="summary">None</div>
                                             <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
                                         </div>
                                         <div class="body" style="display: none;">
                                             Blah blah yaaaaass
@@ -1054,6 +1082,7 @@
                                             <div class="title">Output Size</div>
                                             <div class="summary">Landscape 16:9 (1920 x 1080)</div>
                                             <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
                                         </div>
                                         <div class="body" style="display: none;">
                                             Blah blah yaaaaass
@@ -1287,6 +1316,9 @@
                         <div id="canvas" style="width: 100%">
                             <canvas width="640" height="360"></canvas>
                             <!-- <div id="preview-label">Preview</div> -->
+                        </div>
+                        <div id="preview-footnote">
+                            <i class="fa fa-info-circle"></i> Layout and subtitle preview only.
                         </div>
                     </section>
 
