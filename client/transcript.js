@@ -331,11 +331,12 @@ function format() {
     jQuery('.transcript-block').each(function () {
         var speaker = jQuery(this).attr('data-speaker');
         var prevSpeaker = jQuery(this).prev().attr('data-speaker');
+        var trimStart = jQuery(this).prev().find('.transcript-word:last').is('.unused') && !jQuery(this).find('.transcript-word:first').is('.unused');
         jQuery(this).find('.transcript-speaker select').val(speaker);
-        if (speaker === prevSpeaker) {
-            jQuery(this).addClass('same-speaker');
+        if (speaker === prevSpeaker && !trimStart) {
+          jQuery(this).addClass("same-speaker");
         } else {
-            jQuery(this).removeClass('same-speaker');
+          jQuery(this).removeClass("same-speaker");
         }
         if (jQuery("input[name='subtitles.color." + speaker + "']").length) {
             var color = jQuery("input[name='subtitles.color." + speaker + "']").val();
@@ -601,6 +602,7 @@ function poll(job) {
             if (data.status=="SUCCESS" && !data.error) {
                 load({segments: data.script});
                 jQuery("#transcript").removeClass("loading");
+                format();                
             } else if (data.error) {
                 jQuery("#transcript-pane .error span").html("The BBC R&D Kaldi transcription failed<br/><i>Ref: " + job + "</i>");
                 jQuery("#transcript").removeClass("loading").addClass("error");
