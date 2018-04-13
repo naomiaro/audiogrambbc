@@ -1422,3 +1422,73 @@ g.time line {
 .nav-tabs > li {
   font-family: "ReithSans";
 }
+
+/* DESIGN TAB */
+#editor-tab-design {
+  margin-bottom: -12px;
+}
+
+#editor-tab-design button {
+    padding: 3px 8px;
+    position: relative;
+}
+
+#section-theme {
+  font-size: 13px;
+}
+
+#section-theme #theme-change span {
+  font-style: italic;
+  margin-left: 5px;
+}
+#section-theme #theme-save,
+#section-theme #theme-reset {
+  float: right;
+  color: #666;
+}#section-theme #theme-save i,
+#section-theme #theme-reset i {
+  color: #000000;
+}
+#section-theme #theme-save {
+  margin-left: 5px;
+}
+
+.design-block {
+    background: #fff;
+    border-top: 15px solid #eee;
+    margin: 0 -12px;
+}
+
+.design-block .heading {
+    cursor: pointer;
+    position: relative;
+    padding: 10px 22px;
+}
+
+.design-block .heading .title {
+    display: inline-block;  
+    font-family: ReithSans;
+    font-weight: bold;
+    color: #3f81cc;
+    font-size: 15px;
+    min-width: 100px;
+}
+
+.design-block .heading .summary {
+    display: inline-block;
+    color: #999;
+    font-style: italic;
+    padding-left: 30px;
+}
+
+.design-block .heading i {
+    position: absolute;
+    right: 15px;
+    top: 14px;
+}
+
+.design-block .body {
+    padding: 10px;
+    border-top: 1px solid #eee;
+    margin: 0 12px;
+}

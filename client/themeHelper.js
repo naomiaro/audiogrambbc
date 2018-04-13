@@ -281,15 +281,24 @@ function updateThemeConfig() {
         preview.redraw();
     }
 }
-d3.selectAll('.themeConfig').on('change', updateThemeConfig);
 
-d3.selectAll('#theme-reset').on('click', themeReset);
-d3.selectAll('#theme-save').on('click', themeSave);
-d3.select('#videoload a').on('click', useVideoAsBackground);
+function init() {
+    d3.selectAll('.themeConfig').on('change', updateThemeConfig);
+    d3.selectAll('#theme-reset').on('click', themeReset);
+    d3.selectAll('#theme-save').on('click', themeSave);
+    d3.select('#videoload a').on('click', useVideoAsBackground);
+    jQuery(document).on('click', '#section-design .design-block .heading', function(e){
+        jQuery("#section-design .design-block .heading").not(this).each(function(){
+            jQuery(this).parent().find('.body').slideUp();
+        });
+        jQuery(this).parent().find('.body').slideToggle();
+    });
+}
 
 module.exports = {
     raw: _raw,
     update,
     reset: themeReset,
-    updateImage
+    updateImage,
+    init
 }

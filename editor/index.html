@@ -984,7 +984,83 @@
                             </div>
                             <div class="tab-pane" id="editor-tab-design">
                                 <!-- DESIGN -->
-                                <section id="section-theme" class="well" style="border: none;">
+                                <section id="section-theme">
+                                    <button id="theme-change">
+                                        <b>Base Theme:</b> <span>Subtitles Only - Gradient - 2 Line</span>
+                                    </button>
+                                    <button id="theme-save"><i class="fa fa-save"></i> Save As</button>
+                                    <button id="theme-reset"><i class="fa fa-undo"></i> Reset</button>
+                                </section>
+                                <section id="section-design" class="well">
+                                    <div id="design-background" class="design-block">
+                                        <!-- Background -->
+                                        <div class="heading">
+                                            <div class="title">Background</div>
+                                            <div class="summary">Video: R4export.mp4</div>
+                                            <i class="fa fa-plus"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+                                            <input id="input-background" name="background" type="file" accept="image/*,video/*" style="width:calc(100% + 15px)" />
+                                            <a id="input-image-pid" href="#">or Image PID</a>
+
+                                            <select class="form-control themeConfig" name="backgroundPosition.align.x" style="text-align: center;">
+                                                <option value="left">left</option>
+                                                <option value="center">center</option>
+                                                <option value="right">right</option>
+                                            </select>
+                                            <div class="background-slider" name="horizontal" style="margin: 10px 0;"></div>
+
+                                            <select class="form-control themeConfig" name="backgroundPosition.align.y" style="text-align: center;">
+                                                <option value="top">top</option>
+                                                <option value="middle">middle</option>
+                                                <option value="bottom">bottom</option>
+                                            </select>
+
+
+                                        </div>
+                                    </div>
+                                    <div id="design-overlay" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Overlay</div>
+                                            <div class="summary">None</div>
+                                            <i class="fa fa-plus"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+                                            Blah blah yaaaaass
+                                        </div>
+                                    </div>
+                                    <div id="design-waveform" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Waveform</div>
+                                            <div class="summary">Bricks</div>
+                                            <i class="fa fa-plus"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+                                            Blah blah yaaaaass
+                                        </div>
+                                    </div>
+                                    <div id="design-caption" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Caption</div>
+                                            <div class="summary">None</div>
+                                            <i class="fa fa-plus"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+                                            Blah blah yaaaaass
+                                        </div>
+                                    </div>
+                                    <div id="design-size" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Output Size</div>
+                                            <div class="summary">Landscape 16:9 (1920 x 1080)</div>
+                                            <i class="fa fa-plus"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+                                            Blah blah yaaaaass
+                                        </div>
+                                    </div>
+                                </section>
+                                <section id="section-theme" class="well hidden" style="border: none;">
                                     <div id="row-theme" class="row">
                                         <div class="col-md-3">
                                             <label class="settings" for="input-theme">Theme:</label>
@@ -1034,11 +1110,9 @@
                                             <div class="row">
                                                 <div class="col-md-7">
                                                     <div id="input-background-type-file" class="input-background-type" style="margin-top: 10px;">
-                                                        <input id="input-background" name="background" type="file" accept="image/*,video/*" style="width:calc(100% + 15px)" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-5" style="text-align: center;">
-                                                    <a id="input-image-pid" href="#">or Image PID</a>
                                                 </div>
                                             </div>
                                 
@@ -1048,29 +1122,17 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="intGEL-arrow" for="input-size">
-                                                        <select class="form-control themeConfig" name="backgroundPosition.align.x" style="text-align: center;">
-                                                            <option value="left">left</option>
-                                                            <option value="center">center</option>
-                                                            <option value="right">right</option>
-                                                        </select>
                                                     </label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="background-slider" name="horizontal" style="margin: 10px 0;"></div>
                                                 </div>
                                             </div>
                                             <div class="row background-advanced hidden">
                                                 <div class="col-md-4">
                                                     <label class="intGEL-arrow" for="input-size">
-                                                        <select class="form-control themeConfig" name="backgroundPosition.align.y" style="text-align: center;">
-                                                            <option value="top">top</option>
-                                                            <option value="middle">middle</option>
-                                                            <option value="bottom">bottom</option>
-                                                        </select>
                                                     </label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="background-slider" name="vertical" style="margin: 10px 0;"></div>
                                                 </div>
                                             </div>
                                 
@@ -1231,11 +1293,11 @@
                     <section id="config-save" class="well hidden" style="border: none;">
                         <div class="row">
                             <div class="col-md-6">
-                                <button type="button" id="theme-reset" class="btn btn-sm btn-block btn-secondary right">
+                                <button type="button" id="theme-reset-old" class="btn btn-sm btn-block btn-secondary right">
                                     <i class="fa fa-undo"></i> Reset Formatting</button>
                             </div>
                             <div class="col-md-6">
-                                <button type="button" id="theme-save" class="btn btn-sm btn-block btn-secondary right">
+                                <button type="button" id="theme-save-old" class="btn btn-sm btn-block btn-secondary right">
                                     <i class="fa fa-save"></i> Save Theme</button>
                             </div>
                         </div>

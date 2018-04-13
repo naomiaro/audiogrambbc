@@ -115,6 +115,7 @@ function initialize(err, themesWithImages) {
   png.init();
   webcap.init();
   ui.init();
+  themeHelper.init();
 
   // Tooltips
   utils.tooltips();
