@@ -196,7 +196,7 @@ function loadProject(id) {
       jQuery('#input-overlay-type').append('<option value="history">Last Used</option>');
       jQuery('#input-overlay-type option[value="history"]').attr("data-src", path.join("/media/", data.media.foreground.dest));
       jQuery('#input-overlay-type').val("history");
-    } else if (data.theme.foregroundImag) {
+    } else if (data.theme.foregroundImage) {
       jQuery('#input-overlay-type').val("default");
     } else {
       jQuery('#input-overlay-type').val("none");      
