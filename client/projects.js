@@ -171,6 +171,25 @@ function loadProject(id) {
     var q = d3.queue(1);
     // Set title
     _title(data.title);
+    // Load media
+    for (var type in data.media) {
+      q.defer(
+        media.loadFromURL,
+        type,
+        path.join("/media/", data.media[type].dest)
+      );
+    }
+    console.log(data.media);
+    jQuery('#input-background-type option[value="history"]').remove();
+    if (data.media.background && data.media.audio.path == data.media.background.path) {
+      jQuery('#input-background-type').val("source");
+    } else if (data.media.background) {
+      jQuery('#input-background-type').append('<option value="history">Last Used</option>');
+      jQuery('#input-background-type option[value="history"]').attr("data-src", path.join("/media/", data.media.background.dest));
+      jQuery('#input-background-type').val("history");
+    } else {
+      jQuery('#input-background-type').val("default");      
+    }
     // Load theme
     jQuery('#transcript-btn-enabled').attr('data-enabled', Boolean(data.theme.subtitles.enabled));
     if (data.theme.subtitles.enabled) {
@@ -182,14 +201,6 @@ function loadProject(id) {
     d3.select('#transcript-pane').classed('disabled', !data.theme.subtitles.enabled);
     jQuery("#input-theme").val(data.theme.name.trim());
     themeHelper.update(data.theme);
-    // Load media
-    for (var type in data.media) {
-      q.defer(
-        media.loadFromURL,
-        type,
-        path.join("/media/", data.media[type].dest)
-      );
-    }
     // Load transcript
     q.defer(function(data, cb) {
       var script = JSON.parse(data.transcript);

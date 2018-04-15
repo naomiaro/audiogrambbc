@@ -85,8 +85,12 @@ function backgroundType() {
         jQuery("#input-background").show().click();
     } else if (type == "pid") {
         jQuery("#input-image-pid").show().click();
+    } else if (type == "history") {
+        var url = jQuery("#input-background-type option[value='" + type + "']").attr('data-src');
+        console.log(url);
+        if (!LOADING) media.loadFromURL('background', url, function(){});
     } else {
-        updateImage();
+        if (!LOADING) updateImage();
     }
 }
 
@@ -299,6 +303,7 @@ function update(theme) {
             webCapList();
         }
     }
+    backgroundType();
     transcript.format();
     ui.windowResize(); // Bcause sometimes it makes the vertical scroll-bar appear, and elements need resizing
 }
