@@ -21,7 +21,14 @@ var orientation_map = {
 
 var title;
 function _title(_) {
-    return arguments.length ? (title = _) : title;
+  if (arguments.length) {
+    title = _;
+    var disp = title;
+    if (disp.length > 20) disp = disp.slice(0, 20).trim() + "...";
+    jQuery("#input-title span").text(disp);
+    jQuery("#video h1").text(title);
+  }
+  return title;
 }
 
 function formatDuration(time) {
@@ -264,6 +271,13 @@ function init() {
     jQuery.getJSON(url, function(data) {
         jQuery('#sharing-spinner').hide();
     });
+  });
+  jQuery(document).on("click", "#input-title", function(){
+    var currentTitle = _title();
+    var newTitle = prompt("Enter a project title to be displayed in the Audiogram Logstore:", currentTitle);
+    if (newTitle != null) {
+      _title(newTitle);
+    }
   });
 }
 

@@ -353,6 +353,9 @@ function updateDesignSummaries() {
     if (type == 'pid') {
         summary += ": " + jQuery('#input-image-pid').attr('data-pid');
     }
+    if (type == 'history') {
+        summary = "Loaded from version history";
+    }
     jQuery('#design-background .summary').text(summary);
     // Overlay
     var type = jQuery('#input-overlay-type').val();
@@ -362,6 +365,9 @@ function updateDesignSummaries() {
     }
     if (type == 'webcap') {
         summary += ": " + jQuery("#input-webcap").val();
+    }
+    if (type == 'history') {
+        summary = "Loaded from version history";
     }
     jQuery('#design-overlay .summary').text(summary);
     // Waveform
