@@ -172,6 +172,8 @@ function resize(width, height) {
 
 function redraw() {
 
+    if (!jQuery("canvas").is(":visible") || document.readyState != 'complete') return;
+
     jQuery("#submit").removeClass("hidden");
     jQuery("#view").addClass("hidden");
 
@@ -211,6 +213,11 @@ function redraw() {
         frame: 0,
         time: time || 0
     });
+
+    if (!audio.isPlaying()) {
+        var themeHelper = require('./themeHelper');
+        themeHelper.updateDesignSummaries();
+    };
 
 }
 

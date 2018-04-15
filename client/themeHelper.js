@@ -141,6 +141,7 @@ function loadImagePid() {
             }
         };
         xhr.send();
+        jQuery('#input-image-pid').attr('data-pid', pid);
     }
 }
 
@@ -339,6 +340,49 @@ function updateThemeConfig() {
     }
 }
 
+function updateDesignSummaries() {
+    // Background
+    var type = jQuery('#input-background-type').val();
+    var summary = jQuery('#input-background-type option[value="' + type + '"]').text();
+    var metadata = media.get('background');
+    var isVideo = metadata ? metadata.mimetype ? metadata.mimetype.startsWith('video') : metadata.name.endsWith('mp4') : false;
+    if (type == 'file') {
+        summary = isVideo ? "Video" : "Image";
+        summary += ": " + metadata.name;
+    } 
+    if (type == 'pid') {
+        summary += ": " + jQuery('#input-image-pid').attr('data-pid');
+    }
+    jQuery('#design-background .summary').text(summary);
+    // Overlay
+    var type = jQuery('#input-overlay-type').val();
+    var summary = jQuery('#input-overlay-type option[value="' + type + '"]').text();
+    if (type == 'file') {
+        summary = "Image: " + media.get('foreground').name;
+    }
+    if (type == 'webcap') {
+        summary += ": " + jQuery("#input-webcap").val();
+    }
+    jQuery('#design-overlay .summary').text(summary);
+    // Waveform
+    var type = jQuery('#input-pattern').val();
+    var summary = jQuery('#input-pattern option[value="' + type + '"]').text();
+    jQuery('#design-waveform .summary').text(summary);
+    // Text
+    var text = jQuery('#input-caption').val().replace(/(\n)+/g, ' ');
+    if (text.trim().length) {
+        var summary = text.slice(0, 32);
+        if (text.length > summary.length) summary = summary.trim() + "...";
+    } else {
+        var summary = "None";
+    }
+    jQuery('#design-caption .summary').text(summary);
+    // Size
+    var type = jQuery('#input-size').val();
+    var summary = jQuery('#input-size option[value="' + type + '"]').text();
+    jQuery('#design-size .summary').text(summary);
+}
+
 function updateDesignTab() {
     backgroundType();
     overlayType();
@@ -371,5 +415,6 @@ module.exports = {
     update,
     reset: themeReset,
     updateImage,
+    updateDesignSummaries,
     init
 }
