@@ -121,6 +121,7 @@ function format() {
     // Clear lines/breaks
     jQuery('.transcript-space, .transcript-line, .transcript-break').remove();
     // Merge segments
+    jQuery('.transcript-timestamp').remove();
     jQuery('.transcript-block').each(function () {
         var speaker = jQuery(this).attr('data-speaker');
         var prevSpeaker = jQuery(this).prev().attr('data-speaker');
@@ -175,8 +176,8 @@ function format() {
     var duration = audio.duration();
     // var selectionStart = extent[0] * duration;
     // var selectionEnd = extent[1] * duration;
-    var selectionStart = +jQuery('#start').val();
-    var selectionEnd = +jQuery('#end').val();
+    var selectionStart = utils.getSeconds(jQuery('#start').val());
+    var selectionEnd = utils.getSeconds(jQuery('#end').val());
     jQuery('.transcript-word.added').attr('data-start', null).attr('data-end', null);
     jQuery('.transcript-word').each(function (i) {
         if (jQuery(this).hasClass('added') && !jQuery(this).attr('data-start')) {
@@ -314,6 +315,16 @@ function format() {
                 }
             }
         });
+    });
+    // Insert timestamps
+    jQuery('.transcript-block').each(function () {
+        var first = jQuery(this).find('.transcript-word:not(.unused):first');
+        if (first.length) {
+            var startTime = first.attr('data-start') - selectionStart;
+            startTime = Math.max(startTime, 0);
+            var disp = utils.formatHMS(startTime);
+            jQuery(this).prepend("<span class='transcript-timestamp'>" + disp + "</span>");
+        }
     });
     // Insert spaces
     jQuery(".transcript-word:not(:last-child)").each(function () {

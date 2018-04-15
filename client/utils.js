@@ -52,6 +52,7 @@ function formatHMS(t, round) {
 }
 
 function getSeconds(hms){
+  if (!hms) return 0;
   if (!hms.includes(':')) {
     return parseFloat(hms);
   }

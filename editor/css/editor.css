@@ -623,6 +623,7 @@ body.landing #error {
 
 .transcript-block {
     clear: both;
+    position: relative;
 }
 .transcript-block:after {
   content: "";
@@ -633,6 +634,13 @@ body.landing #error {
     margin-top: 4px;
     padding-top: 5px;
     border-top: 1px dashed #ccc;
+}
+
+.transcript-timestamp {
+  position: absolute;
+  top: 7px;
+  right: 0;
+  color: #bbb;
 }
 
 .transcript-speaker {
