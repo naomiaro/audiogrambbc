@@ -179,7 +179,7 @@ function loadProject(id) {
         path.join("/media/", data.media[type].dest)
       );
     }
-    console.log(data.media);
+    // Background settings
     jQuery('#input-background-type option[value="history"]').remove();
     if (data.media.background && data.media.audio.path == data.media.background.path) {
       jQuery('#input-background-type').val("source");
@@ -189,6 +189,17 @@ function loadProject(id) {
       jQuery('#input-background-type').val("history");
     } else {
       jQuery('#input-background-type').val("default");      
+    }
+    // Overlay settings
+    jQuery('#input-overlay-type option[value="history"]').remove();
+    if (data.media.foreground) {
+      jQuery('#input-overlay-type').append('<option value="history">Last Used</option>');
+      jQuery('#input-overlay-type option[value="history"]').attr("data-src", path.join("/media/", data.media.foreground.dest));
+      jQuery('#input-overlay-type').val("history");
+    } else if (data.theme.foregroundImag) {
+      jQuery('#input-overlay-type').val("default");
+    } else {
+      jQuery('#input-overlay-type').val("none");      
     }
     // Load theme
     jQuery('#transcript-btn-enabled').attr('data-enabled', Boolean(data.theme.subtitles.enabled));

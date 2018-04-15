@@ -5,22 +5,17 @@ function updateList() {
   // Get list of Web:Cap files in the W1 Dropzone
   jQuery.getJSON("/webcap", function(data) {
     if (data.err) return console.log(data.err);
-    var count = 0,
-      eq = 4;
+    var count = 0;
+    var eq = 1;
     // Loop through each file
     for (var i = 0; i < data.files.length; i++) {
       var file = data.files[i];
-      if (
-        count > 100 ||
-        jQuery("#input-webcap option[value='" + file + "']").length
-      ) {
+      if (count > 100 || jQuery("#input-webcap option[value='" + file + "']").length) {
         // Already in the list, or the list is too long
         break;
       }
       if (file[0] != "." && file.endsWith(".png")) {
-        jQuery("#input-webcap option:eq(" + eq + ")").before(
-          "<option value=" + file + ">" + file + "</option>"
-        );
+        jQuery("#input-webcap option:eq(" + eq + ")").before("<option value=" + file + ">" + file + "</option>");
         eq++;
         count++;
       }
@@ -37,7 +32,7 @@ function set(e, type, blob, cb) {
 
 function use() {
   var filename = jQuery("#input-webcap").val();
-  d3.select("#input-foreground-wrapper").classed("hidden", filename != "local");
+  // d3.select("#input-foreground-wrapper").classed("hidden", filename != "local");
 
   if (filename == "local") {
     setTimeout(function() {
@@ -76,5 +71,6 @@ function init() {
 
 module.exports = {
   updateList,
+  use,
   init
 };

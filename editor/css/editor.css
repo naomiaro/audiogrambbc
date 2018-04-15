@@ -333,6 +333,7 @@ body.landing #error {
 
 #input-image-pid,
 #input-webcap-link {
+  margin-left: 15px;
   font-size: 13px;
   border-bottom: 1px dotted;
   text-decoration: none;
@@ -1472,9 +1473,8 @@ g.time line {
   outline: none;
   cursor: pointer;
   padding: 0;
-  /* padding-left: 48px;
-  margin-left: -48px; */
-  /* width: 100%; */
+  outline: none !important;
+  box-shadow: none !important;
 }
 #editor-tab-design button.button-select:after {
     font-family: FontAwesome;
@@ -1559,7 +1559,8 @@ g.time line {
     top: 7.5px;
 }
 
-#input-background-type-detail {
+#input-background-type-detail,
+#input-overlay-type-detail {
   display: inline-block;
   margin-left: 15px;
 }

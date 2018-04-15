@@ -72,17 +72,23 @@ function windowResize() {
 
 function sizeButtonSelect() {
     jQuery('button.button-select').each(function(){
+        var label = jQuery(this).find('label');
+        if (!label.length) {
+            jQuery(this).prepend('&nbsp;');
+        }
         var tmp = document.createElement("div");
         tmp.setAttribute("class", "intGEL");
         var clone = jQuery(this).clone();
         jQuery(tmp).append(clone);
         jQuery("body").append(tmp);
         var buttonWidth = clone.width();
-        var labelWidth = clone.find('label').outerWidth();
+        var labelWidth = clone.find('label').outerWidth() || 0;
         var selectWidth = clone.find('select').outerWidth();
         jQuery(this).width(buttonWidth);
-        jQuery(this).find('select').css('padding-left', (labelWidth + 10) + 'px');
-        jQuery(this).find('select').css('margin-left', -(labelWidth + 10) + 'px');
+        if (labelWidth) {
+            jQuery(this).find('select').css('padding-left', (labelWidth + 10) + 'px');
+            jQuery(this).find('select').css('margin-left', -(labelWidth + 10) + 'px');
+        }
         jQuery(this).find('select').css('width', '100%');
         jQuery(tmp).remove();
     });

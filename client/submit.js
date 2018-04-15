@@ -73,6 +73,9 @@ function submitted() {
     // formData.append("background", imgFile.background);
     // formData.append("foreground", imgFile.foreground);
 
+    var removeForeground = jQuery('#input-overlay-type').val() == 'none';
+    if (removeForeground) delete mediaInfo.foreground;
+
     formData.append('media', JSON.stringify(mediaInfo));
 
     formData.append('backgroundInfo', JSON.stringify(backgroundInfo || theme.backgroundImageInfo[theme.orientation]));
@@ -89,7 +92,7 @@ function submitted() {
             $.extend({}, theme, {
                 backgroundImage: theme.backgroundImage ? theme.backgroundImage[theme.orientation] : null,
                 backgroundImageFile: null,
-                foregroundImage: theme.foregroundImage ? theme.foregroundImage[theme.orientation] : null
+                foregroundImage: removeForeground ? null : theme.foregroundImage ? theme.foregroundImage[theme.orientation] : null
             })
         )
     );

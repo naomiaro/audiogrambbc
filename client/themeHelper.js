@@ -76,6 +76,27 @@ function themeSave() {
     }
 }
 
+function overlayType() {
+    jQuery("#input-overlay-type-detail").children().hide();
+    var type = jQuery("#input-overlay-type").val();
+    if (type == "file") {
+        jQuery("#input-foreground").show();
+        setTimeout(function () {
+            jQuery("#input-foreground").click();
+        }, 1000);
+    } else if (type == "webcap") {
+        jQuery("#input-webcap-wrapper").show();
+        var webcap = require('./webcap');
+        webcap.use();
+    } else if (type == "history") {
+        var url = jQuery("#input-foreground-type option[value='history']").attr('data-src');
+        console.log(url);
+        if (!LOADING) media.loadFromURL('foreground', url, function () { });
+    } else {
+        if (!LOADING) updateImage(null, 'foreground');
+    }
+}
+
 function backgroundType() {
     jQuery("#input-background-type-detail").children().hide();
     var type = jQuery("#input-background-type").val();
@@ -86,11 +107,11 @@ function backgroundType() {
     } else if (type == "pid") {
         jQuery("#input-image-pid").show().click();
     } else if (type == "history") {
-        var url = jQuery("#input-background-type option[value='" + type + "']").attr('data-src');
+        var url = jQuery("#input-background-type option[value='history']").attr('data-src');
         console.log(url);
         if (!LOADING) media.loadFromURL('background', url, function(){});
     } else {
-        if (!LOADING) updateImage();
+        if (!LOADING) updateImage(null, 'background');
     }
 }
 
@@ -165,12 +186,7 @@ function updateImage(event, type, blob, cb) {
     } else {
         media.upload(type, imgFile);
     }
-    var filename = blob
-        ? 'blob'
-        : jQuery('#input-' + type)
-              .val()
-              .split('\\')
-              .pop();
+    var filename = blob ? 'blob' : jQuery('#input-' + type).val().split('\\').pop();
 
     var size = imgFile.size / 1000000;
     if (size >= 150) {
@@ -334,6 +350,7 @@ function init() {
     });
     jQuery(document).on("click", "#input-image-pid", loadImagePid);
     jQuery(document).on("change", "#input-background-type", backgroundType);
+    jQuery(document).on("change", "#input-overlay-type", overlayType);
 }
 
 module.exports = {

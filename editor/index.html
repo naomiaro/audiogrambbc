@@ -992,8 +992,8 @@
                                     <button id="theme-reset"><i class="fa fa-undo"></i> Reset</button>
                                 </section>
                                 <section id="section-design" class="well">
+                                    <!-- Background -->
                                     <div id="design-background" class="design-block">
-                                        <!-- Background -->
                                         <div class="heading">
                                             <div class="title">Background</div>
                                             <div class="summary">Video: R4export.mp4</div>
@@ -1002,11 +1002,10 @@
                                         </div>
                                         <div class="body" style="display: none;">
 
-
                                             <button class="button-select">
                                                 <label>Type:</label>
                                                 <select id="input-background-type">
-                                                    <option value="default">Theme Default</option>
+                                                    <option value="default" selected>Theme Default</option>
                                                     <option value="source" disabled>Same As Audio Source</option>
                                                     <option value="file">Image/Video File</option>
                                                     <option value="pid">Image PID</option>
@@ -1044,6 +1043,7 @@
 
                                         </div>
                                     </div>
+                                    <!-- Overlay -->
                                     <div id="design-overlay" class="design-block">
                                         <div class="heading">
                                             <div class="title">Overlay</div>
@@ -1052,7 +1052,32 @@
                                             <i class="fa fa-minus" style="display: none;"></i>
                                         </div>
                                         <div class="body" style="display: none;">
-                                            Blah blah yaaaaass
+                                            <button class="button-select">
+                                                <label>Type:</label>
+                                                <select id="input-overlay-type">
+                                                    <option value="none">None</option>
+                                                    <option value="default" selected>Theme Default</option>
+                                                    <option value="file">Image/Video File</option>
+                                                    <option value="webcap">Web:Cap Image</option>
+                                                </select>
+                                            </button>
+                                            <div id="input-overlay-type-detail">
+                                                <input id="input-foreground" name="foreground" type="file" accept="image/*" style="display: none;" />
+                                                <div id="input-webcap-wrapper" style="display: none;">
+                                                    <button class="button-select">
+                                                        <label>Source:</label>
+                                                        <select id="input-webcap" name="webcap" class="form-control">
+                                                            <option disabled>Web:Cap Image Export (this list auto-refreshes)</option>
+                                                            <optgroup label="West 1 Editing Dropzone - Full Frame HD (1920x1080)">
+                                                                <option disabled value="loading">Loading...</option>
+                                                            </optgroup>
+                                                        </select>
+                                                    </button>
+                                                    <a id="input-webcap-link" target="_blank" href="http://webcap.national.core.bbc.co.uk/">Web:Cap
+                                                        <i class="fa fa-external-link" style="margin: 0"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div id="design-waveform" class="design-block">
@@ -1089,6 +1114,7 @@
                                         </div>
                                     </div>
                                 </section>
+                                <!-- OLD -->
                                 <section id="section-theme" class="well hidden" style="border: none;">
                                     <div id="row-theme" class="row">
                                         <div class="col-md-3">
@@ -1121,13 +1147,10 @@
                                                 </select>
                                             </label>
                                             <div id="input-foreground-wrapper" class="hidden" style="margin-top: 10px;">
-                                                <input id="input-foreground" name="foreground" type="file" accept="image/*" />
                                             </div>
                                         </div>
                                         <div class="col-md-3" style="text-align: center;">
-                                            <a id="input-webcap-link" target="_blank" href="http://webcap.national.core.bbc.co.uk/">Web:Cap
-                                                <i class="fa fa-external-link" style="margin: 0"></i>
-                                            </a>
+                                            
                                         </div>
                                     </div>
                                     <div id="row-background" class="row">
