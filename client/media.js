@@ -142,7 +142,7 @@ function upload(type, blob) {  // Reset
         success: function(res) {
             if (MEDIA[res.type] && res.name == MEDIA[res.type].name && res.size == MEDIA[res.type].size) {
                 for (var type in MEDIA) {
-                    if (MEDIA[res.type].id == MEDIA[type].id && type !== res.type) {
+                    if (type !== 'audio' && MEDIA[res.type].id == MEDIA[type].id && type !== res.type) {
                         MEDIA[type] = Object.assign({}, res, { type });
                     }
                 }
