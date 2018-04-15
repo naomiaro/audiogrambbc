@@ -1051,8 +1051,8 @@
                                             <i class="fa fa-plus"></i>
                                             <i class="fa fa-minus" style="display: none;"></i>
                                         </div>
-                                        <div class="body" style="display: none;">
-                                            <button class="button-select">
+                                        <div class="body" style="display: none; padding-bottom: 10px;">
+                                            <button class="button-select" style="margin-right: 15px; margin-bottom: 5px;">
                                                 <label>Type:</label>
                                                 <select id="input-overlay-type">
                                                     <option value="none">None</option>
@@ -1064,7 +1064,7 @@
                                             <div id="input-overlay-type-detail">
                                                 <input id="input-foreground" name="foreground" type="file" accept="image/*" style="display: none;" />
                                                 <div id="input-webcap-wrapper" style="display: none;">
-                                                    <button class="button-select">
+                                                    <button class="button-select" style="margin-bottom: 5px;">
                                                         <label>Source:</label>
                                                         <select id="input-webcap" name="webcap" class="form-control">
                                                             <option disabled>Web:Cap Image Export (this list auto-refreshes)</option>
@@ -1088,7 +1088,30 @@
                                             <i class="fa fa-minus" style="display: none;"></i>
                                         </div>
                                         <div class="body" style="display: none;">
-                                            Blah blah yaaaaass
+                                            <button class="button-select">
+                                                <label>Pattern:</label>
+                                                <select id="input-pattern" name="pattern" class="themeConfig">
+                                                    <option value="none">None</option>
+                                                    <option value="wave" selected>Wave</option>
+                                                    <option value="line">Line</option>
+                                                    <option value="curve">Curved Line</option>
+                                                    <option value="bars">Bars</option>
+                                                    <option value="pixel">Pixels</option>
+                                                    <option value="bricks">Bricks</option>
+                                                </select>
+                                            </button>
+                                            <input id="input-pattern-color" type="color" class="themeConfig" name="wave.color" value="#942924">
+                                            <div id="input-pattern-position">
+                                                <hr>
+                                                <div class="position">
+                                                    <label>Vertical Position:</label>
+                                                    <div class="wave-slider" name="vertical" style="width: calc(100% - 136px)"></div>
+                                                </div>
+                                                <div class="position">
+                                                    <label>Horizontal Position:</label>
+                                                    <div class="wave-slider" name="horizontal" style="width: calc(100% - 152px)"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div id="design-caption" class="design-block">
@@ -1199,19 +1222,11 @@
                                             <div class="row">
                                                 <div id="group-pattern" class="col-md-5">
                                                     <label class="intGEL-arrow" for="input-size">
-                                                        <select id="input-pattern" name="pattern" class="themeConfig form-control">
-                                                            <option value="none">None</option>
-                                                            <option value="wave" selected>Wave</option>
-                                                            <option value="line">Line</option>
-                                                            <option value="curve">Curved Line</option>
-                                                            <option value="bars">Bars</option>
-                                                            <option value="pixel">Pixels</option>
-                                                            <option value="bricks">Bricks</option>
-                                                        </select>
+                                                        
                                                     </label>
                                                 </div>
                                                 <div id="group-color" class="col-md-3" style="padding: 0">
-                                                    <input type="color" class="themeConfig" name="wave.color" value="#942924">
+                                                    
                                                 </div>
                                                 <div id="group-wave-advanced" class="col-md-4">
                                                     <button type="button" class="btn btn-secondary btn-block">Position</button>
@@ -1225,13 +1240,11 @@
                                                     Vertical:
                                                 </div>
                                                 <div class="col-md-9">
-                                                    <div class="wave-slider" name="vertical" style="margin: 10px 0;"></div>
                                                 </div>
                                                 <div class="col-md-3 tip">
                                                     Horizontal:
                                                 </div>
                                                 <div class="col-md-9">
-                                                    <div class="wave-slider" name="horizontal" style="margin: 10px 0;"></div>
                                                 </div>
                                             </div>
                                         </div>

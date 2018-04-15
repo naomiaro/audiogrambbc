@@ -76,6 +76,12 @@ function themeSave() {
     }
 }
 
+function waveformType() {
+    var type = jQuery("#input-pattern").val();
+    d3.select('#input-pattern-color').classed('hidden', type == 'none');
+    d3.select('#input-pattern-position').classed('hidden', type == 'none');
+}
+
 function overlayType() {
     jQuery("#input-overlay-type-detail").children().hide();
     var type = jQuery("#input-overlay-type").val();
@@ -319,7 +325,7 @@ function update(theme) {
             webCapList();
         }
     }
-    backgroundType();
+    updateDesignTab();
     transcript.format();
     ui.windowResize(); // Bcause sometimes it makes the vertical scroll-bar appear, and elements need resizing
 }
@@ -331,6 +337,12 @@ function updateThemeConfig() {
         transcript.format();
         preview.redraw();
     }
+}
+
+function updateDesignTab() {
+    backgroundType();
+    overlayType();
+    waveformType();
 }
 
 function init() {
@@ -351,6 +363,7 @@ function init() {
     jQuery(document).on("click", "#input-image-pid", loadImagePid);
     jQuery(document).on("change", "#input-background-type", backgroundType);
     jQuery(document).on("change", "#input-overlay-type", overlayType);
+    jQuery(document).on("change", "#input-pattern", waveformType);
 }
 
 module.exports = {

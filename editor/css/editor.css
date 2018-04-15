@@ -1486,6 +1486,15 @@ g.time line {
     pointer-events: none;
 }
 
+#editor-tab-design input[type="color"] {
+  width: 100px;
+  border-radius: 4px;
+  border-color: rgb(204, 204, 204);
+  height: 26px;
+  position: absolute;
+  padding: 0 2px;
+}
+
 #section-theme {
   font-size: 13px;
 }
@@ -1559,8 +1568,31 @@ g.time line {
     top: 7.5px;
 }
 
+#input-background-type-detail {
+  margin-left: 15px;
+}
+
 #input-background-type-detail,
 #input-overlay-type-detail {
   display: inline-block;
+}
+
+#design-waveform input[type='color'] {
   margin-left: 15px;
+}
+
+.design-block .position {
+  position: relative;
+  padding: 2px 0;
+}
+.design-block .position label {
+  font-family: ReithSans;
+  font-weight: bold;
+  font-size: 13px;
+}
+.design-block .position .ui-slider {
+    position: absolute;
+    top: 7px;
+    right: 0;
+    width: 100px;
 }
