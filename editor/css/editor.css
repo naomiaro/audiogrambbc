@@ -949,30 +949,22 @@ button,
   font-size: 16px;
 }
 
-#playbackRate {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  width: 60px;
-  text-align: left;
-  padding: 3px 22px;
+body > .wrapper button#playbackRate.button-select {
+  width: 111px !important;
+  padding: 3px 30px 3px 33px;
 }
-#playbackRate select {
-  background: transparent;
-  color: #333;
-  border: none;
-  line-height: 12px;
-  font-size: 13px;
-  position: absolute;
-  top: 0;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  outline: none;
-  padding-left: 37px;
-  cursor: pointer;
-  margin-left: -37px;
-  width: 100%;
+body > .wrapper button#playbackRate.button-select label {
+  padding: 0
 }
+body > .wrapper button#playbackRate.button-select select {
+    padding-left: 50px !important;
+    margin-left: -50px !important;
+}
+
+body > .wrapper button#playbackRate.button-select:after {
+  display: none;
+}
+
 #playbackRate[data-rate='1'],
 #playbackRate[data-rate='1'] select,
 #playbackRate[data-rate='1'] i {
