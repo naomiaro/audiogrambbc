@@ -71,8 +71,9 @@ function windowResize() {
 }
 
 function sizeButtonSelect() {
-    jQuery('button.button-select').each(function(){
+    jQuery('body > .wrapper button.button-select').each(function(){
         var label = jQuery(this).find('label');
+        var test = label.text();
         if (!label.length) {
             jQuery(this).prepend('&nbsp;');
         }
@@ -81,6 +82,7 @@ function sizeButtonSelect() {
         var clone = jQuery(this).clone();
         jQuery(tmp).append(clone);
         jQuery("body").append(tmp);
+        jQuery(tmp).attr('id', 'tmp');
         var buttonWidth = clone.width();
         var labelWidth = clone.find('label').outerWidth() || 0;
         var selectWidth = clone.find('select').outerWidth();

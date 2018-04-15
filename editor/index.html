@@ -38,7 +38,8 @@
             <span class="title-superscript">ALPHA</span>
         </h1>
         <div class="headerLinks">
-            <a id="messagesLink" href="#">Messages</a> | 
+            <!-- <a id="messagesLink" href="#">Messages</a> |  -->
+            <a href="http://bbcnewslabs.co.uk/" target="_blank">BBC News Labs</a> |
             <a id="version" href="https://github.com/BBC-News-Labs/audiogram/releases" target="_blank"></a>
         </div>
     </header>
@@ -990,6 +991,8 @@
                                     </button>
                                     <button id="theme-save"><i class="fa fa-save"></i> Save As</button>
                                     <button id="theme-reset"><i class="fa fa-undo"></i> Reset</button>
+
+                                    <select id="input-theme" name="theme" class="form-control"></select>
                                 </section>
                                 <section id="section-design" class="well">
                                     <!-- Background -->
@@ -1211,21 +1214,29 @@
                         </div>
                     </section>
 
-                    <section class="well">
+                    <section class="well" style="box-shadow: none;">
+                        <div style="text-align: right;">
+                            <button id="project-name" style="margin-right: 5px;">
+                                <b>Project Name:</b>
+                                <span>blahblahblah.wav</span>
+                            </button>
+                            <button class="button-select">
+                                <label>Logstore Visibility:</label>
+                                <select id="input-private" name="private">
+                                    <option value=0 selected>Shared</option>
+                                    <option value=1>Private</option>
+                                </select>
+                            </button>
+                        </div>
+                        <hr style="margin: 5px 0;">
                         <div class="row">
-                            <div class="col-md-5">
-                                <label for="input-private" class="intGEL-arrow tooltip-info" data-placement="top" title="Shared audiograms will be visible to all users under 'Recent Projects'">
-                                    <select id="input-private" name="private" class="form-control">
-                                        <option value=0 selected>Shared</option>
-                                        <option value=1>Private</option>
-                                    </select>
-                                </label>
+                            <div class="col-md-6">
                             </div>
-                            <div class="col-md-7">
+                            <div class="col-md-6">
                                 <div class="btn-group">
-                                    <button type="button" id="submit" class="btn btn-primary right">
+                                    <button type="button" id="submit" class="right">
                                         <i class="fa fa-film"></i>Generate Audiogram</button>
-                                    <button type="button" id="view" class="btn btn-primary right">
+                                    <button type="button" id="view" class="right">
                                         <i class="fa fa-film"></i>View Audiogram</button>
                                 </div>
                             </div>
