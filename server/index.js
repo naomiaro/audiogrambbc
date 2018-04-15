@@ -190,8 +190,8 @@ app.post("/stats", function(req, res){
 // Serve background images and themes JSON statically
 app.use("/settings/", function(req, res, next) {
 
-  // Limit to themes.json and bg images
-  if (req.url.match(/^\/?themes.json$/i) || req.url.match(/^\/?backgrounds\/[^/]+$/i)) {
+  // Limit to themes.json and bg/themes images
+  if (req.url.match(/^\/?themes.json$/i) || req.url.match(/^\/?backgrounds\/[^/]+$/i) || req.url.match(/^\/?themes\/[^/]+$/i)) {
     return next();
   }
 

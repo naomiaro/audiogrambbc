@@ -1624,3 +1624,52 @@ button#view i{
   position: relative;
   top: -1px;
 }
+
+/* THEMES MODAL */
+.modal .modal-header {
+  font-family: ReithSans;
+  font-weight: bold;
+}
+
+#themes .modal-dialog {
+  width: 890px;
+}
+#themes .modal-body {
+  overflow-y: scroll;
+}
+#themes .row {
+  margin: 15px 0;
+}
+#themes .theme {
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+#themes .theme.template {
+  display: none;
+}
+#themes .theme .info {
+  background: #fff;
+  position: relative;
+  border-top: 4px solid #fff;
+  -webkit-transition: top 0.3s ease-out;
+  -moz-transition: top 0.3s ease-out;
+  -o-transition: top 0.3s ease-out;
+  transition: top 0.3s ease-out;
+  top: 0;
+}
+#themes .theme:hover .info {
+  top: -10px;
+}
+#themes .theme .info hr {
+  margin: 0;
+  border-color: #ccc;
+}
+#themes .theme .info .title {
+  font-family: ReithSans;
+  font-size: 13px;
+  height: 40px;
+  overflow: hidden;
+}
+#themes .theme img {
+  width: 100%;
+}

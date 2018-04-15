@@ -395,6 +395,36 @@ function updateDesignTab() {
     waveformType();
 }
 
+function loadThemeList(cb) {
+    var bodyHeight = jQuery(window).height() - 350;
+    jQuery("#themes .modal-body").css('height', bodyHeight + "px");
+    d3.json("/settings/themes.json", function (err, themes) {
+        if (err) return cb(err);
+        console.log('LOAD THEMES...');
+        console.log(themes);
+        for (var name in themes) {
+            if (themes.hasOwnProperty(name) && name !== 'default' && name !== 'Custom') {
+                var theme = themes[name];
+                var clone = jQuery('#themes .theme.template:first').clone();
+                jQuery("#themes .themes").append(clone);
+                clone.removeClass('template');
+                clone.attr('data-name', name);
+                clone.find(".title").text(name);
+                clone.find("img.preview").attr('src', `/settings/themes/${name}.png`)
+            }
+        }
+        return cb(null);
+    });
+}
+
+function selectTheme() {
+    var themeId = jQuery(this).attr('data-name');
+    console.log('Select theme...', themeId);
+    jQuery('.modal').modal('hide');
+    jQuery('#input-theme').val(themeId);
+    update();
+}
+
 function init() {
     d3.selectAll('.themeConfig').on('change', updateThemeConfig);
     d3.selectAll('#theme-reset').on('click', themeReset);
@@ -414,6 +444,7 @@ function init() {
     jQuery(document).on("change", "#input-background-type", backgroundType);
     jQuery(document).on("change", "#input-overlay-type", overlayType);
     jQuery(document).on("change", "#input-pattern", waveformType);
+    jQuery(document).on("click", "#themes .theme", selectTheme);
 }
 
 module.exports = {
@@ -422,5 +453,6 @@ module.exports = {
     reset: themeReset,
     updateImage,
     updateDesignSummaries,
+    loadThemeList,
     init
 }

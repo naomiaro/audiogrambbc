@@ -46,6 +46,10 @@ jQuery.ajax({
   timeout: 3000
 });
 
+themeHelper.loadThemeList(function(err){
+  console.log('THEMES ALL LOADED', err);
+})
+
 d3.json("/settings/themes.json", function(err, themes){
 
   console.log('Parsing themes...');

@@ -988,7 +988,7 @@
                             <div class="tab-pane" id="editor-tab-design">
                                 <!-- DESIGN -->
                                 <section id="section-theme">
-                                    <button id="theme-change">
+                                    <button id="theme-change" data-toggle="modal" href="#themes" type="button" aria-expanded="false">
                                         <b>Base Theme:</b> <span>Subtitles Only - Gradient - 2 Line</span>
                                     </button>
                                     <button id="theme-save"><i class="fa fa-save"></i> Save As</button>
@@ -1274,6 +1274,11 @@
             </section>
             <section class="well">
                 <div class="btn-group">
+
+                                    <button id="theme-change" data-toggle="modal" href="#themes" type="button" aria-expanded="false">
+                                        <b>Base Theme:</b>
+                                        <span>Subtitles Only - Gradient - 2 Line</span>
+                                    </button>
                     <button id="return" type="button" class="left btn btn-secondary">
                         <i class="fa fa-edit"></i>Return to editor
                     </button>
@@ -1339,6 +1344,36 @@
                         </label>
                         <div style="font-style: italic; font-size: 0.75em; margin-top: 5px; text-align: center;">
                             These settings apply to this version only. A new version is saved every time you (re)generate an audiogram.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
+                        <div id="sharing-spinner" style="float: right; line-height: 32px; display: none;">
+                            <i class="fa fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="themes" class="modal fade intGEL" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: #b60000; color: #ffffff;">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Select Theme</h4>
+                    </div>
+                    <div class="modal-body" style="">
+                        <div class="row themes">
+                            <div class="theme col-md-3 template">
+                                <img class="preview" src="/video/5304313c-2f7d-4f15-ae37-0713ee6845d1.jpg" alt="">
+                                <div class="info">
+                                    <hr>
+                                    <div class="title"></div>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                     <div class="modal-footer">
