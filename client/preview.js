@@ -138,31 +138,35 @@ function resize(width, height) {
 
     width = width || theme.width;
     height = height || theme.height;
+    var landscape = width > height;
 
     var bodyClass = jQuery("body").attr("class");
     jQuery("body").attr("class", null);
     var wrapperWidth = d3.select("#canvas").node().getBoundingClientRect().width;
+    var wrapperHeight = wrapperWidth * (9/16);
     jQuery("body").attr("class", bodyClass);
     if (!wrapperWidth) return;
 
-    var widthFactor = wrapperWidth / width,
-        heightFactor = (wrapperWidth * 9 / 16) / height,
-        factor = Math.min(widthFactor, heightFactor);
+    // var widthFactor = wrapperWidth / width;
+    // var heightFactor = (wrapperWidth * 9 / 16) / height;
 
-    d3.select("canvas")
-        .attr("width", wrapperWidth)
-        .attr("height", wrapperWidth * (height / width));
+    var canvasHeight = wrapperHeight;
+    var canvasWidth = wrapperHeight / (height / width);
+
+    var heightFactor = canvasHeight / height;
+    var widthFactor = canvasWidth / width;
+
+    jQuery("canvas")
+        .attr("width", canvasWidth)
+        .attr("height", canvasHeight);
     
-    d3.select("#canvas")
-        .attr("height", wrapperWidth * (height / width));
+    jQuery("#canvas").height(canvasHeight);
 
-    d3.select("video")
-        .attr("height", widthFactor * height);
+    // jQuery("video").attr("height", canvasHeight);
 
-    d3.select("#video")
-        .attr("height", (widthFactor * height) + "px");
+    // jQuery("#video").height(canvasHeight);
 
-    context.setTransform(widthFactor, 0, 0, widthFactor, 0, 0);
+    context.setTransform(widthFactor, 0, 0, heightFactor, 0, 0);
 
 }
 
