@@ -72,8 +72,8 @@ function combineFrames(options, cb) {
       for (let i = 0; i < options.subtitles.length; i++) {
         var vIn = i + 1;
         var vOut = i + 2;
-        var start = options.subtitles[i].start - options.trim.start;
-        var end = options.subtitles[i].end - options.trim.start;
+        var start = options.subtitles[i].start;
+        var end = options.subtitles[i].end;
         filter += `[v${vIn}][${vOut}]overlay=0:0:enable='between(t,${start},${end})'[v${vOut}]`;
         filter += (i < options.subtitles.length - 1) ? '; ' : ' ';
       }

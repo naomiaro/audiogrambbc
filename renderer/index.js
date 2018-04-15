@@ -137,7 +137,7 @@ module.exports = function(t) {
     // SUBTITLES
     if (theme.subtitles.enabled && options.subtitles) {
       var time = options.frame / options.fps || options.time || 0;
-      time += options.start;
+      // time += options.start;
       subtitles.draw(context, theme, options.subtitles, time);
     }
 

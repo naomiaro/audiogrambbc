@@ -433,6 +433,12 @@ function toSubs() {
             subs[i].end = end;
         });
     }
+    // Trim offset
+    var selectionStart = utils.getSeconds(jQuery('#start').val());
+    for (var i = 0; i < subs.length; i++) {
+        subs[i].start -= selectionStart;
+        subs[i].end -= selectionStart;
+    }
     // Remove small gaps between segments
     for (var i = 1; i < subs.length; i++) {
         var mergeGapsSmallerThan = 1;
@@ -675,21 +681,16 @@ function exportTranscript() {
     
     if (format.startsWith('plain')) {
         // PLAIN
-        blocks.each(function(e){
-            var block = jQuery(this);
-            if (!text.length || !block.hasClass('same-speaker') || block.hasClass('break')) {
-                var speaker = +block.attr('data-speaker') + 1;
-                var start = +block.find('.transcript-word:not(.unused):first').attr('data-start');
-                var time = formatHMS(start);
-                if (text.length) text += '\n\n';
-                if (format == 'plain-timecodes') {
-                    text += time + ' - SPEAKER ' + speaker;
-                    text += '\n';
-                }
+        subs.forEach(function (sub, i) {
+            if (text.length) text += '\n';
+            if (format == 'plain-timecodes') {
+                if (text.length) text += '\n';
+                text += formatHMS(sub.start) + ' - SPEAKER ' + (sub.speaker + 1);
             }
-            block.find('.transcript-word:not(.unused)').each(function(){
-                text += jQuery(this).text() + ' ';
-            })
+            sub.lines.forEach(function (line) {
+                if (text.length) text += '\n';
+                text += line;
+            });
         });
         window.open('/transcript?txt=' + btoa(text));
     } else if (format == 'srt') {
