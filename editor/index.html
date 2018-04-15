@@ -1116,13 +1116,47 @@
                                     </div>
                                     <div id="design-caption" class="design-block">
                                         <div class="heading">
-                                            <div class="title">Caption</div>
+                                            <div class="title">Text</div>
                                             <div class="summary">None</div>
                                             <i class="fa fa-plus"></i>
                                             <i class="fa fa-minus" style="display: none;"></i>
                                         </div>
                                         <div class="body" style="display: none;">
-                                            Blah blah yaaaaass
+                                            <textarea id="input-caption" name="caption" lass="form-control" cols="30" rows="2" style="height: 52px; min-height: 0!important; width: 100%"></textarea>
+                                            <hr>
+                                            <button class="button-select" style="margin: -5px -3px 0 0;">
+                                                <label>Weight:</label>
+                                                <select class="themeConfig" name="caption.fontWeight">
+                                                    <option>Regular</option>
+                                                    <option>Medium</option>
+                                                    <option>Bold</option>
+                                                </select>
+                                            </button>
+                                            <input id="input-caption-size" name="caption.fontSize" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
+                                            <input type="color" class="themeConfig" name="caption.color">
+                                            <hr>
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>H Align:</label>
+                                                    <select class="themeConfig" name="caption.align">
+                                                        <option value="left">left</option>
+                                                        <option value="center">center</option>
+                                                        <option value="right">right</option>
+                                                    </select>
+                                                </button>
+                                                <div class="caption-slider" name="horizontal"></div>
+                                            </div>
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>V Align:</label>
+                                                    <select class="themeConfig" name="caption.valign">
+                                                        <option value="top">top</option>
+                                                        <option value="middle">middle</option>
+                                                        <option value="bottom">bottom</option>
+                                                    </select>
+                                                </button>
+                                                <div class="caption-slider" name="vertical"></div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div id="design-size" class="design-block">
@@ -1257,7 +1291,6 @@
                                         <div class="col-md-9">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <textarea id="input-caption" name="caption" lass="form-control" cols="30" rows="2" style="height: 52px; min-height: 0!important; width: 100%"></textarea>
                                                 </div>
                                             </div>
                                             <div class="row caption-advanced hidden">
@@ -1265,18 +1298,11 @@
                                                     <hr>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <input type="color" class="themeConfig" name="caption.color">
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <input name="caption.fontSize" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
                                                 </div>
                                                 <div class="col-md-5">
                                                     <label class="intGEL-arrow" for="input-size">
-                                                        <select class="form-control themeConfig" name="caption.fontWeight" style="text-align: center;">
-                                                            <option>Regular</option>
-                                                            <option>Medium</option>
-                                                            <option>Bold</option>
-                                                        </select>
                                                     </label>
                                                 </div>
                                                 <div class="col-md-12">
@@ -1292,7 +1318,6 @@
                                                     </label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="caption-slider" name="horizontal" style="margin: 10px 0;"></div>
                                                 </div>
                                             </div>
                                             <div class="row caption-advanced hidden">
@@ -1306,7 +1331,6 @@
                                                     </label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="caption-slider" name="vertical" style="margin: 10px 0;"></div>
                                                 </div>
                                             </div>
                                         </div>
