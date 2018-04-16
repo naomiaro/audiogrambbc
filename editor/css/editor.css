@@ -1641,7 +1641,7 @@ button#view i{
   margin: 15px 0;
 }
 #themes .theme {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   cursor: pointer;
 }
 #themes .theme.template {
@@ -1658,7 +1658,14 @@ button#view i{
   top: 0;
 }
 #themes .theme:hover .info {
-  top: -10px;
+  top: -5px;
+}
+#themes .theme.active .info {
+  border-top-width: 3px;
+  margin-bottom: -1px;
+}
+#themes .theme.active .info hr {
+  border-top: 3px solid #000;
 }
 #themes .theme .info hr {
   margin: 0;
@@ -1670,6 +1677,12 @@ button#view i{
   height: 40px;
   overflow: hidden;
 }
-#themes .theme img {
-  width: 100%;
+#themes .theme .preview {
+  height: 104px;
+  background: #ccc;
+  text-align: center;
+}
+#themes .theme .preview img {
+  width: auto;
+  height: 100%;
 }

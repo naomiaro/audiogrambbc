@@ -410,7 +410,7 @@ function loadThemeList(cb) {
                 clone.removeClass('template');
                 clone.attr('data-name', name);
                 clone.find(".title").text(name);
-                clone.find("img.preview").attr('src', `/settings/themes/${name}.png`)
+                clone.find(".preview img").attr('src', `/settings/themes/${name}.png`)
             }
         }
         return cb(null);
