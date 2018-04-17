@@ -48,8 +48,8 @@ var WHITELIST = require('../whitelist.json');
 // use middlewares
 app.use(compression());
 app.use(logger.morgan());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false, limit: "10mb", parameterLimit: 50000 }));
+app.use(bodyParser.json({ limit: "10mb" }));
 
 // Edit whitelist
 app.get("/whitelist/get/", whitelist.get);
@@ -92,7 +92,9 @@ app.post("/submit/", [multer(fileOptions).fields(filesToUpload), render.validate
 // Edit themes
 // var filesToUpload = [{ name: 'background', maxCount: 1 },{ name: 'foreground', maxCount: 1 }];
 // app.post("/themes/add", [multer({ dest: "./settings/backgrounds" }).fields(filesToUpload), themes.add]);
-app.post('/themes/add', themes.add);
+app.post("/themes/add", themes.add);
+app.post("/themes/save", themes.save);
+app.get('/themes/list', themes.list);
 // Edit themes
 // app.post("/themes/add/", themes.add);
 
