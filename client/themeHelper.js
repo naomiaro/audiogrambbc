@@ -409,7 +409,7 @@ function updateDesignTab() {
 }
 
 function loadThemeList(cb) {
-    var bodyHeight = jQuery(window).height() - 350;
+    var bodyHeight = jQuery(window).height() - 200;
     jQuery("#themes .modal-body").css('height', bodyHeight + "px");
     d3.json("/settings/themes.json", function (err, themes) {
         if (err) return cb(err);

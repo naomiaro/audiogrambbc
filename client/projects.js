@@ -24,7 +24,7 @@ function _title(_) {
   if (arguments.length) {
     title = _;
     var disp = title;
-    if (disp.length > 20) disp = disp.slice(0, 20).trim() + "...";
+    if (disp.length > 15) disp = disp.slice(0, 15).trim() + "...";
     jQuery("#input-title span").text(disp);
     jQuery("#video h1").text(title);
   }
