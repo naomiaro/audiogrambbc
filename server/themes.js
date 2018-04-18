@@ -105,6 +105,14 @@ function list(req, res) {
 
 }
 
+function get(req, res) {
+  redisClient.hget(`audiogram:theme:${req.params.id}`, "config", function(err, reply) {
+    if (err || !reply) return res.json({ error: err || "Config not found" });
+    var config = JSON.parse(reply);
+    return res.json({ config });
+  });
+}
+
 function add(req, res) {
 
   delete require.cache[require.resolve('../settings/themes.json')];
@@ -186,5 +194,6 @@ function add(req, res) {
 module.exports = {
   add: add,
   save,
+  get,
   list
 };

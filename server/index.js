@@ -95,6 +95,7 @@ app.post("/submit/", [multer(fileOptions).fields(filesToUpload), render.validate
 app.post("/themes/add", themes.add);
 app.post("/themes/save", themes.save);
 app.get('/themes/list', themes.list);
+app.get("/themes/config/:id", themes.get);
 // Edit themes
 // app.post("/themes/add/", themes.add);
 

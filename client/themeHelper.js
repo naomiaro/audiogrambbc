@@ -82,6 +82,7 @@ function themeSave() {
                 utils.setClass("success", "The theme '" + newName + "' has been saved, and will be available next time you use Audiogram." );
                 var msg = themes[newName] ? USER.name + " updated the theme '" + newName + "'" : USER.name + " added a new theme: '" + newName + "'";
                 logger.info(msg);
+                loadThemeList();
               },
               error: error
             });
@@ -267,11 +268,64 @@ function updateCaption(value) {
 }
 d3.select("#input-caption").on("change keyup", updateCaption);
 
+
+
+function loadThemeImages(theme, cb) {
+    console.log("$ loadThemeImages", theme);
+    if (!theme.backgroundImage && !theme.foregroundImage) {
+        return cb(null, theme);
+    }
+
+    var imageQueue = d3.queue();
+
+    // Load background images
+    theme.backgroundImageFile = theme.backgroundImageFile || {};
+    theme.backgroundImageInfo = theme.backgroundImageInfo || {};
+    imageQueue.defer(function(imgCb) {
+        theme.backgroundImageFile = new Image();
+        theme.backgroundImageFile.onload = function() {
+            theme.backgroundImageInfo = { type: "image", height: this.height, width: this.width };
+            return imgCb(null);
+        };
+        theme.backgroundImageFile.onerror = function(e) {
+            console.warn(e);
+            return imgCb(e);
+        };
+        theme.backgroundImageFile.src = "/settings/backgrounds/" + theme.backgroundImage;
+    });
+    // Load foreground images
+    theme.foregroundImageFile = theme.foregroundImageFile || {};
+    theme.foregroundImageInfo = theme.foregroundImageInfo || {};
+    imageQueue.defer(function(imgCb) {
+        theme.foregroundImageFile = new Image();
+        theme.foregroundImageFile.onload = function() {
+            theme.foregroundImageInfo = { type: "image", height: this.height, width: this.width };
+            return imgCb(null);
+        };
+        theme.foregroundImageFile.onerror = function(e) {
+            console.warn(e);
+            return imgCb(e);
+        };
+        theme.foregroundImageFile.src = "/settings/backgrounds/" + theme.backgroundImage;
+    });
+
+    // Update raw themes
+    themesRaw[theme.id].backgroundImageFile = theme.backgroundImageFile;
+    themesRaw[theme.id].backgroundImageInfo = theme.backgroundImageInfo;
+    themesRaw[theme.id].foregroundImageFile = theme.foregroundImageFile;
+
+    // Finished loading this theme
+    imageQueue.await(function(err) {
+        return cb(err, theme);
+    });
+}
+
 function update(theme) {
-    if (theme && themesRaw[theme.name]) {
-        theme.backgroundImageFile = jQuery.extend(true, {}, themesRaw[theme.name].backgroundImageFile);
-        theme.backgroundImageInfo = jQuery.extend(true, {}, themesRaw[theme.name].backgroundImageInfo);
-        theme.foregroundImageFile = jQuery.extend(true, {}, themesRaw[theme.name].foregroundImageFile);
+    console.log("$ update", theme);
+    if (theme && themesRaw[theme.id]) {
+        theme.backgroundImageFile = jQuery.extend(true, {}, themesRaw[theme.id].backgroundImageFile);
+        theme.backgroundImageInfo = jQuery.extend(true, {}, themesRaw[theme.id].backgroundImageInfo);
+        theme.foregroundImageFile = jQuery.extend(true, {}, themesRaw[theme.id].foregroundImageFile);
     }
     var sel = jQuery('#input-theme').get(0);
     var theme = theme || d3.select(sel.options[sel.selectedIndex]).datum();
@@ -299,9 +353,9 @@ function update(theme) {
         }
     });
     // Force sizes if theme doesn't support all of them
-    jQuery("#input-size [data-orientation='landscape']").attr('disabled', (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.landscape) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.landscape) ? true : false);
-    jQuery("#input-size [data-orientation='square']").attr('disabled', (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.square) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.square) ? true : false);
-    jQuery("#input-size [data-orientation='portrait']").attr('disabled', (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.portrait) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.portrait) ? true : false);
+    // jQuery("#input-size [data-orientation='landscape']").attr('disabled', (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.landscape) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.landscape) ? true : false);
+    // jQuery("#input-size [data-orientation='square']").attr('disabled', (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.square) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.square) ? true : false);
+    // jQuery("#input-size [data-orientation='portrait']").attr('disabled', (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.portrait) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.portrait) ? true : false);
     jQuery('#input-size').val(jQuery("#input-size option[data-orientation='" + theme.orientation + "']:not(':disabled'):first").val());
     if (jQuery('#input-size option:selected').is(':disabled')) {
         jQuery('#input-size').val(jQuery("#input-size option:not(':disabled'):first").val());
@@ -411,31 +465,57 @@ function updateDesignTab() {
 function loadThemeList(cb) {
     var bodyHeight = jQuery(window).height() - 200;
     jQuery("#themes .modal-body").css('height', bodyHeight + "px");
-    d3.json("/settings/themes.json", function (err, themes) {
-        if (err) return cb(err);
-        console.log('LOAD THEMES...');
-        console.log(themes);
-        for (var name in themes) {
-            if (themes.hasOwnProperty(name) && name !== 'default' && name !== 'Custom') {
-                var theme = themes[name];
-                var clone = jQuery('#themes .theme.template:first').clone();
-                jQuery("#themes .themes").append(clone);
-                clone.removeClass('template');
-                clone.attr('data-name', name);
-                clone.find(".title").text(name);
-                clone.find(".preview img").attr('src', `/settings/themes/${name}.png`)
-            }
+
+    jQuery.getJSON("/themes/list", function(data) {
+        if (data.error) {
+            console.log("Error fetching themes", data.error);
+            return cb(data.error);
         }
+        console.log(data);
+        data.themes.forEach(function(theme){
+            console.log(theme);
+            var id = theme.id;
+            var name = theme.name;
+            if (id && name && name !== "default" && name !== "Custom") {
+                console.log('theme >', id);
+                var clone = jQuery("#themes .theme.template:first").clone();
+                jQuery("#themes .themes").append(clone);
+                clone.removeClass("template");
+                clone.attr("data-id", id);
+                clone.attr("data-name", name);
+                clone.find(".title").text(name);
+                clone.find(".preview img").attr("src", `/settings/themes/${id}`);
+            }
+        });
         return cb(null);
     });
 }
 
+function initialiseTheme(theme, cb) {
+    console.log("$ initialiseTheme", theme);
+    if (!themesRaw[theme.id]) {
+        // Initialise theme
+        var themeStr = JSON.stringify(theme);
+        themesRaw[theme.id] = JSON.parse(themeStr);
+        return loadThemeImages(theme, cb);
+    } else {
+        return cb(null);
+    }
+}
+
 function selectTheme() {
-    var themeId = jQuery(this).attr('data-name');
-    console.log('Select theme...', themeId);
-    jQuery('.modal').modal('hide');
-    jQuery('#input-theme').val(themeId);
-    update();
+    var themeId = jQuery(this).attr('data-id');
+    console.log("$ selectTheme", themeId);
+    jQuery.getJSON("/themes/config/" + themeId, function(data) {
+        console.log("$ getJSON", data);
+        if (data.error) return console.log(data.error);
+        initialiseTheme(data.config, function(err){
+            console.log('Selected theme...', themeId);
+            jQuery('.modal').modal('hide');
+            jQuery('#input-theme').val(themeId);
+            update(data.config);
+        });
+    });
 }
 
 function init() {
