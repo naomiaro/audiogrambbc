@@ -55,10 +55,23 @@ function themeSave() {
             // Add name/author
             newTheme.name = newName;
             newTheme.author = USER.email;
+            // Add preview image
+            var subs = transcript.toSubs();
+            var lorem = "Lorem ipsum dolor sit amet consectetur adipiscing elit Phasellus mollis massa eu ornare consectetur orci mauris lobortis elit accumsan condimentum nulla nisi in mauris Duis sit amet lacinia ante non placerat dui Aenean commodo ligula ac hendrerit cursus Proin et dui id ligula lobortis accumsan Phasellus iaculis condimentum massa a porta Phasellus turpis mi porta nec molestie eget convallis sit amet metus Praesent in nunc id ligula tempor egestas Interdum et malesuada fames ac ante ipsum primis in faucibus Curabitur pharetra nec ex in pulvinar";
+            for (let i = 0; i < subs[0].lines.length; i++) {
+                var line = subs[0].lines[i];
+                var dummy = lorem.slice(0, line.length).trim();
+                lorem = lorem.slice(line.length);
+                lorem = lorem.slice(lorem.indexOf(" ")).trim();
+                subs[0].lines[i] = dummy;
+            }
+            preview.redraw(subs);
+            body.preview = jQuery("canvas")[0].toDataURL();
+            preview.redraw();
             // Post
             body.theme = JSON.stringify(newTheme);
             $.ajax({
-              url: "/themes/add/",
+              url: "/themes/save/",
               type: "POST",
               data: JSON.stringify(body),
               contentType: "application/json; charset=utf-8",

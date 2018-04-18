@@ -170,7 +170,7 @@ function resize(width, height) {
 
 }
 
-function redraw() {
+function redraw(overrideSubs) {
 
     if (!jQuery("canvas").is(":visible") || document.readyState != 'complete') return;
 
@@ -192,7 +192,7 @@ function redraw() {
     renderer.foregroundImage(jQuery.isEmptyObject(foreground) ? null : foreground);
     renderer.backgroundImage(jQuery.isEmptyObject(background) ? null : background);
         
-    var subtitles = transcript.toSubs();
+    var subtitles = overrideSubs || transcript.toSubs();
     if (audio.isPlaying()) {
         var time = audio.currentTime();
     } else if (subtitles[0]) {
