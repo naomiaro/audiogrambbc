@@ -63,6 +63,7 @@ function redraw(data) {
 }
 
 function time(t) {
+  if (jQuery('audio')[0].paused) return;
   d3.select("g.time")
     .attr("transform","translate(" + (t * minimapWidth) + ")");
 }

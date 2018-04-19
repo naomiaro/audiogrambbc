@@ -5,7 +5,7 @@ var ui = require('./ui');
 var transcript = require("./transcript");
 var logger = require("./slack");
 
-var themesRaw;
+var themesRaw = {};
 function _raw(_) {
     return arguments.length ? (themesRaw = _) : themesRaw;
 }
@@ -268,13 +268,13 @@ function updateCaption(value) {
 }
 d3.select("#input-caption").on("change keyup", updateCaption);
 
-
-
 function loadThemeImages(theme, cb) {
     console.log("$ loadThemeImages", theme);
     if (!theme.backgroundImage && !theme.foregroundImage) {
         return cb(null, theme);
     }
+    theme.backgroundImage = theme.backgroundImage.landscape || theme.backgroundImage;
+    theme.foregroundImage = theme.foregroundImage.landscape || theme.foregroundImage;
 
     var imageQueue = d3.queue();
 
@@ -296,18 +296,18 @@ function loadThemeImages(theme, cb) {
     // Load foreground images
     theme.foregroundImageFile = theme.foregroundImageFile || {};
     theme.foregroundImageInfo = theme.foregroundImageInfo || {};
-    imageQueue.defer(function(imgCb) {
-        theme.foregroundImageFile = new Image();
-        theme.foregroundImageFile.onload = function() {
-            theme.foregroundImageInfo = { type: "image", height: this.height, width: this.width };
-            return imgCb(null);
-        };
-        theme.foregroundImageFile.onerror = function(e) {
-            console.warn(e);
-            return imgCb(e);
-        };
-        theme.foregroundImageFile.src = "/settings/backgrounds/" + theme.backgroundImage;
-    });
+    // imageQueue.defer(function(imgCb) {
+    //     theme.foregroundImageFile = new Image();
+    //     theme.foregroundImageFile.onload = function() {
+    //         theme.foregroundImageInfo = { type: "image", height: this.height, width: this.width };
+    //         return imgCb(null);
+    //     };
+    //     theme.foregroundImageFile.onerror = function(e) {
+    //         console.warn(e);
+    //         return imgCb(e);
+    //     };
+    //     theme.foregroundImageFile.src = "/settings/backgrounds/" + theme.backgroundImage;
+    // });
 
     // Update raw themes
     themesRaw[theme.id].backgroundImageFile = theme.backgroundImageFile;
@@ -320,8 +320,30 @@ function loadThemeImages(theme, cb) {
     });
 }
 
+function initialiseTheme(theme, cb) {
+  console.log("$ initialiseTheme", theme);
+  if (!themesRaw[theme.id]) {
+    // Initialise theme
+    var themeStr = JSON.stringify(theme);
+    themesRaw[theme.id] = JSON.parse(themeStr);
+    return loadThemeImages(theme, cb);
+  } else {
+    return cb(null, theme);
+  }
+}
+
 function update(theme) {
     console.log("$ update", theme);
+    initialiseTheme(theme, function(err, theme){
+        if (err || !theme) {
+            return console.error(err || "Error initialising theme");
+        };
+        apply(theme);
+    })
+}
+
+function apply(theme) {
+    console.log("$ apply", theme);
     if (theme && themesRaw[theme.id]) {
         theme.backgroundImageFile = jQuery.extend(true, {}, themesRaw[theme.id].backgroundImageFile);
         theme.backgroundImageInfo = jQuery.extend(true, {}, themesRaw[theme.id].backgroundImageInfo);
@@ -491,30 +513,16 @@ function loadThemeList(cb) {
     });
 }
 
-function initialiseTheme(theme, cb) {
-    console.log("$ initialiseTheme", theme);
-    if (!themesRaw[theme.id]) {
-        // Initialise theme
-        var themeStr = JSON.stringify(theme);
-        themesRaw[theme.id] = JSON.parse(themeStr);
-        return loadThemeImages(theme, cb);
-    } else {
-        return cb(null);
-    }
-}
-
 function selectTheme() {
     var themeId = jQuery(this).attr('data-id');
     console.log("$ selectTheme", themeId);
     jQuery.getJSON("/themes/config/" + themeId, function(data) {
         console.log("$ getJSON", data);
         if (data.error) return console.log(data.error);
-        initialiseTheme(data.config, function(err){
-            console.log('Selected theme...', themeId);
-            jQuery('.modal').modal('hide');
-            jQuery('#input-theme').val(themeId);
-            update(data.config);
-        });
+        console.log('Selected theme...', themeId);
+        jQuery('.modal').modal('hide');
+        jQuery('#input-theme').val(themeId);
+        update(data.config);
     });
 }
 
