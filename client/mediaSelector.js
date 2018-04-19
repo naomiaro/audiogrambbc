@@ -109,7 +109,7 @@ function txPoll(id, type, req) {
     });
 }
 
-function init(){
+function init(cb){
     // Fetch broadcast audio
     d3.selectAll("input[id^='input-tx-']").on("keyup", txTimeUpdate);
     jQuery(document).on("click", "#tx-search", txSearch);
@@ -119,6 +119,8 @@ function init(){
         endDate = new Date(now - 60000);
     jQuery("#input-tx-start").val(utils.pad(startDate.getHours()) + ":" + utils.pad(startDate.getMinutes()) + ":00");
     jQuery("#input-tx-end").val(utils.pad(endDate.getHours()) + ":" + utils.pad(endDate.getMinutes()) + ":00");
+
+    return cb(null);
 }
 
 module.exports = {

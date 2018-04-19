@@ -32,6 +32,7 @@ function _blobs(type) {
 }
 
 function loadFromURL(type, url, cb) {
+    console.log('load media', type, url);
     var blob = null;
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url);
@@ -78,7 +79,7 @@ function update(blob, cb) {
     jQuery('#subtitles, #transcript').removeClass('hidden');
     jQuery('#loading-message').text('Analyzing...');
     utils.setClass('loading');
-
+    
     preview.loadAudio(audioFile, function(err){
         jQuery('#minimap, #submit').removeClass('hidden');
         if (err) {

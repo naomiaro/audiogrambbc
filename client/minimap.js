@@ -31,11 +31,9 @@ minimap.selectAll(".brush .resize")
 var t, minimapWidth;
 function _width(_) {
   if (arguments.length) {
+    console.log('MINIMAP WIDTH', _);
     minimapWidth = _;
-    t = d3.scaleLinear()
-        .domain([0, _])
-        .range([0,1])
-        .clamp(true);
+    t = d3.scaleLinear().domain([0, _]).range([0,1]).clamp(true);
     d3.selectAll("#minimap svg, #minimap clipPath rect").attr("width", _);
     d3.selectAll("#minimap g.waveform line").attr("x2", _);
   } else {
@@ -133,8 +131,13 @@ function updateTrim(extent) {
     }
 }
 
-function init() {
+function init(cb) {
     d3.selectAll("#start, #end").on("change", updateTrim);
+    if (LOADING) {
+      jQuery('body').removeClass('loading');
+      _width(jQuery('#minimap svg').parent().width());
+      jQuery('body').addClass('loading');
+    }
     jQuery(document).on('click', '#minimap:not(.disabled) svg, #minimap.disabled .disabled', function(e){
       if (!jQuery('#transcript-timings').hasClass('recording')){
         var pos = e.offsetX / jQuery(this).width();
@@ -152,6 +155,8 @@ function init() {
     jQuery(document).on("click", "#minimap button#trim_clear", function() {
       drawBrush({start: 0, end: 0});
     });
+
+  return cb(null);
 }
 
 module.exports = {

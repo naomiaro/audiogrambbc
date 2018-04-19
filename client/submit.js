@@ -186,11 +186,12 @@ function poll(id) {
     }, 2500);
 }
 
-function init() {
+function init(cb) {
     d3.select('#submit').on('click', submit);
     jQuery(document).on("click", "button#view", function() {
       utils.setBreadcrumb('view');
     });
+    return cb(null);
 }
 
 module.exports = {

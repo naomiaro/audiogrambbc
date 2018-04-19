@@ -303,7 +303,7 @@ function save() {
   }
 }
 
-function init() {
+function init(cb) {
 
   jQuery(document).on("click", "#transcript-btn-timings", function (e) {
     jQuery("#transcript").addClass("timings");
@@ -432,6 +432,7 @@ function init() {
     jQuery(this).val(disp);
   });
 
+  return cb(null);
 }
 
 module.exports = {

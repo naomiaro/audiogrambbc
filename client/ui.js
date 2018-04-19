@@ -106,12 +106,14 @@ function sizeSliders() {
     });
 }
 
-function init() {
+function init(cb) {
     initializeSliders();
     sizeButtonSelect();
     sizeSliders();
     d3.select('#group-theme-advanced button').on('click', showAdvancedConfig);
     d3.select(window).on("resize", windowResize);
+    windowResize();
+    return cb(null);
 }
 
 module.exports = {

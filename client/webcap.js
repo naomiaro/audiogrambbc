@@ -64,9 +64,10 @@ function use() {
   updateList();
 }
 
-function init() {
+function init(cb) {
   updateList();
   jQuery(document).on("change", "#input-webcap", use);
+  return cb(null);
 }
 
 module.exports = {

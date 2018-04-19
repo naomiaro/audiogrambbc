@@ -160,7 +160,7 @@ function _currentTime(_) {
   return arguments.length ? audio.currentTime = _ : audio.currentTime;
 }
 
-function init() {
+function init(cb) {
     d3.select(document).on('keydown', function() {
         if (!d3.select('body').classed('rendered') && !d3.matcher("input, textarea, button, select, [contenteditable='true']").call(d3.event.target)) {
             var start = extent[0] * audio.duration,
@@ -256,6 +256,7 @@ function init() {
       utils.stats("increment", "user_activity.playback.rate");
     });
 
+  return cb(null);
 }
 
 module.exports = {

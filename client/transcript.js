@@ -845,7 +845,7 @@ function importFromFile() {
     reader.readAsText(this.files[0]);
 }
 
-function init() {
+function init(cb) {
     // Attach listener to hightlight words during playback
     jQuery('audio').on('timeupdate', function() {
         jQuery('.transcript-word').removeClass('played');
@@ -1248,6 +1248,8 @@ function init() {
         var preview = require('./preview');
         preview.redraw();
     });
+
+    return cb(null);
     
 }
 

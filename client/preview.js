@@ -230,6 +230,8 @@ function loadAudio(audioFile, cb) {
                 return cb ? cb(err) : err;
             }
 
+            console.log('YASS');
+            utils.setClass(null);
             file = audioFile;
             minimap.redraw(data.peaks);
 

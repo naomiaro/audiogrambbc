@@ -26,8 +26,8 @@ var png = require('./png');
 var webcap = require('./webcap');
 var user = require('./user');
 
+global.LOADING = true;
 user.init();
-
 jQuery('#version').text('Version: __VERSION__');
 
 // Check DB status
@@ -46,28 +46,37 @@ jQuery.ajax({
   timeout: 3000
 });
 
-// Load theme list
-themeHelper.loadThemeList(function(err){
-  console.log('THEMES ALL LOADED', err);
-});
 
 // Initialize components
-audio.init();
-ichef.init();
-mediaSelector.init();
-minimap.init();
-projects.init();
-submit.init();
-transcript.init();
-transcriptTimings.init();
-vcs.init();
-png.init();
-webcap.init();
-ui.init();
-themeHelper.init();
+jQuery(function () {
 
+  var initQueue = d3.queue();
+  initQueue.defer(ui.init);
+  initQueue.defer(audio.init);
+  initQueue.defer(mediaSelector.init);
+  initQueue.defer(minimap.init)
+  initQueue.defer(projects.init);
+  initQueue.defer(submit.init)
+  initQueue.defer(transcript.init)
+  initQueue.defer(transcriptTimings.init);
+  initQueue.defer(vcs.init);
+  initQueue.defer(png.init)
+  initQueue.defer(webcap.init)
+  initQueue.defer(themeHelper.init);
 
-jQuery(function() {
+  initQueue.await(function (err) {
+    console.log('AAAAAAAAA');
+    if (err) return console.error(err);
+    load();
+  });
+
+});
+
+function load(){
+  // Load theme list
+  themeHelper.loadThemeList(function (err) {
+    console.log('THEMES ALL LOADED', err);
+  });
   // Tooltips
   utils.tooltips();
   // Log load time
@@ -81,7 +90,9 @@ jQuery(function() {
   } else {
     utils.setClass("landing");
   }
-});
+}
+
+
 
 // d3.json("/settings/themes.json", function(err, themes){
 

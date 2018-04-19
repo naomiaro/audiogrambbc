@@ -273,41 +273,45 @@ function loadThemeImages(theme, cb) {
     if (!theme.backgroundImage && !theme.foregroundImage) {
         return cb(null, theme);
     }
-    theme.backgroundImage = theme.backgroundImage.landscape || theme.backgroundImage;
-    theme.foregroundImage = theme.foregroundImage.landscape || theme.foregroundImage;
+    theme.backgroundImage = theme.backgroundImage ? theme.backgroundImage.landscape || theme.backgroundImage : null;
+    theme.foregroundImage = theme.foregroundImage ? theme.foregroundImage.landscape || theme.foregroundImage : null;
 
     var imageQueue = d3.queue();
 
     // Load background images
-    theme.backgroundImageFile = theme.backgroundImageFile || {};
-    theme.backgroundImageInfo = theme.backgroundImageInfo || {};
-    imageQueue.defer(function(imgCb) {
-        theme.backgroundImageFile = new Image();
-        theme.backgroundImageFile.onload = function() {
-            theme.backgroundImageInfo = { type: "image", height: this.height, width: this.width };
-            return imgCb(null);
-        };
-        theme.backgroundImageFile.onerror = function(e) {
-            console.warn(e);
-            return imgCb(e);
-        };
-        theme.backgroundImageFile.src = "/settings/backgrounds/" + theme.backgroundImage;
-    });
+    if (theme.backgroundImage) {
+        theme.backgroundImageFile = theme.backgroundImageFile || {};
+        theme.backgroundImageInfo = theme.backgroundImageInfo || {};
+        imageQueue.defer(function(imgCb) {
+            theme.backgroundImageFile = new Image();
+            theme.backgroundImageFile.onload = function() {
+                theme.backgroundImageInfo = { type: "image", height: this.height, width: this.width };
+                return imgCb(null);
+            };
+            theme.backgroundImageFile.onerror = function(e) {
+                console.warn(e);
+                return imgCb(e);
+            };
+            theme.backgroundImageFile.src = "/settings/backgrounds/" + theme.backgroundImage;
+        });
+    }
     // Load foreground images
-    theme.foregroundImageFile = theme.foregroundImageFile || {};
-    theme.foregroundImageInfo = theme.foregroundImageInfo || {};
-    // imageQueue.defer(function(imgCb) {
-    //     theme.foregroundImageFile = new Image();
-    //     theme.foregroundImageFile.onload = function() {
-    //         theme.foregroundImageInfo = { type: "image", height: this.height, width: this.width };
-    //         return imgCb(null);
-    //     };
-    //     theme.foregroundImageFile.onerror = function(e) {
-    //         console.warn(e);
-    //         return imgCb(e);
-    //     };
-    //     theme.foregroundImageFile.src = "/settings/backgrounds/" + theme.backgroundImage;
-    // });
+    if (theme.foregroundImage) {
+        theme.foregroundImageFile = theme.foregroundImageFile || {};
+        theme.foregroundImageInfo = theme.foregroundImageInfo || {};
+        imageQueue.defer(function(imgCb) {
+            theme.foregroundImageFile = new Image();
+            theme.foregroundImageFile.onload = function() {
+                theme.foregroundImageInfo = { type: "image", height: this.height, width: this.width };
+                return imgCb(null);
+            };
+            theme.foregroundImageFile.onerror = function(e) {
+                console.warn(e);
+                return imgCb(e);
+            };
+            theme.foregroundImageFile.src = "/settings/backgrounds/" + theme.foregroundImage;
+        });
+    }
 
     // Update raw themes
     themesRaw[theme.id].backgroundImageFile = theme.backgroundImageFile;
@@ -332,17 +336,23 @@ function initialiseTheme(theme, cb) {
   }
 }
 
-function update(theme) {
+function update(theme, cb) {
     console.log("$ update", theme);
-    initialiseTheme(theme, function(err, theme){
+    initialiseTheme(theme, function (err, theme) {
+        console.log('THEME UPDATE 1', err);
         if (err || !theme) {
-            return console.error(err || "Error initialising theme");
+            console.log('THEME UPDATE 3', err);
+            console.error(err || "Error initialising theme");
+            cb(err);
         };
-        apply(theme);
+        apply(theme, function(err){
+            console.log('THEME UPDATE 2', err);
+            cb(err);
+        });
     })
 }
 
-function apply(theme) {
+function apply(theme, cb) {
     console.log("$ apply", theme);
     if (theme && themesRaw[theme.id]) {
         theme.backgroundImageFile = jQuery.extend(true, {}, themesRaw[theme.id].backgroundImageFile);
@@ -418,6 +428,8 @@ function apply(theme) {
     updateDesignTab();
     transcript.format();
     ui.windowResize(); // Bcause sometimes it makes the vertical scroll-bar appear, and elements need resizing
+    preview.theme(theme);
+    cb(null);
 }
 
 function updateThemeConfig() {
@@ -526,7 +538,7 @@ function selectTheme() {
     });
 }
 
-function init() {
+function init(cb) {
     d3.selectAll('.themeConfig').on('change', updateThemeConfig);
     d3.selectAll('#theme-reset').on('click', themeReset);
     d3.selectAll('#theme-save').on('click', themeSave);
@@ -546,6 +558,7 @@ function init() {
     jQuery(document).on("change", "#input-overlay-type", overlayType);
     jQuery(document).on("change", "#input-pattern", waveformType);
     jQuery(document).on("click", "#themes .theme", selectTheme);
+    return cb(null);
 }
 
 module.exports = {
