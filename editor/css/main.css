@@ -7173,6 +7173,15 @@ header a, header a:focus, header a:hover, header a:visited {
     text-decoration: none
 }
 
+header .ag-logo {
+    height: 40px;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
 header .labs-logo {
     position: absolute;
     display: inline-block;
@@ -7192,7 +7201,7 @@ header h1.page-title {
     display: inline-block;
     line-height: 60px;
     height: 60px;
-    margin: 0 0 0 75px;
+    margin: 0 0 0 60px;
     color: #fff;
     font-size: 36px;
 }
@@ -7200,7 +7209,7 @@ header h1.page-title {
 header h1 .title-superscript {
     display: inline-block;
     position: relative;
-    left: 5px;
+    left: 0;
     bottom: 15px;
     font-size: 14px
 }
