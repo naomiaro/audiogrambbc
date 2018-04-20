@@ -692,125 +692,6 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="editor-tab-transcript">
-                                <!-- TRANSCRIPT FORMATTING -->
-                                <section id="transcript-settings" class="well hidden">
-                                    <div class="page-header">
-                                        <h1>
-                                            Subtitle Formatting
-                                        </h1>
-                                        <div class="tip subFormatToggle">
-                                            <a href="#">close</a>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3" style="text-align: left; line-height: 32px;">
-                                            <label class="settings">Horizontal Align:</label>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="intGEL-arrow" for="input-size">
-                                                <select class="form-control themeConfig" name="subtitles.align" style="text-align: center;">
-                                                    <option value="left">left</option>
-                                                    <option value="center">center</option>
-                                                    <option value="right">right</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="subs-slider" name="horizontal" style="margin: 10px 0;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3" style="text-align: left; line-height: 32px;">
-                                            <label class="settings">Vertical Align:</label>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="intGEL-arrow" for="input-size">
-                                                <select class="form-control themeConfig" name="subtitles.valign" style="text-align: center;">
-                                                    <option value="top">top</option>
-                                                    <option value="middle">middle</option>
-                                                    <option value="bottom">bottom</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="subs-slider" name="vertical" style="margin: 10px 0;"></div>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label class="settings" style="width: 100%; text-align: center;">Max Rows:</label>
-                                            <input name="subtitles.linesMax" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="settings" style="width: 100%; text-align: center;">Char/Line:</label>
-                                            <input name="subtitles.lineWidth" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="settings" style="width: 100%; text-align: center;">Spacing:</label>
-                                            <input name="subtitles.lineSpacing" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="settings" style="width: 100%; text-align: center;">Background:</label>
-                                            <label class="intGEL-arrow" for="input-size">
-                                                <select class="form-control themeConfig" name="subtitles.box.opacity" style="text-align: center;">
-                                                    <option value="0">0%</option>
-                                                    <option value="0.1">10%</option>
-                                                    <option value="0.2">20%</option>
-                                                    <option value="0.3">30%</option>
-                                                    <option value="0.4">40%</option>
-                                                    <option value="0.5">50%</option>
-                                                    <option value="0.6">60%</option>
-                                                    <option value="0.7">70%</option>
-                                                    <option value="0.8">80%</option>
-                                                    <option value="0.9">90%</option>
-                                                    <option value="1">100%</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label class="settings" style="width: 100%; text-align: center;">Size:</label>
-                                            <input name="subtitles.fontSize" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="settings" style="width: 100%; text-align: center;">Weight:</label>
-                                            <label class="intGEL-arrow" for="input-size">
-                                                <select class="form-control themeConfig" name="subtitles.fontWeight" style="text-align: center;">
-                                                    <option>Regular</option>
-                                                    <option>Medium</option>
-                                                    <option>Bold</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div class="col-md-3" style="border-left: 1px solid #eee;">
-                                            <label class="settings" style="width: 100%; text-align: center;">Stroke:</label>
-                                            <input name="subtitles.stroke.width" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="settings" style="width: 100%; text-align: center;">Stroke Colour:</label>
-                                            <input type="color" class="themeConfig" name="subtitles.stroke.color">
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label class="settings" style="width: 100%; text-align: center;">Font Colours:</label>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <div class="row">
-                                                <div class="col-md-3 subtitle-color-col">
-                                                    <input type="color" class="themeConfig" name="subtitles.color.0">
-                                                </div>
-                                                <div class="col-md-3 subtitle-color-col">
-                                                    <input type="color" class="themeConfig" name="subtitles.color.1">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </section>
                                 <!-- TRANSCRIPT -->
                                 <section id="transcript" class="well hidden">
                                     <div class="transcript-buttons">
@@ -830,9 +711,9 @@
                                         <button id="transcript-btn-timings-cancel" class="timingsOnly">
                                             Cancel
                                         </button>
-                                        <button id="transcript-btn-format" class="subFormatToggle enabledOnly">
+                                        <!-- <button id="transcript-btn-format" class="subFormatToggle enabledOnly">
                                             <i class="fa fa-align-center"></i>Format
-                                        </button>
+                                        </button> -->
                                         <button id="transcript-btn-reset" class="hidden">
                                             <i class="fa fa-undo"></i>Reset
                                         </button>
@@ -1069,6 +950,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- Waveform -->
                                     <div id="design-waveform" class="design-block">
                                         <div class="heading">
                                             <div class="title">Waveform</div>
@@ -1103,6 +985,103 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- Subtitles -->
+                                    <div id="design-subtitles" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Subtitles</div>
+                                            <div class="summary"></div>
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>H Align:</label>
+                                                    <select class="themeConfig" name="subtitles.align">
+                                                        <option value="left">left</option>
+                                                        <option value="center">center</option>
+                                                        <option value="right">right</option>
+                                                    </select>
+                                                </button>
+                                                <div class="subs-slider" name="horizontal"></div>
+                                            </div>
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>V Align:</label>
+                                                    <select class="themeConfig" name="subtitles.valign">
+                                                        <option value="top">top</option>
+                                                        <option value="middle">middle</option>
+                                                        <option value="bottom">bottom</option>
+                                                    </select>
+                                                </button>
+                                                <div class="subs-slider" name="vertical"></div>
+                                            </div>
+                                            <hr>
+                                            <button class="button-select">
+                                                <label>Max Rows:</label>
+                                                <select class="themeConfig" name="subtitles.linesMax">
+                                                    <option>1</option>
+                                                    <option>2</option>
+                                                    <option>3</option>
+                                                    <option>4</option>
+                                                    <option>5</option>
+                                                    <option>6</option>
+                                                    <option>7</option>
+                                                    <option>8</option>
+                                                    <option>9</option>
+                                                    <option>10</option>
+                                                </select>
+                                            </button>
+                                            <button class="button-prompt">
+                                                <b>Line Width:</b> <span>0</span>
+                                                <input type="hidden" class="themeConfig" name="subtitles.lineWidth">
+                                            </button>
+                                            <button class="button-prompt">
+                                                <b>Line Spacing:</b> <span>0</span>
+                                                <input type="hidden" class="themeConfig" name="subtitles.lineSpacing">
+                                            </button>
+                                            <button class="button-select">
+                                                <label>Background:</label>
+                                                <select class="themeConfig" name="subtitles.box.opacity">
+                                                    <option value="0">0%</option>
+                                                    <option value="0.1">10%</option>
+                                                    <option value="0.2">20%</option>
+                                                    <option value="0.3">30%</option>
+                                                    <option value="0.4">40%</option>
+                                                    <option value="0.5">50%</option>
+                                                    <option value="0.6">60%</option>
+                                                    <option value="0.7">70%</option>
+                                                    <option value="0.8">80%</option>
+                                                    <option value="0.9">90%</option>
+                                                    <option value="1">100%</option>
+                                                </select>
+                                            </button>
+                                            <hr>
+                                            <button class="button-prompt">
+                                                <b>Font Size:</b> <span>0</span>
+                                                <input type="hidden" class="themeConfig" name="subtitles.fontSize">
+                                            </button>
+                                            <button class="button-select">
+                                                <label>Weight:</label>
+                                                <select class="themeConfig" name="subtitles.fontWeight">
+                                                    <option>Regular</option>
+                                                    <option>Medium</option>
+                                                    <option>Bold</option>
+                                                </select>
+                                            </button>
+                                            <button class="button-prompt">
+                                                <b>Stroke:</b> <span>0</span>
+                                                <input type="hidden" class="themeConfig" name="subtitles.stroke.width">
+                                            </button>
+                                            <input type="color" class="themeConfig" name="subtitles.stroke.color" style="margin-left: 5px;">
+                                            <hr>
+                                            <label class="color-label">Font Colours:</label>
+                                            <input type="color" class="themeConfig speaker-color" name="subtitles.color.0">
+                                            <input type="color" class="themeConfig speaker-color" name="subtitles.color.1">
+                                            <input type="color" class="themeConfig speaker-color" name="subtitles.color.2">
+                                        </div>
+                                    </div>
+                                    <!-- Caption/Text -->
                                     <div id="design-caption" class="design-block">
                                         <div class="heading">
                                             <div class="title">Text</div>
@@ -1148,6 +1127,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- Size -->
                                     <div id="design-size" class="design-block">
                                         <div class="heading">
                                             <div class="title">Output Size</div>

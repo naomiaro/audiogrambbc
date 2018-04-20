@@ -1626,6 +1626,22 @@ button#view i{
   top: -1px;
 }
 
+#design-subtitles .body button {
+  margin-right: 5px;
+}
+#design-subtitles .color-label {
+  font-family: ReithSans;
+  font-weight: bold;
+  font-size: 13px;
+  margin-right: 5px;
+  position: relative;
+  top: -2px;
+  line-height: 26px;
+}
+#design-subtitles .speaker-color {
+  display: inline-block;
+}
+
 /* THEMES MODAL */
 .modal .modal-header {
   font-family: ReithSans;

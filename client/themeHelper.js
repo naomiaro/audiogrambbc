@@ -402,6 +402,10 @@ function apply(theme, cb) {
     transcript.format();
     ui.windowResize();
     preview.theme(theme);
+    jQuery(".design-block button.button-prompt").each(function(){
+        var val = jQuery(this).find('input').val();
+        jQuery(this).find('span').text(val);
+    });
     cb(null);
 }
 
@@ -507,7 +511,8 @@ function selectTheme() {
 }
 
 function init(cb) {
-    d3.selectAll('.themeConfig').on('change', updateThemeConfig);
+    // d3.selectAll('.themeConfig').on('change', updateThemeConfig);
+    jQuery(document).on("change", ".themeConfig", updateThemeConfig);
     d3.selectAll('#theme-reset').on('click', themeReset);
     d3.selectAll('#theme-save').on('click', themeSave);
     jQuery(document).on('click', '#section-design .design-block .heading', function(e){

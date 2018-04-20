@@ -222,7 +222,7 @@ function format() {
     var firstWord = jQuery('.transcript-word:not(.unused):first');
     var lastWord = jQuery('.transcript-word:not(.unused):last');
     var maxChar = +jQuery("input[name='subtitles.lineWidth']").val();
-    var maxLines = +jQuery("input[name='subtitles.linesMax']").val();
+    var maxLines = +jQuery("select[name='subtitles.linesMax']").val();
     jQuery(".transcript-block").each(function () {
         var charCount = 0;
         var lineCount = 1;

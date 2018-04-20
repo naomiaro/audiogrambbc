@@ -113,6 +113,18 @@ function init(cb) {
     sizeSliders();
     d3.select('#group-theme-advanced button').on('click', showAdvancedConfig);
     d3.select(window).on("resize", windowResize);
+    jQuery(document).on("click", "button.button-prompt", function (e) {
+        var label = jQuery(this).find("b").text();
+        var val = jQuery(this).find("span").text();
+        var newVal = prompt(label, val);
+        if (newVal == undefined) return;
+        jQuery(this).find("span").text(newVal);
+        jQuery(this).find("input").val(newVal).trigger('change');
+    });
+    jQuery(document).on("change", "button.button-prompt input", function(){
+        var val = jQuery(this).val();
+        jQuery(this).parent().find('span').text(val);
+    });
     windowResize();
     return cb(null);
 }
