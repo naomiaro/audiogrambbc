@@ -67,6 +67,7 @@ function windowResize() {
             var target = Math.min(current, Math.max(min, full));
             jQuery('.transcript-editor').css('height', target);
         }
+        sizeSliders();
     }
 }
 

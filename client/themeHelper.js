@@ -5,19 +5,18 @@ var ui = require('./ui');
 var transcript = require("./transcript");
 var logger = require("./slack");
 
+var defaultTheme = require('../settings/theme_default');
+
 var themesRaw = {};
 function _raw(_) {
     return arguments.length ? (themesRaw = _) : themesRaw;
 }
 
 function themeReset() {
-    var themes = themesRaw,
-        theme = preview.theme(),
-        name = jQuery('#input-theme').val();
-    var sel = jQuery('#input-theme').get(0);
-    d3.select(sel.options[sel.selectedIndex]).datum(themes[theme.name]);
+    var current = preview.theme();
+    updateImage();
     preview.imgInfo(null);
-    update(themes[name]);
+    update(themesRaw[current.id]);
 }
 
 function themeSave() {
@@ -110,7 +109,6 @@ function overlayType() {
         webcap.use();
     } else if (type == "history") {
         var url = jQuery("#input-foreground-type option[value='history']").attr('data-src');
-        console.log(url);
         if (!LOADING) media.loadFromURL('foreground', url, function () { });
     } else {
         if (!LOADING) updateImage(null, 'foreground');
@@ -123,12 +121,11 @@ function backgroundType() {
     if (type == "source") {
         useVideoAsBackground();
     } else if (type == "file") {
-        jQuery("#input-background").show().click();
+        jQuery("#input-background").show();
     } else if (type == "pid") {
         jQuery("#input-image-pid").show().click();
     } else if (type == "history") {
         var url = jQuery("#input-background-type option[value='history']").attr('data-src');
-        console.log(url);
         if (!LOADING) media.loadFromURL('background', url, function(){});
     } else {
         if (!LOADING) updateImage(null, 'background');
@@ -162,7 +159,6 @@ function loadImagePid() {
 function useVideoAsBackground() {
     d3.select('#loading-message').text('Loading video...');
     utils.setClass('loading');
-    $('#videoload a').attr('data-used', true);
     var sourceBlob = media.blobs('audio');
     if (sourceBlob && sourceBlob.type.startsWith('video')) {
       updateImage("useVideoAsBackground", "background", sourceBlob, function() {
@@ -170,11 +166,9 @@ function useVideoAsBackground() {
         logger.info(USER.name + " used their audio source file as the background video");
       });
     } else {
-      var id = $("#videoload a").attr("data-id");
       var mediaSelector = require("./mediaSelector");
       mediaSelector.poll(id, "video", { processStart: performance.now() });
     }
-    d3.select('#videoload').classed('hidden', true);
 }
 
 
@@ -269,7 +263,6 @@ function updateCaption(value) {
 d3.select("#input-caption").on("change keyup", updateCaption);
 
 function loadThemeImages(theme, cb) {
-    console.log("$ loadThemeImages", theme);
     if (!theme.backgroundImage && !theme.foregroundImage) {
         return cb(null, theme);
     }
@@ -313,19 +306,18 @@ function loadThemeImages(theme, cb) {
         });
     }
 
-    // Update raw themes
-    themesRaw[theme.id].backgroundImageFile = theme.backgroundImageFile;
-    themesRaw[theme.id].backgroundImageInfo = theme.backgroundImageInfo;
-    themesRaw[theme.id].foregroundImageFile = theme.foregroundImageFile;
 
     // Finished loading this theme
     imageQueue.await(function(err) {
+        // Update raw themes
+        themesRaw[theme.id].backgroundImageFile = theme.backgroundImageFile;
+        themesRaw[theme.id].backgroundImageInfo = theme.backgroundImageInfo;
+        themesRaw[theme.id].foregroundImageFile = theme.foregroundImageFile;
         return cb(err, theme);
     });
 }
 
 function initialiseTheme(theme, cb) {
-  console.log("$ initialiseTheme", theme);
   if (!themesRaw[theme.id]) {
     // Initialise theme
     var themeStr = JSON.stringify(theme);
@@ -337,39 +329,39 @@ function initialiseTheme(theme, cb) {
 }
 
 function update(theme, cb) {
-    console.log("$ update", theme);
+    theme = jQuery.extend(true, JSON.parse(JSON.stringify(defaultTheme)), theme);
+    theme.id = theme.id || theme.name;
+    var dispName = theme.name.slice(0, 60);
+    if (theme.name.length > dispName.length) dispName = dispName.trim() + '...';
+    jQuery("#theme-change span").text(dispName);
     initialiseTheme(theme, function (err, theme) {
-        console.log('THEME UPDATE 1', err);
         if (err || !theme) {
-            console.log('THEME UPDATE 3', err);
             console.error(err || "Error initialising theme");
-            cb(err);
+            if (cb) return cb(err);
         };
         apply(theme, function(err){
-            console.log('THEME UPDATE 2', err);
-            cb(err);
+            if (cb) return cb(err);
         });
     })
 }
 
 function apply(theme, cb) {
-    console.log("$ apply", theme);
-    if (theme && themesRaw[theme.id]) {
-        theme.backgroundImageFile = jQuery.extend(true, {}, themesRaw[theme.id].backgroundImageFile);
-        theme.backgroundImageInfo = jQuery.extend(true, {}, themesRaw[theme.id].backgroundImageInfo);
-        theme.foregroundImageFile = jQuery.extend(true, {}, themesRaw[theme.id].foregroundImageFile);
+    if (!theme) {
+        var err = "No theme defined";
+        console.warn(err);
+        return cb(err);
     }
-    var sel = jQuery('#input-theme').get(0);
-    var theme = theme || d3.select(sel.options[sel.selectedIndex]).datum();
+    if (theme && themesRaw[theme.id]) {
+        theme.backgroundImageFile = themesRaw[theme.id].backgroundImageFile;
+        theme.backgroundImageInfo = themesRaw[theme.id].backgroundImageInfo;
+        theme.foregroundImageFile = themesRaw[theme.id].foregroundImageFile;
+    }
     preview.theme(theme);
     updateImage();
     if (theme.caption) {
         var caption = theme.caption.text || '';
         updateCaption(caption);
     }
-    $('#videoload a[data-used=true]')
-        .parent()
-        .removeClass('hidden');
     // Reset custom config fields
     jQuery('.themeConfig').each(function() {
         if (this.name != 'size') {
@@ -384,10 +376,6 @@ function apply(theme, cb) {
             }
         }
     });
-    // Force sizes if theme doesn't support all of them
-    // jQuery("#input-size [data-orientation='landscape']").attr('disabled', (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.landscape) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.landscape) ? true : false);
-    // jQuery("#input-size [data-orientation='square']").attr('disabled', (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.square) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.square) ? true : false);
-    // jQuery("#input-size [data-orientation='portrait']").attr('disabled', (themesRaw[theme.name].backgroundImage && !themesRaw[theme.name].backgroundImage.portrait) || (themesRaw[theme.name].foregroundImage && !themesRaw[theme.name].foregroundImage.portrait) ? true : false);
     jQuery('#input-size').val(jQuery("#input-size option[data-orientation='" + theme.orientation + "']:not(':disabled'):first").val());
     if (jQuery('#input-size option:selected').is(':disabled')) {
         jQuery('#input-size').val(jQuery("#input-size option:not(':disabled'):first").val());
@@ -406,35 +394,19 @@ function apply(theme, cb) {
         jQuery('.caption-slider[name=vertical]').slider('values', [theme.caption.margin.vertical * 100]);
         jQuery('.caption-slider[name=horizontal]').slider('values', [theme.caption.margin.horizontal * 100]);
     }
-    // Show options for settings not specified in theme
-    if (theme.name == 'Custom') {
-        ui.showAdvancedConfig();
-    } else {
-        d3.select('#row-background').classed('hidden', theme.raw.backgroundImage);
-        d3.select('#row-wave').classed('hidden', theme.raw.wave || theme.raw.pattern == 'none');
-        d3.select('#row-caption').classed('hidden', !(theme.raw.caption && theme.raw.caption.hasOwnProperty('text')));
-        d3.selectAll('.row.caption-advanced').classed('hidden', !jQuery('#section-theme').hasClass('advanced'));
-        d3.selectAll('.row.background-advanced').classed('hidden', !jQuery('#section-theme').hasClass('advanced'));
-        d3.select('#row-subs-alias').classed('hidden', !jQuery('#section-theme').hasClass('advanced'));
-        // Show "advanced" button, if some rows are still hidden
-        d3.select('#row-theme').classed('advanced', jQuery('#section-theme > .row:not(:visible)').length);
-        d3.select('#config-save').classed('hidden', !jQuery('#section-theme').hasClass('advanced'));
-        d3.select('#row-foreground').classed('hidden', !jQuery('#section-theme').hasClass('advanced'));
-        if ($('#row-foreground:visible').length) {
-            jQuery('#input-webcap').val('');
-            webCapList();
-        }
-    }
+    // Reset UI
+    jQuery("#input-background-type").val(theme.backgroundImage ? "default" : "file");
+    jQuery("#input-overlay-type").val("default");
+    jQuery("#input-pattern").val(theme.pattern);
     updateDesignTab();
     transcript.format();
-    ui.windowResize(); // Bcause sometimes it makes the vertical scroll-bar appear, and elements need resizing
+    ui.windowResize();
     preview.theme(theme);
     cb(null);
 }
 
 function updateThemeConfig() {
     preview.themeConfig(this.name, this.type == 'checkbox' ? this.checked : this.value);
-    // if (this.name == 'subtitles.enabled') d3.select('#transcript-pane').classed('hidden', !this.checked);
     if (this.name.includes('subtitles')) {
         transcript.format();
         preview.redraw();
@@ -448,21 +420,23 @@ function updateDesignSummaries() {
     var metadata = media.get('background');
     var isVideo = metadata ? metadata.mimetype ? metadata.mimetype.startsWith('video') : metadata.name.endsWith('mp4') : false;
     if (type == 'file') {
-        summary = isVideo ? "Video" : "Image";
-        summary += ": " + metadata.name;
+        summary = metadata ? isVideo ? "Video" : "Image" : "None";
+        if (metadata) summary += ": " + metadata.name;
     } 
     if (type == 'pid') {
-        summary += ": " + jQuery('#input-image-pid').attr('data-pid');
+        var pid = jQuery("#input-image-pid").attr("data-pid");
+        if (pid) summary += ": " + pid;
     }
     if (type == 'history') {
         summary = "Loaded from version history";
     }
-    jQuery('#design-background .summary').text(summary);
+    jQuery('#design-background .summary').text(utils.trimText(summary, 50));
     // Overlay
     var type = jQuery('#input-overlay-type').val();
     var summary = jQuery('#input-overlay-type option[value="' + type + '"]').text();
     if (type == 'file') {
-        summary = "Image: " + media.get('foreground').name;
+        var metadata = media.get('foreground');
+        summary = metadata ? "Image: " + metadata.name : "None";
     }
     if (type == 'webcap') {
         summary += ": " + jQuery("#input-webcap").val();
@@ -470,11 +444,11 @@ function updateDesignSummaries() {
     if (type == 'history') {
         summary = "Loaded from version history";
     }
-    jQuery('#design-overlay .summary').text(summary);
+    jQuery('#design-overlay .summary').text(utils.trimText(summary, 50));
     // Waveform
     var type = jQuery('#input-pattern').val();
     var summary = jQuery('#input-pattern option[value="' + type + '"]').text();
-    jQuery('#design-waveform .summary').text(summary);
+    jQuery('#design-waveform .summary').text(utils.trimText(summary, 50));
     // Text
     var text = jQuery('#input-caption').val().replace(/(\n)+/g, ' ');
     if (text.trim().length) {
@@ -483,11 +457,11 @@ function updateDesignSummaries() {
     } else {
         var summary = "None";
     }
-    jQuery('#design-caption .summary').text(summary);
+    jQuery('#design-caption .summary').text(utils.trimText(summary, 50));
     // Size
     var type = jQuery('#input-size').val();
     var summary = jQuery('#input-size option[value="' + type + '"]').text();
-    jQuery('#design-size .summary').text(summary);
+    jQuery('#design-size .summary').text(utils.trimText(summary, 50));
 }
 
 function updateDesignTab() {
@@ -505,13 +479,10 @@ function loadThemeList(cb) {
             console.log("Error fetching themes", data.error);
             return cb(data.error);
         }
-        console.log(data);
         data.themes.forEach(function(theme){
-            console.log(theme);
             var id = theme.id;
             var name = theme.name;
             if (id && name && name !== "default" && name !== "Custom") {
-                console.log('theme >', id);
                 var clone = jQuery("#themes .theme.template:first").clone();
                 jQuery("#themes .themes").append(clone);
                 clone.removeClass("template");
@@ -527,11 +498,8 @@ function loadThemeList(cb) {
 
 function selectTheme() {
     var themeId = jQuery(this).attr('data-id');
-    console.log("$ selectTheme", themeId);
     jQuery.getJSON("/themes/config/" + themeId, function(data) {
-        console.log("$ getJSON", data);
         if (data.error) return console.log(data.error);
-        console.log('Selected theme...', themeId);
         jQuery('.modal').modal('hide');
         jQuery('#input-theme').val(themeId);
         update(data.config);
@@ -542,7 +510,6 @@ function init(cb) {
     d3.selectAll('.themeConfig').on('change', updateThemeConfig);
     d3.selectAll('#theme-reset').on('click', themeReset);
     d3.selectAll('#theme-save').on('click', themeSave);
-    d3.select('#videoload a').on('click', useVideoAsBackground);
     jQuery(document).on('click', '#section-design .design-block .heading', function(e){
         jQuery("#section-design .design-block .heading").not(this).each(function(){
             jQuery(this).parent().find('.body').slideUp();
@@ -564,6 +531,7 @@ function init(cb) {
 module.exports = {
     raw: _raw,
     update,
+    updateDesignTab,
     reset: themeReset,
     updateImage,
     updateDesignSummaries,

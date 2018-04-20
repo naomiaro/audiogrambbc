@@ -93,10 +93,6 @@ function update(blob, cb) {
             if (!blob) logger.info( USER.name + ' uploaded a local audio file: ' + filename );
             if (cb) cb(null);
         }
-        if (!blob && audioFile.type.startsWith('video')) {
-            jQuery('#videoload a').attr('data-used', false);
-            jQuery('#videoload').removeClass('hidden');
-        }
     });
 }
 

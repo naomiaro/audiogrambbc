@@ -30,8 +30,8 @@ function save(req, res) {
       fs.copySync(backgroundPath, dest);
       newTheme.backgroundImage = filename;
     }
-  } else if (newTheme.backgroundImage && newTheme.backgroundImage.landscape) {
-    newTheme.backgroundImage = newTheme.backgroundImage.landscape;
+  } else if (newTheme.backgroundImage) {
+    newTheme.backgroundImage = newTheme.backgroundImage.landscape || newTheme.backgroundImage;
   } else {
     delete newTheme.backgroundImage;
   }
@@ -44,8 +44,8 @@ function save(req, res) {
       fs.copySync(foregroundPath, dest);
       newTheme.foregroundImage = filename;
     }
-  } else if (newTheme.foregroundImage && newTheme.foregroundImage.landscape) {
-    newTheme.foregroundImage = newTheme.foregroundImage.landscape;
+  } else if (newTheme.foregroundImage) {
+    newTheme.foregroundImage = newTheme.foregroundImage.landscape || newTheme.foregroundImage;
   } else {
     delete newTheme.foregroundImage;
   }

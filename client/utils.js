@@ -51,6 +51,11 @@ function formatHMS(t, round) {
   return string;
 }
 
+function trimText(text, length) {
+  if (!length || text.length <= length) return text;
+  return text.slice(0, length).trim() + "...";
+}
+
 function getSeconds(hms){
   if (!hms) return 0;
   if (!hms.includes(':')) {
@@ -234,17 +239,18 @@ function stats(type, metric, value, sampleRate) {
 }
 
 module.exports = {
-    setClass,
-    offline,
-    getURLParams,
-    stopIt,
-    pad,
-    error,
-    setBreadcrumb,
-    statusMessage,
-    navigate,
-    tooltips,
-    stats,
-    formatHMS,
-    getSeconds
-}
+  setClass,
+  offline,
+  getURLParams,
+  stopIt,
+  pad,
+  error,
+  setBreadcrumb,
+  statusMessage,
+  navigate,
+  tooltips,
+  stats,
+  formatHMS,
+  getSeconds,
+  trimText
+};

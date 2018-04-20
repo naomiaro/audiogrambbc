@@ -60,9 +60,6 @@ function txSearch() {
             if (data.error) {
                 return utils.setClass('error', data.error);
             }
-            $('#videoload a').attr('data-id', data.video);
-            $('#videoload a').attr('data-used', false);
-            d3.select('#videoload').classed('hidden', data.video == null);
             MSID = data.audio;
             txPoll(data.audio, "audio", postData);
         });

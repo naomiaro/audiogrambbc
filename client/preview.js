@@ -186,27 +186,27 @@ function redraw(overrideSubs) {
     renderer.bbcDog(bbcDog || null);
     
     // Render images
-    var foreground = img.foreground ? img.foreground : theme.foregroundImageFile ? theme.foregroundImageFile[theme.orientation] : null;
+    var foreground = img.foreground ? img.foreground : theme.foregroundImageFile ? theme.foregroundImageFile : null;
     if (jQuery('#input-overlay-type').val() == 'none') foreground = null;
-    var background = img.background ? img.background : theme.backgroundImageFile ? theme.backgroundImageFile[theme.orientation] : null;
+    var background = img.background ? img.background : theme.backgroundImageFile ? theme.backgroundImageFile : null;
     renderer.foregroundImage(jQuery.isEmptyObject(foreground) ? null : foreground);
     renderer.backgroundImage(jQuery.isEmptyObject(background) ? null : background);
         
+    var start = selection ? selection.start : 0;
+    var end = selection ? selection.end : Infinity;
     var subtitles = overrideSubs || transcript.toSubs();
     if (audio.isPlaying()) {
         var time = audio.currentTime();
+        time -= start;
     } else if (subtitles[0]) {
         var time = subtitles[0].start;
     }
-    var start = selection ? selection.start : 0;
-    var end = selection ? selection.end : Infinity;
-    time -= start;
 
     renderer.drawFrame(context, {
         caption: theme.caption.text,
         subtitles,
         waveform: sampleWave,
-        backgroundInfo: (img.background && imgInfo.background ? imgInfo.background : theme.backgroundImageInfo ? theme.backgroundImageInfo[theme.orientation] : null),
+        backgroundInfo: (img.background && imgInfo.background ? imgInfo.background : theme.backgroundImageInfo ? theme.backgroundImageInfo : null),
         preview: true,
         start,
         end,

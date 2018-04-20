@@ -502,7 +502,7 @@ function toJSON() {
                 }
                 jQuery(this).find(".transcript-word").each(function () {
                     var text = jQuery(this).text();
-                    var start = +jQuery(this).attr('data-start');
+                    var start = Math.max(+jQuery(this).attr('data-start'), 0);
                     var end = +jQuery(this).attr('data-end');
                     var orig = jQuery(this).attr('data-text');
                     var word = {text, orig, start, end};

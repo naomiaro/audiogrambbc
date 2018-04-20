@@ -11,6 +11,7 @@ media/
 *.iml
 dump.rdb
 settings/themes.json.bk*
+settings/themes/*
 webcap/*
 vcs/*
 png/*

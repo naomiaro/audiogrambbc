@@ -1,0 +1,68 @@
+{
+  "width": 1280,
+  "height": 720,
+  "framesPerSecond": 15,
+  "maxDuration": 300,
+  "samplesPerFrame": 128,
+  "pattern": "wave",
+  "wave": {
+    "color": "#AE0003",
+    "height": 0.28,
+    "width": 1,
+    "y": 0.5,
+    "x": 0.5
+  },
+  "foregroundColor": "#AE0003",
+  "subtitles": {
+    "enabled": true,
+    "lineWidth": "40",
+    "align": "center",
+    "valign": "middle",
+    "margin": {
+      "vertical": 0.8,
+      "horizontal": 0.5
+    },
+    "box": {
+      "opacity": "0.6",
+      "color": "#000000"
+    },
+    "font": "HelveticaNeue",
+    "fontSize": "45",
+    "fontWeight": "Medium",
+    "color": ["#ffffff", "#ebec00", "#ff0000"],
+    "stroke": {
+      "color": "#000000",
+      "width": "5"
+    },
+    "linesMax": 2,
+    "lineSpacing": 10
+  },
+  "caption": {
+    "margin": {
+      "vertical": 0.5,
+      "horizontal": 0.5
+    },
+    "top": 0.5,
+    "left": 0,
+    "right": 1,
+    "font": "HelveticaNeue",
+    "fontSize": 50,
+    "fontWeight": "Medium",
+    "color": "#ffffff",
+    "align": "center",
+    "valign": "middle",
+    "lineHeight": 52,
+    "lineSpacing": 7
+  },
+  "backgroundPosition": {
+    "width": 1,
+    "height": 1,
+    "x": 0,
+    "y": 0,
+    "align": {
+      "y": "middle",
+      "x": "center"
+    }
+  },
+  "backgroundColor": "#eee"
+}
