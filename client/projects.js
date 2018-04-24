@@ -43,7 +43,7 @@ function newProject(e) {
   if (!type) return false;
   utils.stats("increment", `user_activity.new.${type}`);
   if (type == "upload") {
-    jQuery("#input-audio").click();
+    jQuery("#input-audio").trigger('click');
   } else {
     if (type == "vcs") {
         vcs.updateList();

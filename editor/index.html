@@ -443,6 +443,7 @@
                     </div>
                 </div>
                 <!-- Local upload -->
+                <input type="file" id="input-audio" style="position: absolute; z-index: -999; opacity: 0;">
                 <div data-type="upload" class="col-md-6 col-xs-12">
                     <div class="info-box">
                         <span class="box-icon" style="background: #e6e6e6 url(images/upload.png)">&nbsp;</span>
@@ -1149,9 +1150,9 @@
                             <div class="col-md-6">
                                 <div class="btn-group">
                                     <button type="button" id="submit" class="right">
-                                        <i class="fa fa-film"></i>Generate Audiogram</button>
-                                    <button type="button" id="view" class="right">
-                                        <i class="fa fa-film"></i>View Audiogram</button>
+                                        <i class="fa fa-film"></i>Generate Audiogram
+                                    </button>
+                                    <div id="cancel">Cancel</div>
                                 </div>
                             </div>
                         </div>
