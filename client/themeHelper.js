@@ -516,12 +516,20 @@ function init(cb) {
     d3.selectAll('#theme-reset').on('click', themeReset);
     d3.selectAll('#theme-save').on('click', themeSave);
     jQuery(document).on('click', '#section-design .design-block .heading', function(e){
+        var body = jQuery(this).parent().find('.body');
+        var isOpening = !body.is(':visible');
         jQuery("#section-design .design-block .heading").not(this).each(function(){
             jQuery(this).parent().find('.body').slideUp();
             jQuery(this).find(".fa-minus").hide();
             jQuery(this).find(".fa-plus").show();
         });
-        jQuery(this).parent().find('.body').slideToggle();
+        jQuery(".design-block input[type=color]").fadeTo(0, 0);
+        if (isOpening) {
+            setTimeout(() => {
+                body.find("input[type=color]").fadeTo(200, 1);
+            }, 200);
+        }
+        body.slideToggle(400);
         jQuery(this).find(".fa-minus").toggle();
         jQuery(this).find(".fa-plus").toggle();
     });

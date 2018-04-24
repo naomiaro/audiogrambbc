@@ -1092,7 +1092,7 @@
                                         <div class="body" style="display: none;">
                                             <textarea id="input-caption" name="caption" lass="form-control" cols="30" rows="2" style="height: 52px; min-height: 0!important; width: 100%"></textarea>
                                             <hr>
-                                            <button class="button-select" style="margin: -5px -3px 0 0;">
+                                            <button class="button-select">
                                                 <label>Weight:</label>
                                                 <select class="themeConfig" name="caption.fontWeight">
                                                     <option>Regular</option>
@@ -1100,7 +1100,11 @@
                                                     <option>Bold</option>
                                                 </select>
                                             </button>
-                                            <input id="input-caption-size" name="caption.fontSize" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
+                                            <button class="button-prompt" style="margin: 0 10px 0 7px;">
+                                                <b>Font Size:</b>
+                                                <span>0</span>
+                                                <input type="hidden" class="themeConfig" name="caption.fontSize">
+                                            </button>
                                             <input type="color" class="themeConfig" name="caption.color">
                                             <hr>
                                             <div class="slider-wrapper">
