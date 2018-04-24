@@ -70,7 +70,6 @@ jQuery(function () {
   initQueue.defer(themeHelper.init);
 
   initQueue.await(function (err) {
-    console.log('AAAAAAAAA');
     if (err) return console.error(err);
     load();
   });
@@ -80,7 +79,7 @@ jQuery(function () {
 function load(){
   // Load theme list
   themeHelper.loadThemeList(function (err) {
-    console.log('THEMES ALL LOADED', err);
+    // console.log('THEMES ALL LOADED', err);
   });
   // Tooltips
   utils.tooltips();
