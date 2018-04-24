@@ -102,7 +102,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
+                        <button type="button" class="left" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -156,8 +156,8 @@
                                 </table>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
-                                <button id="png-import" type="button" class="btn btn-primary">Import</button>
+                                <button type="button" class="left" data-dismiss="modal">Close</button>
+                                <button id="png-import" type="button" class="btn-bold">Import</button>
                             </div>
                         </div>
                     </div>
@@ -239,8 +239,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
-                                <button id="vcs-import" type="button" class="btn btn-primary">Import</button>
+                                <button type="button" class="left" data-dismiss="modal">Close</button>
+                                <button id="vcs-import" type="button" class="btn-bold">Import</button>
                             </div>
                         </div>
                     </div>
@@ -436,8 +436,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
-                                <button id="tx-search" type="button" class="btn btn-primary">Import</button>
+                                <button type="button" class="left" data-dismiss="modal">Close</button>
+                                <button id="tx-search" type="button" class="btn-bold">Import</button>
                             </div>
                         </div>
                     </div>
@@ -508,7 +508,7 @@
                             <div id="version-history-body" style="padding-top: 15px;"></div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
+                            <button type="button" class="left" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
@@ -638,51 +638,6 @@
 
                 <div class="col-md-7">
 
-                    <div id="sourceWrapper" class="hidden">
-                        <ul class="nav nav-tabs">
-                            <li class="active">
-                                <a href="#source-tab-vcs" data-toggle="tab">VCS Item</a>
-                            </li>
-                            <li>
-                                <a href="#source-tab-tx" data-toggle="tab">Broadcast</a>
-                            </li>
-                            <li>
-                                <a href="#source-tab-upload" data-toggle="tab">File Upload</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="source-tab-vcs">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label class="settings" for="input-vcs">VCS Item ID Number:</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <div class="input-group">
-                                            <input id="input-vcs" type="text" placeholder="00000" class="form-control" name="vcs" value="" />
-                                            <span class="input-group-btn">
-                                                <button id="vcs-search" class="btn btn-secondary" type="button">Import</button>
-                                            </span>
-                                        </div>
-                                        <div id="vcs-results" class="hidden"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="source-tab-tx">
-
-                            </div>
-                            <div class="tab-pane" id="source-tab-upload">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label class="settings" for="input-audio">Audio/Video File:</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input id="input-audio" name="audio" type="file" accept="audio/*,video/mp4" style="width: 100%" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
                     <div id="editor-wrapper">
                         <ul class="nav nav-tabs">
                             <li class="active">
@@ -1173,19 +1128,6 @@
                         </div>
                     </section>
 
-                    <section id="config-save" class="well hidden" style="border: none;">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <button type="button" id="theme-reset-old" class="btn btn-sm btn-block btn-secondary right">
-                                    <i class="fa fa-undo"></i> Reset Formatting</button>
-                            </div>
-                            <div class="col-md-6">
-                                <button type="button" id="theme-save-old" class="btn btn-sm btn-block btn-secondary right">
-                                    <i class="fa fa-save"></i> Save Theme</button>
-                            </div>
-                        </div>
-                    </section>
-
                     <section class="well" style="box-shadow: none;">
                         <div style="text-align: right;">
                             <button id="input-title" style="margin-right: 5px;">
@@ -1244,36 +1186,28 @@
             </section>
             <section class="well">
                 <div class="btn-group">
-                    <button id="return" type="button" class="left btn btn-secondary">
-                        <i class="fa fa-edit"></i>Return to editor
+                    <button type="button" id="return">
+                        Return to editor
                     </button>
-                    <div style="float: right;">
-                        <div style="float: left;">
-                            <button data-toggle="modal" href="#sharing" class="btn-primary btn" type="button" aria-expanded="false">
-                                Sharing
-                            </button>
-                        </div>
-                        <div id="download-btns" class="dropdown-button btn-group btn-group" style="width: auto; margin-left: 10px">
-                            <a href="#" class="btn btn-primary download-video">Download</a>
-                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-primary btn-primary dropdown-toggle" type="button">
-                                <span class="caret"></span>
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <ul role="menu" class="dropdown-menu">
-                                <li>
-                                    <a class="download-video" href="#">
-                                        <strong>Video (MP4)</strong>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="download-srt" href="#">Facebook Subtitles (SRT)</a>
-                                </li>
-                                <li>
-                                    <a class="download-ebu" href="#">BBC Subtitles (EBU-TT-D)</a>
-                                </li>
-                            </ul>
-                        </div>
+                    <div style="margin-left: 5px; position: relative; float: right;">
+                        <button type="button" data-toggle="dropdown" aria-expanded="false" style="border-color: #777">
+                            <i class="fa fa-file-text-o"></i><b>Download</b>
+                        </button>
+                        <ul id="download-btns" class="dropdown-menu" role="menu">
+                            <li role="presentation">
+                                <a class="download-video" role="menuitem" href="#"><b>Video (MP4)</b></a>
+                            </li>
+                            <li role="presentation">
+                                <a class="download-srt" role="menuitem" href="#">Facebook Subtitles (SRT)</a>
+                            </li>
+                            <li role="presentation">
+                                <a class="download-ebu" role="menuitem" href="#">BBC Subtitles (XML EBU-TT-D)</a>
+                            </li>
+                        </ul>
                     </div>
+                    <button data-toggle="modal" href="#sharing" type="button" aria-expanded="false" style="float: right;">
+                        Sharing
+                    </button>
                 </div>
             </section>
         </div>
@@ -1286,7 +1220,7 @@
                         <h4 class="modal-title">Sharing Settings</h4>
                     </div>
                     <div class="modal-body" style="background: #eee;">
-                        <p style='font-weight: bold;'>
+                        <p style='font-weight: bold; font-family: ReithSans'>
                             <i class='fa fa-link'></i> Link to video
                         </p>
                         <div class="row">
@@ -1298,13 +1232,13 @@
                             </div>
                         </div>
                         <hr style="border-color: #aaa">
-                        <p style='font-weight: bold;'>
+                        <p style='font-weight: bold; font-family: ReithSans'>
                             <i class='fa fa-users'></i> Editing rights
                         </p>
                         <label class="intGEL-arrow" for="sharing-private">
                             <select id="sharing-private" class="form-control" style="width: 100%; background: #fff;">
-                                <option value="0">Public - all users can see/edit this audiogram</option>
-                                <option value="1">Private - only you can see/edit this audiogram</option>
+                                <option value="0">Public - visible in the logstore to all users</option>
+                                <option value="1">Private - only visible in the logstore to you, but accesible to all with a direct link</option>
                             </select>
                         </label>
                         <div style="font-style: italic; font-size: 0.75em; margin-top: 5px; text-align: center;">
@@ -1312,7 +1246,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
+                        <button type="button" class="left" data-dismiss="modal">Close</button>
                         <div id="sharing-spinner" style="float: right; line-height: 32px; display: none;">
                             <i class="fa fa-spinner fa-spin"></i>
                         </div>
@@ -1344,10 +1278,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
-                        <div id="sharing-spinner" style="float: right; line-height: 32px; display: none;">
-                            <i class="fa fa-spinner fa-spin"></i>
-                        </div>
+                        <button type="button" class="left" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

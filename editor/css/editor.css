@@ -33,6 +33,10 @@
   border: none;
 }
 
+button.btn-bold {
+  font-weight: bold;
+  border-color: #777;
+}
 
 #progressbar {
   margin-bottom: 30px;
