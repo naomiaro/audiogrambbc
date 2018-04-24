@@ -7173,6 +7173,11 @@ header a, header a:focus, header a:hover, header a:visited {
     text-decoration: none
 }
 
+header #header-home {
+    cursor: pointer;
+    display: inline-block;
+}
+
 header .ag-logo {
     height: 40px;
     border: 2px solid #fff;

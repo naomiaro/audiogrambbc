@@ -108,6 +108,9 @@ function sizeSliders() {
 }
 
 function init(cb) {
+    jQuery(document).on("click", "#header-home", function () {
+        window.location.href = '/';
+    });
     initializeSliders();
     sizeButtonSelect();
     sizeSliders();
