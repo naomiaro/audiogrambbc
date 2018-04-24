@@ -32,7 +32,6 @@ function _blobs(type) {
 }
 
 function loadFromURL(type, url, cb) {
-    console.log('load media', type, url);
     var blob = null;
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url);

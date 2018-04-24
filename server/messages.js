@@ -20,7 +20,6 @@ function getMessages(req, res) {
     since = !isNaN(since) ? parseInt(since) : null;
     var now = Date.parse(new Date());
 
-    console.log(since);
 
     redisClient.smembers(`audiogram:messages`, (err, messages) => {
         messages = messages.map((message) => {
@@ -29,7 +28,6 @@ function getMessages(req, res) {
         messages = _.sortBy(messages, "date").reverse();
         if (!since) {
             // Admin view
-            console.log('ADMIN');
             var ids = messages.map((message) => message.id);
             async.map(ids, fetchReadCount, (err, readCounts) => {
               messsages = messages.map((message, i) => {
@@ -39,7 +37,6 @@ function getMessages(req, res) {
             });
         } else {
             // User view
-            console.log('INCREASE');
             messages = messages.filter((message) => {
                 var date = Date.parse(message.date);
                 var expires = Date.parse(message.expire);
