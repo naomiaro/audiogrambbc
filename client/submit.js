@@ -191,6 +191,14 @@ function init(cb) {
     jQuery(document).on("click", "button#view", function() {
       utils.setBreadcrumb('view');
     });
+    jQuery(document).on("click", "#cancel", function () {
+        var path = window.location.pathname.split("/");
+        if (path[1] == 'ag') {
+            projects.load(path[2]);
+        } else {
+            window.location.href = '/';
+        }
+    });
     return cb(null);
 }
 

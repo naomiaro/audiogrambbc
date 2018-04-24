@@ -1629,6 +1629,20 @@ button#view i{
   position: relative;
   top: -1px;
 }
+#cancel {
+    display: inline;
+    float: right;
+    line-height: 23px;
+    font-size: 13px;
+    color: #777;
+    border-right: 1px solid #ccc;
+    padding-right: 10px;
+    margin: 3px 10px 3px 0;
+    cursor: pointer;
+}
+#cancel:hover {
+  color: #333;
+}
 
 #design-subtitles .body button {
   margin-right: 5px;
