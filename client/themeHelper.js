@@ -397,7 +397,9 @@ function apply(theme, cb) {
         jQuery('.caption-slider[name=horizontal]').slider('values', [theme.caption.margin.horizontal * 100]);
     }
     // Reset UI
-    jQuery("#input-background-type").val(theme.backgroundImage ? "default" : "file");
+    var metadata = media.get('audio');
+    var isVideo = metadata ? metadata.mimetype ? metadata.mimetype.startsWith('video') : metadata.name.endsWith('mp4') : false;
+    jQuery("#input-background-type").val(theme.backgroundImage ? "default" : isVideo ? "source" : "file");
     jQuery("#input-overlay-type").val("default");
     jQuery("#input-pattern").val(theme.pattern);
     updateDesignTab();
@@ -502,7 +504,7 @@ function loadThemeList(cb) {
                 clone.find(".preview img").attr("src", `/settings/themes/${id}`);
             }
         });
-        return cb(null);
+        if (cb) return cb(null);
     });
 }
 
