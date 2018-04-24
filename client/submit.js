@@ -78,7 +78,7 @@ function submitted() {
 
     formData.append('media', JSON.stringify(mediaInfo));
 
-    formData.append('backgroundInfo', JSON.stringify(backgroundInfo || theme.backgroundImageInfo[theme.orientation]));
+    formData.append('backgroundInfo', JSON.stringify(backgroundInfo || theme.backgroundImageInfo));
     if (selection.start || selection.end) {
         formData.append('start', selection.start);
         formData.append('end', selection.end);
@@ -90,9 +90,9 @@ function submitted() {
         'theme',
         JSON.stringify(
             $.extend({}, theme, {
-                backgroundImage: theme.backgroundImage ? theme.backgroundImage[theme.orientation] : null,
+                backgroundImage: theme.backgroundImage ? theme.backgroundImage : null,
                 backgroundImageFile: null,
-                foregroundImage: removeForeground ? null : theme.foregroundImage ? theme.foregroundImage[theme.orientation] : null
+                foregroundImage: removeForeground ? null : theme.foregroundImage ? theme.foregroundImage : null
             })
         )
     );

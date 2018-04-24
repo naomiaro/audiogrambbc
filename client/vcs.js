@@ -32,8 +32,9 @@ function load(file) {
     var src = encodeURIComponent(file);
     var url = "/vcs/media/" + src;
     media.loadFromURL('audio', url, function () {
-        utils.navigate('edit');
+        // utils.navigate('edit');
     });
+    jQuery('#themes.modal').modal('show');
 }
 
 function init(cb) {

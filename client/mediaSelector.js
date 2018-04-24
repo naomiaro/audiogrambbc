@@ -63,6 +63,7 @@ function txSearch() {
             MSID = data.audio;
             txPoll(data.audio, "audio", postData);
         });
+    jQuery('#themes.modal').modal('show');
 }
 
 function txPoll(id, type, req) {

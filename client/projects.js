@@ -39,11 +39,7 @@ function formatDuration(time) {
 }
 
 function newProject(e) {
-  var type = e.target
-    ? jQuery(e.target)
-        .parents("[data-type]")
-        .attr("data-type")
-    : e;
+  var type = e.target ? jQuery(e.target).parents("[data-type]").attr("data-type") : e;
   if (!type) return false;
   utils.stats("increment", `user_activity.new.${type}`);
   if (type == "upload") {
@@ -237,7 +233,7 @@ function loadProject(id) {
       media.set(data.media);
       minimap.updateTrim([data.start, data.end]);
       video.update(path.join("/video/", id + ".mp4"), data);
-      if (data.media.audio.path == data.media.background.path) {
+      if (data.media.background && data.media.audio.path == data.media.background.path) {
         jQuery("#input-background-type").val("source");
         themeHelper.updateDesignTab();
       }
@@ -262,6 +258,8 @@ function init(cb) {
     var name = jQuery('#input-audio')[0].files[0].name;
     _title(name);
     utils.navigate("new");
+    utils.setClass("loading");
+    jQuery('#themes.modal').modal('show');
   });
   jQuery(document).on("change", "#recent-filter", function(){
     utils.stats("increment", `user_activity.logstore.filter`);
@@ -284,7 +282,7 @@ function init(cb) {
     }
   });
 
-  return cb(null);
+  if (cb) return cb(null);
 }
 
 module.exports = {

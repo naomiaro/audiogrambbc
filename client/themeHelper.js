@@ -502,11 +502,19 @@ function loadThemeList(cb) {
 
 function selectTheme() {
     var themeId = jQuery(this).attr('data-id');
+    utils.setClass('loading');
+    jQuery('.modal').modal('hide');
     jQuery.getJSON("/themes/config/" + themeId, function(data) {
         if (data.error) return console.log(data.error);
-        jQuery('.modal').modal('hide');
         jQuery('#input-theme').val(themeId);
-        update(data.config);
+        update(data.config, function(){
+            var audioLoaded = media.get('audio');
+            if (audioLoaded) {
+                utils.setClass(null);
+            } else {
+                utils.setClass('loading', 'Loading audio source...');
+            }
+        });
     });
 }
 
@@ -515,6 +523,21 @@ function init(cb) {
     jQuery(document).on("change", ".themeConfig", updateThemeConfig);
     d3.selectAll('#theme-reset').on('click', themeReset);
     d3.selectAll('#theme-save').on('click', themeSave);
+    jQuery(document).on('show.bs.modal', '#themes', function (e) {
+        jQuery("#themes").addClass('active');
+    });
+    jQuery(document).on('hide.bs.modal', '#themes', function (e) {
+        jQuery("#themes").removeClass('active');
+    });
+    jQuery(document).on('shown.bs.modal', '#themes', function (e) {
+        var current = preview.theme();
+        if (!current) {
+            jQuery("#themes .modal-footer").hide();
+            jQuery("body").attr("class", "loading");
+        } else {
+            jQuery("#themes .modal-footer").show();
+        }
+    });
     jQuery(document).on('click', '#section-design .design-block .heading', function(e){
         var body = jQuery(this).parent().find('.body');
         var isOpening = !body.is(':visible');

@@ -172,7 +172,7 @@ function resize(width, height) {
 
 function redraw(overrideSubs) {
 
-    if (!jQuery("canvas").is(":visible") || document.readyState != 'complete') return;
+    if (!jQuery("canvas").is(":visible") || document.readyState != 'complete' || !theme) return;
 
     jQuery("#submit").removeClass("hidden");
     jQuery("#view").addClass("hidden");

@@ -75,7 +75,11 @@ function setClass(cl, msg, log) {
   if (jQuery('.modal').hasClass('in') && msg) {
     alert(msg);
   } else {
+    if (!cl && jQuery('#themes.modal').hasClass('active')) {
+      var bodyClass = 'loading';
+    } else {
     var bodyClass = cl || '';
+    }
     if (error) bodyClass += ' error';
     jQuery("body").attr("class", bodyClass || null);
     jQuery('#error, #success').text(msg || '');
