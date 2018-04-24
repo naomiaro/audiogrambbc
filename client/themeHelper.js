@@ -13,16 +13,18 @@ function _raw(_) {
 }
 
 function themeReset() {
-    var current = preview.theme();
-    updateImage();
-    preview.imgInfo(null);
-    update(themesRaw[current.id]);
+    if (confirm("Reset design to theme defaults?")) {
+        var current = preview.theme();
+        updateImage();
+        preview.imgInfo(null);
+        update(themesRaw[current.id]);
+    }
 }
 
 function themeSave() {
     var theme = preview.theme();
     // Prompt for theme name
-    var newName = prompt('Save theme with these settings.\nNOTE: The theme will be public to all users.\n\nEnter a theme name.\nUsing an existing theme name will overwrite that theme.', theme.name);
+    var newName = prompt('Save theme with these settings.\n\nEnter a theme name.\nUsing an existing theme name will overwrite that theme.', theme.name);
     if (newName != null) {
         // Get theme config
         var body = {},
@@ -453,6 +455,10 @@ function updateDesignSummaries() {
     var type = jQuery('#input-pattern').val();
     var summary = jQuery('#input-pattern option[value="' + type + '"]').text();
     jQuery('#design-waveform .summary').text(utils.trimText(summary, 50));
+    // Subtitles
+    var currentTheme = preview.theme();
+    var unchanged = JSON.stringify(currentTheme.subtitles) == JSON.stringify(themesRaw[currentTheme.id].subtitles)
+    jQuery('#design-subtitles .summary').text(unchanged ? "Theme Default" : "Custom");
     // Text
     var text = jQuery('#input-caption').val().replace(/(\n)+/g, ' ');
     if (text.trim().length) {

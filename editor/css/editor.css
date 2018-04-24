@@ -1640,6 +1640,8 @@ button#view i{
 }
 #design-subtitles .speaker-color {
   display: inline-block;
+  position: relative !important;
+  margin-right: 5px;
 }
 
 /* THEMES MODAL */
