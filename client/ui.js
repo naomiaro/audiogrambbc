@@ -55,20 +55,112 @@ function windowResize() {
         });
         var hidden = d3.select('#minimap').classed('hidden');
         d3.select('#minimap').classed('hidden', false);
-        minimap.width(jQuery('#minimap .page-header').width());
+        minimap.width(jQuery('#minimap svg').parent().width());
         minimap.updateTrim(extent);
         d3.select('#minimap').classed('hidden', hidden);
+        // Transcript height
+        if (jQuery('.transcript-editor').is(':visible')) {
+            var current = jQuery('.transcript-editor').css('height','').outerHeight();
+            var diff = jQuery(document).height() - jQuery(window).height();
+            var full = current - diff;
+            var min = 300;
+            var target = Math.min(current, Math.max(min, full));
+            jQuery('.transcript-editor').css('height', target);
+        }
+        sizeSliders();
     }
 }
 
-function init() {
+function sizeSelectButton(btn) {
+    var label = btn.find('label');
+    var test = label.text();
+    if (!label.length) {
+        btn.prepend('&nbsp;');
+    }
+    var tmp = document.createElement("div");
+    tmp.setAttribute("class", "intGEL");
+    var clone = btn.clone();
+    jQuery(tmp).append(clone);
+    jQuery("body").append(tmp);
+    jQuery(tmp).attr('id', 'tmp');
+    var buttonWidth = clone.width();
+    var labelWidth = clone.find('label').outerWidth() || 0;
+    var selectWidth = clone.find('select').outerWidth();
+    btn.width(buttonWidth);
+    if (labelWidth) {
+        btn.find('select').css('padding-left', (labelWidth + 10) + 'px');
+        btn.find('select').css('margin-left', -(labelWidth + 10) + 'px');
+    }
+    btn.find('select').css('width', '100%');
+    jQuery(tmp).remove();
+}
+
+function sizeSelectButtons() {
+    jQuery('body > .wrapper button.button-select').each(function(){
+        var btn = jQuery(this);
+        sizeSelectButton(btn);
+    });
+}
+
+function sizeSliders() {
+    jQuery('.slider-wrapper').each(function(){
+        var offset = 0;
+        jQuery(this).find('.ui-slider').prevAll().each(function () {
+            offset += jQuery(this).outerWidth();
+        });
+        jQuery(this).find(".ui-slider").css({ 'width': `calc(100% - ${offset + 30}px)` });;
+    });
+}
+
+function init(cb) {
+    jQuery(document).on("click", "#header-home", function () {
+        window.location.href = '/';
+    });
+    document.cookie = "username=John Doe";
+    var heroCookie = jQuery.cookie("ag_showhero");
+    var showHero = (heroCookie == 'true' || heroCookie == undefined);
+    if (heroCookie == undefined) jQuery.cookie("ag_showhero", "false");
+    console.log('SHOW HERO', heroCookie, showHero);
+    if (!showHero) {
+        jQuery('#hero, #welcome-wrapper').addClass('collapsed');
+        var current = jQuery("#welcome-toggle").text('Show More');
+    }
+    jQuery(document).on("click", "#welcome-toggle", function () {
+        var currentlyOpen = !jQuery('#hero').hasClass('collapsed');
+        jQuery('#hero, #welcome-wrapper').toggleClass('collapsed');
+        var current = jQuery(this).text();
+        var text = currentlyOpen ? 'Show More' : 'Hide'
+        jQuery(this).text(text);
+        if (currentlyOpen) {
+            jQuery.cookie("ag_showhero", "false");
+        } else {
+            jQuery.cookie("ag_showhero", "true");
+        }
+    });
     initializeSliders();
+    sizeSelectButtons();
+    sizeSliders();
     d3.select('#group-theme-advanced button').on('click', showAdvancedConfig);
     d3.select(window).on("resize", windowResize);
+    jQuery(document).on("click", "button.button-prompt", function (e) {
+        var label = jQuery(this).find("b").text();
+        var val = jQuery(this).find("span").text();
+        var newVal = prompt(label, val);
+        if (newVal == undefined) return;
+        jQuery(this).find("span").text(newVal);
+        jQuery(this).find("input").val(newVal).trigger('change');
+    });
+    jQuery(document).on("change", "button.button-prompt input", function(){
+        var val = jQuery(this).val();
+        jQuery(this).parent().find('span').text(val);
+    });
+    windowResize();
+    return cb(null);
 }
 
 module.exports = {
     init,
     showAdvancedConfig,
+    sizeSelectButton,
     windowResize
 }

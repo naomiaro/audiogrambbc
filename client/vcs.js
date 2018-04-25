@@ -32,11 +32,12 @@ function load(file) {
     var src = encodeURIComponent(file);
     var url = "/vcs/media/" + src;
     media.loadFromURL('audio', url, function () {
-        utils.navigate('edit');
+        // utils.navigate('edit');
     });
+    jQuery('#themes.modal').modal('show');
 }
 
-function init() {
+function init(cb) {
     jQuery(document).on("click", "#new-vcs tr", function (e) {
         jQuery(this)
             .find("input[name=vcs-import]")
@@ -49,6 +50,7 @@ function init() {
         load();
     });
     updateList();
+    return cb(null);
 }
 
 module.exports = {

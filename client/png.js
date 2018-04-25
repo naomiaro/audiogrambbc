@@ -28,7 +28,7 @@ function load(file) {
     });
 }
 
-function init() {
+function init(cb) {
     jQuery(document).on("click", "#new-png tr", function (e) {
         jQuery(this)
             .find("input[name=png-import]")
@@ -41,6 +41,7 @@ function init() {
         load();
     });
     updateList();
+    return cb(null);
 }
 
 module.exports = {

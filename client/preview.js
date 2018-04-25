@@ -1,4 +1,5 @@
 var d3 = require("d3"),
+    utils = require("./utils.js"),
     audio = require("./audio.js"),
     video = require("./video.js"),
     minimap = require("./minimap.js"),
@@ -98,18 +99,35 @@ minimap.onBrush(function (extent) {
         x2 -= diff / 2;
     }
 
-    transcript.highlight((selection.start || 0), (selection.end || selection.duration));
     transcript.format();
+    transcript.highlight((selection.start || 0), (selection.end || selection.duration));
+
+    var startDisp = utils.formatHMS(selection.start);
+    if (startDisp.startsWith('00:')) startDisp = startDisp.slice(3);
+    var endDisp = utils.formatHMS(selection.end);
+    if (endDisp.startsWith('00:')) endDisp = endDisp.slice(3);
 
     d3.select("#start")
-        .property("value", Math.round(100 * (selection.start || 0)) / 100)
+        .property("value", startDisp)
         .style("left", x1 + "px");
     d3.select("#end")
-        .property("value", Math.round(100 * (selection.end || selection.duration)) / 100)
+        .property("value", endDisp)
         .style("left", x2 + "px");
 
-    d3.select("#duration strong").text(Math.round(10 * selection.duration) / 10)
+    var durationStr = utils.formatHMS(selection.duration);
+    d3.select("#duration strong").text(durationStr.slice(1))
         .classed("red", theme && theme.maxDuration && theme.maxDuration < selection.duration);
+
+    jQuery("#duration .current").text("0:00.0");
+
+    if (extent[0] == 0 && extent[1] == 1) {
+        jQuery('#minimap').removeClass('trimmed');
+        setTimeout(() => {
+            transcript.format();
+        }, 500); 
+    } else {
+        jQuery("#minimap").addClass("trimmed");        
+    }
 
     redraw();
 
@@ -120,32 +138,41 @@ function resize(width, height) {
 
     width = width || theme.width;
     height = height || theme.height;
+    var landscape = width > height;
 
     var bodyClass = jQuery("body").attr("class");
     jQuery("body").attr("class", null);
     var wrapperWidth = d3.select("#canvas").node().getBoundingClientRect().width;
+    var wrapperHeight = wrapperWidth * (9/16);
     jQuery("body").attr("class", bodyClass);
     if (!wrapperWidth) return;
 
-    var widthFactor = wrapperWidth / width,
-        heightFactor = (wrapperWidth * 9 / 16) / height,
-        factor = Math.min(widthFactor, heightFactor);
+    // var widthFactor = wrapperWidth / width;
+    // var heightFactor = (wrapperWidth * 9 / 16) / height;
 
-    d3.select("canvas")
-        .attr("width", wrapperWidth)
-        .attr("height", wrapperWidth * (height / width));
+    var canvasHeight = wrapperHeight;
+    var canvasWidth = wrapperHeight / (height / width);
 
-    d3.select("video")
-        .attr("height", widthFactor * height);
+    var heightFactor = canvasHeight / height;
+    var widthFactor = canvasWidth / width;
 
-    d3.select("#video")
-        .attr("height", (widthFactor * height) + "px");
+    jQuery("canvas")
+        .attr("width", canvasWidth)
+        .attr("height", canvasHeight);
+    
+    jQuery("#canvas").height(canvasHeight);
 
-    context.setTransform(widthFactor, 0, 0, widthFactor, 0, 0);
+    // jQuery("video").attr("height", canvasHeight);
+
+    // jQuery("#video").height(canvasHeight);
+
+    context.setTransform(widthFactor, 0, 0, heightFactor, 0, 0);
 
 }
 
-function redraw() {
+function redraw(overrideSubs) {
+
+    if (!jQuery("canvas").is(":visible") || document.readyState != 'complete' || !theme) return;
 
     jQuery("#submit").removeClass("hidden");
     jQuery("#view").addClass("hidden");
@@ -159,32 +186,38 @@ function redraw() {
     renderer.bbcDog(bbcDog || null);
     
     // Render images
-    var foreground = img.foreground ? img.foreground : theme.foregroundImageFile ? theme.foregroundImageFile[theme.orientation] : null;
-    var background = img.background ? img.background : theme.backgroundImageFile ? theme.backgroundImageFile[theme.orientation] : null;
+    var foreground = img.foreground ? img.foreground : theme.foregroundImageFile ? theme.foregroundImageFile : null;
+    if (jQuery('#input-overlay-type').val() == 'none') foreground = null;
+    var background = img.background ? img.background : theme.backgroundImageFile ? theme.backgroundImageFile : null;
     renderer.foregroundImage(jQuery.isEmptyObject(foreground) ? null : foreground);
     renderer.backgroundImage(jQuery.isEmptyObject(background) ? null : background);
         
-    var subtitles = transcript.toSubs();
+    var start = selection ? selection.start : 0;
+    var end = selection ? selection.end : Infinity;
+    var subtitles = overrideSubs || transcript.toSubs();
     if (audio.isPlaying()) {
         var time = audio.currentTime();
+        time -= start;
     } else if (subtitles[0]) {
         var time = subtitles[0].start;
     }
-    var start = selection ? selection.start : 0;
-    var end = selection ? selection.end : Infinity;
-    time -= start;
 
     renderer.drawFrame(context, {
         caption: theme.caption.text,
         subtitles,
         waveform: sampleWave,
-        backgroundInfo: (img.background && imgInfo.background ? imgInfo.background : theme.backgroundImageInfo ? theme.backgroundImageInfo[theme.orientation] : null),
+        backgroundInfo: (img.background && imgInfo.background ? imgInfo.background : theme.backgroundImageInfo ? theme.backgroundImageInfo : null),
         preview: true,
         start,
         end,
         frame: 0,
         time: time || 0
     });
+
+    if (!audio.isPlaying()) {
+        var themeHelper = require('./themeHelper');
+        themeHelper.updateDesignSummaries();
+    };
 
 }
 
@@ -197,6 +230,7 @@ function loadAudio(audioFile, cb) {
                 return cb ? cb(err) : err;
             }
 
+            utils.setClass(null);
             file = audioFile;
             minimap.redraw(data.peaks);
 

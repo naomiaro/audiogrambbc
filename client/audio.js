@@ -49,29 +49,50 @@ function restart() {
   play(extent[0] * audio.duration);
 }
 
+function setTimestamp(currentPos) {
+  if (!currentPos) {
+    var offset = extent[0] * audio.duration;
+    currentPos = audio.currentTime - offset;
+  } 
+  var currentTimeStr = utils.formatHMS(currentPos).slice(1);
+  jQuery("#duration .current").text(currentTimeStr);
+}
+
 function update() {
 
   if (audio.duration) {
 
     var pos = audio.currentTime / audio.duration;
+    var trim = [
+      extent[0] * audio.duration,
+      extent[1] * audio.duration
+    ]
 
     if (stopAt && pos >= stopAt/audio.duration) {
       pause();
       if (pos >= extent[1]) {
-        audio.currentTime = extent[1] * audio.duration;
+        audio.currentTime = trim[1];
       } else {
-        audio.currentTime = extent[0] * audio.duration;
+        audio.currentTime = trim[0];
       }
     } else if (audio.ended || pos >= extent[1] || audio.duration * extent[0] - audio.currentTime > 0.2) {
       // Need some allowance at the beginning because of frame imprecision (esp. FF)
       if (isPlaying()) {
-        play(extent[0] * audio.duration);
+        if (jQuery('button#loop .on').is(':visible')) {
+          // Loop
+          play(trim[0]);
+        } else {
+          // Stop
+          pause();
+          audio.currentTime = trim[0];
+        }
+        // pause(extent[0] * audio.duration);
       }
-      // pause(extent[0] * audio.duration);
     }
 
     minimap.time(pos);
     if (isPlaying()) {
+      setTimestamp();
       var preview = require("./preview");
       preview.redraw();
     }
@@ -139,7 +160,7 @@ function _currentTime(_) {
   return arguments.length ? audio.currentTime = _ : audio.currentTime;
 }
 
-function init() {
+function init(cb) {
     d3.select(document).on('keydown', function() {
         if (!d3.select('body').classed('rendered') && !d3.matcher("input, textarea, button, select, [contenteditable='true']").call(d3.event.target)) {
             var start = extent[0] * audio.duration,
@@ -217,8 +238,13 @@ function init() {
       utils.stats("increment", "user_activity.playback.restart");
     });
     
-    d3.select('#controls .tip a').on('click', function() {
+    d3.select('#minimap .controls .tip a').on('click', function() {
       jQuery('#shortcuts').toggleClass('hidden');
+      utils.stopIt(d3.event);
+    });
+    
+    d3.select("#minimap .controls #loop").on("click", function() {
+      jQuery(this).find('i').toggleClass('hidden');
       utils.stopIt(d3.event);
     });
 
@@ -230,6 +256,7 @@ function init() {
       utils.stats("increment", "user_activity.playback.rate");
     });
 
+  return cb(null);
 }
 
 module.exports = {
@@ -242,5 +269,6 @@ module.exports = {
   extent: _extent,
   currentTime: _currentTime,
   duration: _duration,
+  setTimestamp,
   init
 };

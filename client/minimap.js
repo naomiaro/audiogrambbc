@@ -31,11 +31,9 @@ minimap.selectAll(".brush .resize")
 var t, minimapWidth;
 function _width(_) {
   if (arguments.length) {
+    console.log('MINIMAP WIDTH', _);
     minimapWidth = _;
-    t = d3.scaleLinear()
-        .domain([0, _])
-        .range([0,1])
-        .clamp(true);
+    t = d3.scaleLinear().domain([0, _]).range([0,1]).clamp(true);
     d3.selectAll("#minimap svg, #minimap clipPath rect").attr("width", _);
     d3.selectAll("#minimap g.waveform line").attr("x2", _);
   } else {
@@ -63,6 +61,7 @@ function redraw(data) {
 }
 
 function time(t) {
+  if (jQuery('audio')[0].paused) return;
   d3.select("g.time")
     .attr("transform","translate(" + (t * minimapWidth) + ")");
 }
@@ -116,12 +115,11 @@ function _onBrushEnd(_) {
 
 function updateTrim(extent) {
     extent = extent || [];
-    var start = extent[0] || parseFloat(d3.select('#start').property('value'));
-    var end = extent[1] || parseFloat(d3.select('#end').property('value'));
+    var start = extent[0] || utils.getSeconds(d3.select('#start').property('value'));
+    var end = extent[1] || utils.getSeconds(d3.select('#end').property('value'));
     if (!isNaN(start) && !isNaN(end)) {
         if (start > end) {
-            end = extent[0] || parseFloat(d3.select('#start').property('value'));
-            start = extent[1] || parseFloat(d3.select('#end').property('value'));
+          start = end + (end = start, 0)
         }
         var audio = require('./audio');
         var duration = Math.round(100 * audio.duration()) / 100;
@@ -135,9 +133,14 @@ function updateTrim(extent) {
     }
 }
 
-function init() {
+function init(cb) {
     d3.selectAll("#start, #end").on("change", updateTrim);
-  jQuery(document).on('click', '#minimap:not(.disabled) svg, #minimap.disabled .disabled', function(e){
+    if (LOADING) {
+      jQuery('body').removeClass('loading');
+      _width(jQuery('#minimap svg').parent().width());
+      jQuery('body').addClass('loading');
+    }
+    jQuery(document).on('click', '#minimap:not(.disabled) svg, #minimap.disabled .disabled', function(e){
       if (!jQuery('#transcript-timings').hasClass('recording')){
         var pos = e.offsetX / jQuery(this).width();
         var audio = require('./audio');
@@ -145,7 +148,17 @@ function init() {
         var time = pos * dur;
         audio.currentTime(time);
       }
+      audio.setTimestamp();
     });
+    jQuery(document).on("click", "#minimap button#trim", function() {
+      drawBrush({ start: 0.33, end: 0.66 });
+      jQuery("#start").focus();
+    });
+    jQuery(document).on("click", "#minimap button#trim_clear", function() {
+      drawBrush({start: 0, end: 0});
+    });
+
+  return cb(null);
 }
 
 module.exports = {

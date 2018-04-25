@@ -17,14 +17,16 @@ function fetchReadCount(id, cb) {
 function getMessages(req, res) {
 
     var since = req.params.since;
+    since = !isNaN(since) ? parseInt(since) : null;
     var now = Date.parse(new Date());
+
 
     redisClient.smembers(`audiogram:messages`, (err, messages) => {
         messages = messages.map((message) => {
             return JSON.parse(message);
         });
         messages = _.sortBy(messages, "date").reverse();
-        if (_.isUndefined(since)) {
+        if (!since) {
             // Admin view
             var ids = messages.map((message) => message.id);
             async.map(ids, fetchReadCount, (err, readCounts) => {

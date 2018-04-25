@@ -60,12 +60,10 @@ function txSearch() {
             if (data.error) {
                 return utils.setClass('error', data.error);
             }
-            $('#videoload a').attr('data-id', data.video);
-            $('#videoload a').attr('data-used', false);
-            d3.select('#videoload').classed('hidden', data.video == null);
             MSID = data.audio;
             txPoll(data.audio, "audio", postData);
         });
+    jQuery('#themes.modal').modal('show');
 }
 
 function txPoll(id, type, req) {
@@ -109,7 +107,7 @@ function txPoll(id, type, req) {
     });
 }
 
-function init(){
+function init(cb){
     // Fetch broadcast audio
     d3.selectAll("input[id^='input-tx-']").on("keyup", txTimeUpdate);
     jQuery(document).on("click", "#tx-search", txSearch);
@@ -119,6 +117,8 @@ function init(){
         endDate = new Date(now - 60000);
     jQuery("#input-tx-start").val(utils.pad(startDate.getHours()) + ":" + utils.pad(startDate.getMinutes()) + ":00");
     jQuery("#input-tx-end").val(utils.pad(endDate.getHours()) + ":" + utils.pad(endDate.getMinutes()) + ":00");
+
+    return cb(null);
 }
 
 module.exports = {

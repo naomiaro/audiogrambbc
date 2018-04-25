@@ -5295,8 +5295,8 @@ a.thumbnail.active, a.thumbnail:focus, a.thumbnail:hover {
 }
 
 .alert {
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 10px;
+    margin-bottom: 0px;
     border: 1px solid transparent;
     border-radius: 4px
 }
@@ -6270,7 +6270,7 @@ button.close {
     position: absolute;
     z-index: 1070;
     display: block;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "ReithSans";
     font-style: normal;
     font-weight: 400;
     letter-spacing: normal;
@@ -6404,7 +6404,7 @@ button.close {
     display: none;
     max-width: 276px;
     padding: 1px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "ReithSans";
     font-style: normal;
     font-weight: 400;
     letter-spacing: normal;
@@ -7066,7 +7066,6 @@ button.close {
 
 .global-header header h1 {
     color: #fefefe;
-    font-family: 'Gill Sans', 'Helvetica Neue';
     font-weight: 300;
     position: relative;
     line-height: 2.3;
@@ -7126,11 +7125,12 @@ html {
 
 body {
     height: 100%;
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif
+    font-family: "ReithSerif";
 }
 
 body h1, body h2 {
-    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif
+    font-family: "ReithSans";
+    font-weight: 600;
 }
 
 .context_uri {
@@ -7166,11 +7166,27 @@ header {
     width: 100%;
     height: 60px;
     margin-bottom: 0;
-    background-color: #b60000
+    background-color: #b60000;
+    position: relative;
+    z-index: 999;
 }
 
 header a, header a:focus, header a:hover, header a:visited {
     text-decoration: none
+}
+
+header #header-home {
+    cursor: pointer;
+    display: inline-block;
+}
+
+header .ag-logo {
+    height: 40px;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
 }
 
 header .labs-logo {
@@ -7192,7 +7208,7 @@ header h1.page-title {
     display: inline-block;
     line-height: 60px;
     height: 60px;
-    margin: 0 0 0 75px;
+    margin: 0 0 0 60px;
     color: #fff;
     font-size: 36px;
 }
@@ -7200,7 +7216,7 @@ header h1.page-title {
 header h1 .title-superscript {
     display: inline-block;
     position: relative;
-    left: 5px;
+    left: 0;
     bottom: 15px;
     font-size: 14px
 }
@@ -7322,6 +7338,7 @@ header .headerLinks a:hover {
 }
 
 .footer {
+    margin-top: 10px;
     background-color: #eee
 }
 
@@ -8453,7 +8470,6 @@ video {
     text-align: center;
     font-weight: 300;
     font-size: 14px;
-    font-family: Roboto,sans-serif;
     line-height: 1.5em;
 }
 

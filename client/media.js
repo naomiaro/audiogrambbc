@@ -18,6 +18,12 @@ function _set(obj, type) {
     } else {
         MEDIA = obj;
     }
+    var sourceIsVideo = MEDIA.audio.mimetype.startsWith("video");
+    if (sourceIsVideo) {
+        jQuery("#input-background-type option[value='source']").attr("disabled", false);
+    } else {
+        jQuery("#input-background-type option[value='source']").attr("disabled", true);
+    }
     return MEDIA;
 }
 
@@ -58,23 +64,11 @@ function update(blob, cb) {
         return true;
     }
 
-    var filename = blob
-        ? 'blob'
-        : jQuery('#input-audio')
-              .val()
-              .split('\\')
-              .pop();
+    var filename = blob ? 'blob' : jQuery('#input-audio').val().split('\\').pop();
     var size = audioFile.size / 1000000;
 
     if (size >= 150) {
-        utils.setClass(
-            'error',
-            'Maximum upload size is 150MB. (Audio: ' +
-                filename +
-                ' - ' +
-                Math.round(size * 10) / 10 +
-                'MB)'
-        );
+        utils.setClass( 'error', 'Maximum upload size is 150MB. (Audio: ' + filename + ' - ' + Math.round(size * 10) / 10 + 'MB)' );
         return;
     }
 
@@ -84,7 +78,7 @@ function update(blob, cb) {
     jQuery('#subtitles, #transcript').removeClass('hidden');
     jQuery('#loading-message').text('Analyzing...');
     utils.setClass('loading');
-
+    
     preview.loadAudio(audioFile, function(err){
         jQuery('#minimap, #submit').removeClass('hidden');
         if (err) {
@@ -97,10 +91,6 @@ function update(blob, cb) {
             if (!LOADING) upload('audio', audioFile);
             if (!blob) logger.info( USER.name + ' uploaded a local audio file: ' + filename );
             if (cb) cb(null);
-        }
-        if (!blob && audioFile.type.startsWith('video')) {
-            jQuery('#videoload a').attr('data-used', false);
-            jQuery('#videoload').removeClass('hidden');
         }
     });
 }
@@ -148,7 +138,7 @@ function upload(type, blob) {  // Reset
         success: function(res) {
             if (MEDIA[res.type] && res.name == MEDIA[res.type].name && res.size == MEDIA[res.type].size) {
                 for (var type in MEDIA) {
-                    if (MEDIA[res.type].id == MEDIA[type].id && type !== res.type) {
+                    if (type !== 'audio' && MEDIA[res.type].id == MEDIA[type].id && type !== res.type) {
                         MEDIA[type] = Object.assign({}, res, { type });
                     }
                 }

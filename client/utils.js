@@ -28,6 +28,8 @@ function navigate(state, msg, log) {
     var audio = require('./audio');
     audio.pause();
     jQuery(".modal-backdrop").remove();
+    var ui = require('./ui.js');
+    ui.windowResize();
 }
 
 function offline(msg) {
@@ -39,13 +41,45 @@ function offline(msg) {
     stopAudio();
 }
 
+function formatHMS(t, round) {
+  t = Number(t);
+  var h = Math.floor(t / 3600);
+  var m = Math.floor((t % 3600) / 60);
+  var s = ((t % 3600) % 60).toFixed(1);
+  if (round) s = Math.round(s);
+  var string = `00${m}`.slice(-2) + ":" + `00${s}`.slice(round ? -2 : -4);
+  return string;
+}
+
+function trimText(text, length) {
+  if (!length || text.length <= length) return text;
+  return text.slice(0, length).trim() + "...";
+}
+
+function getSeconds(hms){
+  if (!hms) return 0;
+  if (!hms.includes(':')) {
+    return parseFloat(hms);
+  }
+  var sec = 0;
+  hms = hms.split(':');
+  sec += +hms[hms.length - 1];
+  sec += +hms[hms.length - 2] * 60;
+  if (hms[hms.length - 3]) sec += +hms[hms.length - 3] * 3600;
+  return sec;
+}
+
 function setClass(cl, msg, log) {
   var error = cl=='error';
   cl = LOADING ? error ? 'landing' : 'loading' : cl;
   if (jQuery('.modal').hasClass('in') && msg) {
     alert(msg);
   } else {
+    if (!cl && jQuery('#themes.modal').hasClass('active')) {
+      var bodyClass = 'loading';
+    } else {
     var bodyClass = cl || '';
+    }
     if (error) bodyClass += ' error';
     jQuery("body").attr("class", bodyClass || null);
     jQuery('#error, #success').text(msg || '');
@@ -209,15 +243,18 @@ function stats(type, metric, value, sampleRate) {
 }
 
 module.exports = {
-    setClass,
-    offline,
-    getURLParams,
-    stopIt,
-    pad,
-    error,
-    setBreadcrumb,
-    statusMessage,
-    navigate,
-    tooltips,
-    stats
-}
+  setClass,
+  offline,
+  getURLParams,
+  stopIt,
+  pad,
+  error,
+  setBreadcrumb,
+  statusMessage,
+  navigate,
+  tooltips,
+  stats,
+  formatHMS,
+  getSeconds,
+  trimText
+};

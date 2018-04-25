@@ -21,7 +21,14 @@ var orientation_map = {
 
 var title;
 function _title(_) {
-    return arguments.length ? (title = _) : title;
+  if (arguments.length) {
+    title = _;
+    var disp = title;
+    if (disp.length > 15) disp = disp.slice(0, 15).trim() + "...";
+    jQuery("#input-title span").text(disp);
+    jQuery("#video h1").text(title);
+  }
+  return title;
 }
 
 function formatDuration(time) {
@@ -32,15 +39,11 @@ function formatDuration(time) {
 }
 
 function newProject(e) {
-  var type = e.target
-    ? jQuery(e.target)
-        .parents("[data-type]")
-        .attr("data-type")
-    : e;
+  var type = e.target ? jQuery(e.target).parents("[data-type]").attr("data-type") : e;
   if (!type) return false;
   utils.stats("increment", `user_activity.new.${type}`);
   if (type == "upload") {
-    jQuery("#input-audio").click();
+    jQuery("#input-audio").trigger('click');
   } else {
     if (type == "vcs") {
         vcs.updateList();
@@ -171,6 +174,36 @@ function loadProject(id) {
     var q = d3.queue(1);
     // Set title
     _title(data.title);
+    // Background settings
+    jQuery('#input-background-type option[value="history"]').remove();
+    if (data.media.background && data.media.audio.path == data.media.background.path) {
+      jQuery('#input-background-type').val("source");
+    } else if (data.media.background) {
+      jQuery('#input-background-type').append('<option value="history">Last Used</option>');
+      jQuery('#input-background-type option[value="history"]').attr("data-src", path.join("/media/", data.media.background.dest));
+      jQuery('#input-background-type').val("history");
+    } else {
+      jQuery('#input-background-type').val("default");      
+    }
+    // Overlay settings
+    jQuery('#input-overlay-type option[value="history"]').remove();
+    if (data.media.foreground) {
+      jQuery('#input-overlay-type').append('<option value="history">Last Used</option>');
+      jQuery('#input-overlay-type option[value="history"]').attr("data-src", path.join("/media/", data.media.foreground.dest));
+      jQuery('#input-overlay-type').val("history");
+    } else if (data.theme.foregroundImage) {
+      jQuery('#input-overlay-type').val("default");
+    } else {
+      jQuery('#input-overlay-type').val("none");      
+    }
+    // Load media
+    for (var type in data.media) {
+      q.defer(
+        media.loadFromURL,
+        type,
+        path.join("/media/", data.media[type].dest)
+      );
+    }
     // Load theme
     jQuery('#transcript-btn-enabled').attr('data-enabled', Boolean(data.theme.subtitles.enabled));
     if (data.theme.subtitles.enabled) {
@@ -181,15 +214,7 @@ function loadProject(id) {
     jQuery('#input-subtitles')[0].checked = data.theme.subtitles.enabled;
     d3.select('#transcript-pane').classed('disabled', !data.theme.subtitles.enabled);
     jQuery("#input-theme").val(data.theme.name.trim());
-    themeHelper.update(data.theme);
-    // Load media
-    for (var type in data.media) {
-      q.defer(
-        media.loadFromURL,
-        type,
-        path.join("/media/", data.media[type].dest)
-      );
-    }
+    q.defer(themeHelper.update, data.theme);
     // Load transcript
     q.defer(function(data, cb) {
       var script = JSON.parse(data.transcript);
@@ -208,6 +233,10 @@ function loadProject(id) {
       media.set(data.media);
       minimap.updateTrim([data.start, data.end]);
       video.update(path.join("/video/", id + ".mp4"), data);
+      if (data.media.background && data.media.audio.path == data.media.background.path) {
+        jQuery("#input-background-type").val("source");
+        themeHelper.updateDesignTab();
+      }
       utils.navigate('edit');
       LOADING = false;
       transcript.format();
@@ -218,7 +247,7 @@ function loadProject(id) {
   });
 }
 
-function init() {
+function init(cb) {
   global.LOADING = false;
   getProjects();
   // Event listeners
@@ -229,6 +258,8 @@ function init() {
     var name = jQuery('#input-audio')[0].files[0].name;
     _title(name);
     utils.navigate("new");
+    utils.setClass("loading");
+    jQuery('#themes.modal').modal('show');
   });
   jQuery(document).on("change", "#recent-filter", function(){
     utils.stats("increment", `user_activity.logstore.filter`);
@@ -243,6 +274,15 @@ function init() {
         jQuery('#sharing-spinner').hide();
     });
   });
+  jQuery(document).on("click", "#input-title", function(){
+    var currentTitle = _title();
+    var newTitle = prompt("Enter a project title to be displayed in the Audiogram Logstore:", currentTitle);
+    if (newTitle != null) {
+      _title(newTitle);
+    }
+  });
+
+  if (cb) return cb(null);
 }
 
 module.exports = {

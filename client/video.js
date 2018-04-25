@@ -98,7 +98,7 @@ function update(url, data) {
     mediaPlayer.load();
     mediaPlayer.bind('playing', function(e) {
       var width = jQuery('#mediaPlayer').width();
-      jQuery('#mediaPlayer').height(width * Math.min(ratio,1));
+      // jQuery('#mediaPlayer').height(width * Math.min(ratio,1));
       mediaPlayer.setData({name: "SMP.subtitlesHref", data:{ url : window.location.protocol + "//" + window.location.host + url.replace(".mp4",".xml") }});
     });
     jQuery(document).on('exit-video', function(e){

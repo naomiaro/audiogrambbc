@@ -7,38 +7,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
     <link rel="stylesheet" href="https://bbc.github.io/internalGEL/dist/internalgel-bootstrap.css">
     <link rel="stylesheet" href="https://bbc.github.io/internalGEL/dist/internalgel-fonts.css">
     <link rel="stylesheet" href="https://bbc.github.io/internalGEL/dist/internalgel.css" id="intGEL-stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,600" rel="stylesheet" type="text/css">
     <link href="/css/base.css" rel="stylesheet" type="text/css">
     <link href="/css/editor.css" rel="stylesheet" type="text/css">
+    <link href="/css/reith-font.css" rel="stylesheet" type="text/css">
     <link href="/fonts/fonts.css" rel="stylesheet" type="text/css">
     <link href="/css/main.css" rel="stylesheet" type="text/css">
     <!-- Icons -->
     <!-- 16x16 -->
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
     <!-- 32x32 -->
-    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
     <!-- 48x48 -->
-    <link rel="icon" type="image/png" href="favicon-48x48.png" sizes="48x48">
+    <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48">
     <!-- 96x96 -->
-    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
     <script type="text/javascript" src="/browsercheck.js"></script>
 </head>
 
 <body class="loading">
     <header>
-        <svg class="labs-logo" width="62" height="80">
-            <image class="labs-logo-image" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="images/labs-logo.svg" src="images/labs-logo.png"
-                width="62" height="80"></image>
-        </svg>
+        <div id="header-home">
+        <img class="ag-logo" src="/images/audiogram.png" alt="BBC News Labs - Audiogram">
         <h1 class="page-title">Audiogram
             <span class="title-superscript">ALPHA</span>
         </h1>
+        </div>
         <div class="headerLinks">
-            <a id="messagesLink" href="#">Messages</a> | 
-            <a id="version" href="https://github.com/BBC-News-Labs/audiogram/releases" target="_blank"></a>
+            <!-- <a id="messagesLink" href="#">Messages</a> |  -->
+            <a href="http://bbcnewslabs.co.uk/" target="_blank">BBC News Labs</a> |&nbsp;
+            <span id="version"></span>
         </div>
     </header>
     <div id="offline" style="display: none">
@@ -60,7 +62,7 @@
             <strong>Yay!</strong> It works :)
         </div>
 
-        <section class="well breadcrumbs">
+        <section class="well breadcrumbs hidden">
             <span id="breadcrumb_home">
                 <a href="#">Home</a>
             </span>
@@ -101,7 +103,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
+                        <button type="button" class="left" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -109,17 +111,52 @@
 
         <div id="landing">
 
-            <h2>Welcome to Audiogram</h2>
-            <p>
+            <div id="hero">
+                <img src="/images/welcome.png" alt="">
+            </div>
+            <div id="welcome-wrapper">
+                <h2>
+                    Welcome to Audiogram
+                    <button id="welcome-toggle" type="button" class="right">Hide</button>                
+                </h2>
+                <div id="welcome">
+                    <div>
+                        Audiogram is <a href="#" class="tooltip-info" data-placement="bottom" title="This is an experimental tool, and is not formally supported.">prototype</a> transcription, subtitling and audio animation tool developed by <a href="http://bbcnewslabs.co.uk">BBC News Labs</a>.
+                    </div>
+                </div>
+                <div id="features">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <i class="fas fa-quote-left"></i>
+                            <div class="feature">Transcribe</div>
+                            <div class="desc">
+                                Automatically generate time-coded, exportable transcripts.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="far fa-closed-captioning"></i>
+                            <div class="feature">Subtitle</div>
+                            <div class="desc">
+                                Burn subtitles into videos and/or produce SRT/XML subtitle files.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-film"></i>
+                            <div class="feature">Animate</div>
+                            <div class="desc">
+                                If your source is audio-only, produce animiated waveform videos.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <p>
                 Audiogram is a
                 <b>audio &rarr; video, and subtitling tool</b>, built by
                 <a href="http://bbcnewslabs.co.uk/" target="_blank">BBC News Labs</a> off the back of
                 <a href="https://medium.com/@WNYC/socialaudio-e648e8a5f2e9#.7se6rlrt8" target="_blank">original work by NPR's WNYC</a> in New York. You can read about why we built it, and how, in our
                 <a href="https://medium.com/bbc-news-labs/visualising-audio-bbc-news-labs-audiogram-generator-4ce97ee3da51" target="_blank">Medium blog</a>.
-            </p>
-            <!-- <p style="color: #b60000; font-size: 0.9em">
-          <b>This is a prototype.</b> The tool and its infrastructure may present errors or be unavailable at times.
-        </p> -->
+            </p> -->
 
             <h2>New Project</h2>
             <div class="row new">
@@ -158,8 +195,8 @@
                                 </table>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
-                                <button id="png-import" type="button" class="btn btn-primary">Import</button>
+                                <button type="button" class="left" data-dismiss="modal">Close</button>
+                                <button id="png-import" type="button" class="btn-bold">Import</button>
                             </div>
                         </div>
                     </div>
@@ -241,8 +278,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
-                                <button id="vcs-import" type="button" class="btn btn-primary">Import</button>
+                                <button type="button" class="left" data-dismiss="modal">Close</button>
+                                <button id="vcs-import" type="button" class="btn-bold">Import</button>
                             </div>
                         </div>
                     </div>
@@ -438,13 +475,14 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
-                                <button id="tx-search" type="button" class="btn btn-primary">Import</button>
+                                <button type="button" class="left" data-dismiss="modal">Close</button>
+                                <button id="tx-search" type="button" class="btn-bold">Import</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- Local upload -->
+                <input type="file" id="input-audio" style="position: absolute; z-index: -999; opacity: 0;">
                 <div data-type="upload" class="col-md-6 col-xs-12">
                     <div class="info-box">
                         <span class="box-icon" style="background: #e6e6e6 url(images/upload.png)">&nbsp;</span>
@@ -456,14 +494,15 @@
 
             </div>
 
-            <h2>Recent Projects</h2>
-            <div id="recent-filter-wrapper" class="intGEL">
-                <label for="recent-filter" class="intGEL-arrow">
-                    <select id="recent-filter" class="form-control">
-                        <option value="all" selected>All</option>
-                        <option value="user">Mine only</option>
+            <h2>Logstore</h2>
+            <div id="recent-filter-wrapper">
+                <button class="button-select">
+                    <label>View:</label>
+                    <select id="recent-filter"><option value="all" selected>
+                        All</option>
+                    <option value="user">Mine only</option>
                     </select>
-                </label>
+                </button>
             </div>
             <div class="row saved">
 
@@ -510,7 +549,7 @@
                             <div id="version-history-body" style="padding-top: 15px;"></div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
+                            <button type="button" class="left" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
@@ -530,754 +569,628 @@
         <!-- #loading -->
         <div id="loaded" class="intGEL">
 
+            <section id="minimap">
+                <div class="map well">
+                    <div class="disabled"></div>
+                    <svg width="640" height="80" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <clipPath id="clip">
+                                <rect height="80" width="640" x="0" y="0"></rect>
+                            </clipPath>
+                        </defs>
+                        <g class="waveform background">
+                            <line x1="0" x2="640" y1="40" y2="40"></line>
+                            <path></path>
+                        </g>
+                        <g class="waveform foreground" clip-path="url(#clip)">
+                            <line x1="0" x2="640" y1="40" y2="40"></line>
+                            <path></path>
+                        </g>
+                        <g class="brush"></g>
+                        <g class="time">
+                            <line x1="0" x2="0" y1="0" y2="80"></line>
+                        </g>
+                    </svg>
+                    <div class="timecodes">
+                        <input id="start" type="text">
+                        <input id="end" type="text">
+                    </div>
+                </div>
+                <div class="controls well">
+                    <button id="play">
+                        <i class="fa fa-play"></i>Play
+                    </button>
+                    <button id="pause" class="hidden">
+                        <i class="fa fa-pause"></i>Pause
+                    </button>
+                    <button id="restart">
+                        <i class="fa fa-step-backward"></i>Restart
+                    </button>
+                    <button id="playbackRate" data-rate='1' class="button-select tooltip-info" data-placement="left" title="Changing the playback rate is for preview and transcription assistance only.<br/>It will not affect video output.">
+                        <label>
+                            <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        </label>
+                        <select>
+                            <option value="0.5">0.5x</option>
+                            <option value="1" selected>1.0x</option>
+                            <option value="1.5">1.5x</option>
+                        </select>
+                    </button>
+                    <button id="loop">
+                        <i class="on fa fa-check-square"></i>
+                        <i class="off fa fa-square-o hidden"></i>
+                        Loop
+                    </button>
+                    <hr>
+                    <button id="trim">
+                        <i class="fa fa-cut"></i>Trim
+                    </button>
+                    <button id="trim_clear">
+                        <i class="fa fa-cut"></i>Clear
+                    </button>
+                    <div id="duration">
+                        <span class="current">0:00.0</span><span class="separator"> / </span><strong class="duration"></strong>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div id="shortcuts" class="hidden">
+                    <hr>
+                    <div class="col">
+                        <div>
+                            <kbd>space</kbd> &nbsp; - &nbsp; toggle playback
+                        </div>
+                        <div>
+                            <kbd>&#8594;</kbd> /
+                            <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 0.1s
+                        </div>
+                        <div>
+                            <kbd>ctrl</kbd> /
+                            <kbd>&#8984;</kbd> +
+                            <kbd>&#8594;</kbd> /
+                            <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 1s
+                        </div>
+                        <div>
+                            <kbd>shift</kbd> +
+                            <kbd>&#8594;</kbd> /
+                            <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 10s
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div>
+                            <kbd>q</kbd> /
+                            <kbd>w</kbd> &nbsp; - &nbsp; go to IN/OUT
+                        </div>
+                        <div>
+                            <kbd>i</kbd> /
+                            <kbd>o</kbd> &nbsp; - &nbsp; mark IN/OUT
+                        </div>
+                        <div>
+                            <kbd>5</kbd> &nbsp; - &nbsp; play from IN for 1s
+                        </div>
+                        <div>
+                            <kbd>6</kbd> &nbsp; - &nbsp; play from 1s before OUT
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </section>
 
             <div class="row">
 
-
-
                 <div class="col-md-7">
 
-                    <div id="sourceWrapper" class="hidden">
+                    <div id="editor-wrapper">
                         <ul class="nav nav-tabs">
                             <li class="active">
-                                <a href="#source-tab-vcs" data-toggle="tab">VCS Item</a>
+                                <a href="#editor-tab-transcript" data-toggle="tab">Transcript</a>
                             </li>
                             <li>
-                                <a href="#source-tab-tx" data-toggle="tab">Broadcast</a>
-                            </li>
-                            <li>
-                                <a href="#source-tab-upload" data-toggle="tab">File Upload</a>
+                                <a href="#editor-tab-design" data-toggle="tab">Design</a>
                             </li>
                         </ul>
                         <div class="tab-content">
-                            <div class="tab-pane active" id="source-tab-vcs">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label class="settings" for="input-vcs">VCS Item ID Number:</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <div class="input-group">
-                                            <input id="input-vcs" type="text" placeholder="00000" class="form-control" name="vcs" value="" />
-                                            <span class="input-group-btn">
-                                                <button id="vcs-search" class="btn btn-secondary" type="button">Import</button>
-                                            </span>
+                            <div class="tab-pane active" id="editor-tab-transcript">
+                                <!-- TRANSCRIPT -->
+                                <section id="transcript" class="well hidden">
+                                    <div class="transcript-buttons">
+                                        <button id="transcript-btn-enabled" data-enabled='true'>
+                                            <input id="input-subtitles" class="themeConfig hidden" type="checkbox" name="subtitles.enabled" value="true" checked>
+                                            <i class="on fa fa-check-square"></i>
+                                            <i class="off fa fa-square-o"></i>
+                                            Overlay Subtitles
+                                        </button>
+                                        <span style="color: #ccc; padding: 0 10px;">|</span>
+                                        <button id="transcript-btn-timings" class="enabledOnly">
+                                            <i class="fa fa-clock-o"></i>Set Timings
+                                        </button>
+                                        <button id="transcript-btn-timings-save" class="timingsOnly" style='font-weight: bold'>
+                                            Save
+                                        </button>
+                                        <button id="transcript-btn-timings-cancel" class="timingsOnly">
+                                            Cancel
+                                        </button>
+                                        <!-- <button id="transcript-btn-format" class="subFormatToggle enabledOnly">
+                                            <i class="fa fa-align-center"></i>Format
+                                        </button> -->
+                                        <button id="transcript-btn-reset" class="hidden">
+                                            <i class="fa fa-undo"></i>Reset
+                                        </button>
+                                        <input id="input-transcript" class="hidden" name="transcript" accept=".srt, .xml, .txt, .json" type="file" />
+                                        <button id="transcript-btn-import">
+                                            <i class="fa fa-upload"></i>Import
+                                        </button>
+                                        <div>
+                                            <button id="transcript-btn-export" type="button" data-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa fa-file-text-o"></i>Export
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li role="presentation">
+                                                    <a class="transcript-export-btn" data-format="plain" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (script only)</a>
+                                                </li>
+                                                <li role="presentation">
+                                                    <a class="transcript-export-btn" data-format="plain-timecodes" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (with timecodes)</a>
+                                                </li>
+                                                <li role="presentation">
+                                                    <a class="transcript-export-btn" data-format="srt" role="menuitem" href="#">Facebook Subs (SRT)</a>
+                                                </li>
+                                                <li role="presentation">
+                                                    <a class="transcript-export-btn" data-format="ebu" role="menuitem" href="#">BBC Subs (EBU-TT-D)</a>
+                                                </li>
+                                            </ul>
                                         </div>
-                                        <div id="vcs-results" class="hidden"></div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="source-tab-tx">
+                                    <div id="transcript-timings" class="wizard">
+                                        <p class="buttons buttons-start">
+                                            <button id="transcript-btn-timings-wizard-start-on">
+                                                <b>Start Wizard</b>, with first subtitle block
+                                                <i>visible</i>
+                                            </button>
+                                            <button id="transcript-btn-timings-wizard-start-off">
+                                                <b>Start Wizard</b>, with first subtitle block
+                                                <i>hidden</i>
+                                            </button>
+                                        </p>
+                                        <p class="buttons buttons-stop">
+                                            <button id="transcript-btn-timings-wizard-restart">
+                                                <i class="fa fa-step-backward"></i>Restart
+                                            </button>
+                                            <button id="transcript-btn-timings-wizard-finish">
+                                                <i class="fa fa-stop"></i>Finish
+                                            </button>
+                                            <button id="transcript-btn-timings-wizard-cancel">
+                                                <i class="fa fa-ban"></i>Cancel
+                                            </button>
+                                        </p>
+                                        <div id="transcript-timings-wizard-info" class="hidden alert alert-info" role="alert" style="margin-bottom: 10px;">
+                                            <div class="instructions">
+                                                <p>
+                                                    To set timings, preview the audio and click on the next subtitle block when it should appear.
+                                                </p>
+                                                <p>
+                                                    Click on the next block to transition to it immediately.
+                                                </p>
+                                                <p>
+                                                    Alternatively, click on the same block again to hide it until you're ready to click on the next one.
+                                                </p>
+                                                <p>
+                                                    You can always use "manual mode" to tweak the timings after.
+                                                </p>
+                                                <hr>
+                                            </div>
+                                            <p class="buttons-start" style="text-align: center; margin: 0;">
+                                                <button id="transcript-btn-timings-wizard-start-on">
+                                                    <b>Start</b>, with first subtitle block
+                                                    <i>visible</i>
+                                                </button>
+                                                <button id="transcript-btn-timings-wizard-start-off">
+                                                    <b>Start</b>, with first subtitle block
+                                                    <i>hidden</i>
+                                                </button>
+                                            </p>
+                                            <p class="buttons-stop" style="display: none; text-align: center; margin: 0;">
+                                                <button id="transcript-btn-timings-wizard-restart">
+                                                    <i class="fa fa-step-backward"></i>Restart
+                                                </button>
+                                                <button id="transcript-btn-timings-wizard-finish">
+                                                    <i class="fa fa-stop"></i>Finish
+                                                </button>
+                                                <button id="transcript-btn-timings-wizard-cancel">
+                                                    <i class="fa fa-ban"></i>Cancel
+                                                </button>
+                                            </p>
+                                        </div>
+                                        <div class="label">
+                                            <span class="start">IN</span>
+                                            <span class="end">OUT</span>
+                                        </div>
+                                        <i id="transcript-timings-tooltip-show" data-toggle="tooltip" data-placement="bottom" title="Click to SHOW" data-animation="false"
+                                            data-trigger="manual"></i>
+                                        <i id="transcript-timings-tooltip-hide" data-toggle="tooltip" data-placement="bottom" title="Click to HIDE" data-animation="false"
+                                            data-trigger="manual"></i>
+                                    </div>
+                                    <div id="transcript-pane">
+                                        <transcript>
+                                            <div class="transcript-editor">
+                                                <div class="transcript-btn-select">
+                                                    <span>select corresponding audio</span>
+                                                </div>
+                                                <div id='transcript-content' class="transcript-content" contenteditable="true" spellcheck="false">
 
+                                                </div>
+                                            </div>
+                                        </transcript>
+                                        <div class="loading">
+                                            <div style="margin: -20px 0 20px 0">
+                                                <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
+                                            </div>
+                                            The transcript for this clip is waiting in a queue to be processed.
+                                            <br/> It will appear here automatically when ready.
+                                            <hr style="margin: 10px auto; width: 75%" />
+                                            <div>
+                                                Alternatively,
+                                                <a class='transcript-manual' href="#">transcribe manually</a>, or
+                                                <a class='transcript-import' href="#">import a subtitle file</a> instead.
+                                            </div>
+                                        </div>
+                                        <div class="error">
+                                            <div style="margin: -20px 0 20px 0">
+                                                <i class="fa fa-warning fa-3x fa-fw"></i>
+                                            </div>
+                                            <span></span>
+                                            <hr style="margin: 10px auto; width: 75%" />
+                                            <div>
+                                                You can still
+                                                <a class='transcript-manual' href="#">transcribe manually</a>, or
+                                                <a class='transcript-import' href="#">import a subtitle file</a> instead.
+                                            </div>
+                                        </div>
+                                        <div class="transcript-export">
+                                            <a id="trasncript-export-dummy" href="" target="_blank" style="display: none"></a>
+                                        </div>
+                                    </div>
+                                </section>
                             </div>
-                            <div class="tab-pane" id="source-tab-upload">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label class="settings" for="input-audio">Audio/Video File:</label>
+                            <div class="tab-pane" id="editor-tab-design">
+                                <!-- DESIGN -->
+                                <section id="section-theme">
+                                    <button id="theme-change" data-toggle="modal" href="#themes" type="button" aria-expanded="false">
+                                        <b>Base Theme:</b> <span>Custom</span>
+                                    </button>
+                                    <button id="theme-save"><i class="fa fa-save"></i> Save As</button>
+                                    <button id="theme-reset"><i class="fa fa-undo"></i> Reset</button>
+                                </section>
+                                <section id="section-design" class="well">
+                                    <!-- Background -->
+                                    <div id="design-background" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Background</div>
+                                            <div class="summary"></div>
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+
+                                            <button class="button-select">
+                                                <label>Type:</label>
+                                                <select id="input-background-type">
+                                                    <option value="default" selected>Theme Default</option>
+                                                    <option value="source" disabled>Same As Audio Source</option>
+                                                    <option value="file">Image/Video File</option>
+                                                    <option value="pid">Image PID</option>
+                                                </select>
+                                            </button>
+                                            <div id="input-background-type-detail">
+                                                <input id="input-background" name="background" type="file" accept="image/*,video/*" />
+                                                <a id="input-image-pid" href="#" style="display: none;">Update Image PID</a>
+                                            </div>
+
+                                            <hr>
+
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>H Align:</label>
+                                                    <select class="themeConfig" name="backgroundPosition.align.x">
+                                                        <option value="left">left</option>
+                                                        <option value="center">center</option>
+                                                        <option value="right">right</option>
+                                                    </select>
+                                                </button>
+                                                <div class="background-slider" name="horizontal"></div>
+                                            </div>
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>V Align:</label>
+                                                    <select class="themeConfig" name="backgroundPosition.align.y">
+                                                        <option value="top">top</option>
+                                                        <option value="middle">middle</option>
+                                                        <option value="bottom">bottom</option>
+                                                    </select>
+                                                </button>
+                                                <div class="background-slider" name="vertical"></div>
+                                            </div>
+
+                                        </div>
                                     </div>
-                                    <div class="col-md-9">
-                                        <input id="input-audio" name="audio" type="file" accept="audio/*,video/mp4" style="width: 100%" />
+                                    <!-- Overlay -->
+                                    <div id="design-overlay" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Overlay</div>
+                                            <div class="summary"></div>
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
+                                        </div>
+                                        <div class="body" style="display: none; padding-bottom: 10px;">
+                                            <button class="button-select" style="margin-right: 15px; margin-bottom: 5px;">
+                                                <label>Type:</label>
+                                                <select id="input-overlay-type">
+                                                    <option value="none">None</option>
+                                                    <option value="default" selected>Theme Default</option>
+                                                    <option value="file">Image File</option>
+                                                    <option value="webcap">Web:Cap Image</option>
+                                                </select>
+                                            </button>
+                                            <div id="input-overlay-type-detail">
+                                                <input id="input-foreground" name="foreground" type="file" accept="image/*" style="display: none;" />
+                                                <div id="input-webcap-wrapper" style="display: none;">
+                                                    <button class="button-select" style="margin-bottom: 5px;">
+                                                        <label>Source:</label>
+                                                        <select id="input-webcap" name="webcap" class="form-control">
+                                                            <option disabled>Web:Cap Image Export (this list auto-refreshes)</option>
+                                                            <optgroup label="West 1 Editing Dropzone - Full Frame HD (1920x1080)">
+                                                                <option disabled value="loading">Loading...</option>
+                                                            </optgroup>
+                                                        </select>
+                                                    </button>
+                                                    <a id="input-webcap-link" target="_blank" href="http://webcap.national.core.bbc.co.uk/">Web:Cap
+                                                        <i class="fa fa-external-link" style="margin: 0"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                    <!-- Waveform -->
+                                    <div id="design-waveform" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Waveform</div>
+                                            <div class="summary"></div>
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+                                            <button class="button-select">
+                                                <label>Pattern:</label>
+                                                <select id="input-pattern" name="pattern" class="themeConfig">
+                                                    <option value="none">None</option>
+                                                    <option value="wave" selected>Wave</option>
+                                                    <option value="line">Line</option>
+                                                    <option value="curve">Curved Line</option>
+                                                    <option value="bars">Bars</option>
+                                                    <option value="pixel">Pixels</option>
+                                                    <option value="bricks">Bricks</option>
+                                                </select>
+                                            </button>
+                                            <input id="input-pattern-color" type="color" class="themeConfig" name="wave.color" value="#942924">
+                                            <div id="input-pattern-position">
+                                                <hr>
+                                                <div class="position">
+                                                    <label>Vertical Position:</label>
+                                                    <div class="wave-slider" name="vertical" style="width: calc(100% - 136px)"></div>
+                                                </div>
+                                                <div class="position">
+                                                    <label>Horizontal Position:</label>
+                                                    <div class="wave-slider" name="horizontal" style="width: calc(100% - 152px)"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Subtitles -->
+                                    <div id="design-subtitles" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Subtitles</div>
+                                            <div class="summary"></div>
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>H Align:</label>
+                                                    <select class="themeConfig" name="subtitles.align">
+                                                        <option value="left">left</option>
+                                                        <option value="center">center</option>
+                                                        <option value="right">right</option>
+                                                    </select>
+                                                </button>
+                                                <div class="subs-slider" name="horizontal"></div>
+                                            </div>
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>V Align:</label>
+                                                    <select class="themeConfig" name="subtitles.valign">
+                                                        <option value="top">top</option>
+                                                        <option value="middle">middle</option>
+                                                        <option value="bottom">bottom</option>
+                                                    </select>
+                                                </button>
+                                                <div class="subs-slider" name="vertical"></div>
+                                            </div>
+                                            <hr>
+                                            <button class="button-select">
+                                                <label>Max Rows:</label>
+                                                <select class="themeConfig" name="subtitles.linesMax">
+                                                    <option>1</option>
+                                                    <option>2</option>
+                                                    <option>3</option>
+                                                    <option>4</option>
+                                                    <option>5</option>
+                                                    <option>6</option>
+                                                    <option>7</option>
+                                                    <option>8</option>
+                                                    <option>9</option>
+                                                    <option>10</option>
+                                                </select>
+                                            </button>
+                                            <button class="button-prompt">
+                                                <b>Line Width:</b> <span>0</span>
+                                                <input type="hidden" class="themeConfig" name="subtitles.lineWidth">
+                                            </button>
+                                            <button class="button-prompt">
+                                                <b>Line Spacing:</b> <span>0</span>
+                                                <input type="hidden" class="themeConfig" name="subtitles.lineSpacing">
+                                            </button>
+                                            <button class="button-select">
+                                                <label>Background:</label>
+                                                <select class="themeConfig" name="subtitles.box.opacity">
+                                                    <option value="0">0%</option>
+                                                    <option value="0.1">10%</option>
+                                                    <option value="0.2">20%</option>
+                                                    <option value="0.3">30%</option>
+                                                    <option value="0.4">40%</option>
+                                                    <option value="0.5">50%</option>
+                                                    <option value="0.6">60%</option>
+                                                    <option value="0.7">70%</option>
+                                                    <option value="0.8">80%</option>
+                                                    <option value="0.9">90%</option>
+                                                    <option value="1">100%</option>
+                                                </select>
+                                            </button>
+                                            <hr>
+                                            <button class="button-prompt">
+                                                <b>Font Size:</b> <span>0</span>
+                                                <input type="hidden" class="themeConfig" name="subtitles.fontSize">
+                                            </button>
+                                            <button class="button-select">
+                                                <label>Weight:</label>
+                                                <select class="themeConfig" name="subtitles.fontWeight">
+                                                    <option>Regular</option>
+                                                    <option>Medium</option>
+                                                    <option>Bold</option>
+                                                </select>
+                                            </button>
+                                            <button class="button-prompt">
+                                                <b>Stroke:</b> <span>0</span>
+                                                <input type="hidden" class="themeConfig" name="subtitles.stroke.width">
+                                            </button>
+                                            <input type="color" class="themeConfig" name="subtitles.stroke.color" style="margin-left: 5px;">
+                                            <hr>
+                                            <label class="color-label">Font Colours:</label>
+                                            <input type="color" class="themeConfig speaker-color" name="subtitles.color.0">
+                                            <input type="color" class="themeConfig speaker-color" name="subtitles.color.1">
+                                            <input type="color" class="themeConfig speaker-color" name="subtitles.color.2">
+                                        </div>
+                                    </div>
+                                    <!-- Caption/Text -->
+                                    <div id="design-caption" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Text</div>
+                                            <div class="summary"></div>
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+                                            <textarea id="input-caption" name="caption" lass="form-control" cols="30" rows="2" style="height: 52px; min-height: 0!important; width: 100%"></textarea>
+                                            <hr>
+                                            <button class="button-select">
+                                                <label>Weight:</label>
+                                                <select class="themeConfig" name="caption.fontWeight">
+                                                    <option>Regular</option>
+                                                    <option>Medium</option>
+                                                    <option>Bold</option>
+                                                </select>
+                                            </button>
+                                            <button class="button-prompt" style="margin: 0 10px 0 7px;">
+                                                <b>Font Size:</b>
+                                                <span>0</span>
+                                                <input type="hidden" class="themeConfig" name="caption.fontSize">
+                                            </button>
+                                            <input type="color" class="themeConfig" name="caption.color">
+                                            <hr>
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>H Align:</label>
+                                                    <select class="themeConfig" name="caption.align">
+                                                        <option value="left">left</option>
+                                                        <option value="center">center</option>
+                                                        <option value="right">right</option>
+                                                    </select>
+                                                </button>
+                                                <div class="caption-slider" name="horizontal"></div>
+                                            </div>
+                                            <div class="slider-wrapper">
+                                                <button class="button-select">
+                                                    <label>V Align:</label>
+                                                    <select class="themeConfig" name="caption.valign">
+                                                        <option value="top">top</option>
+                                                        <option value="middle">middle</option>
+                                                        <option value="bottom">bottom</option>
+                                                    </select>
+                                                </button>
+                                                <div class="caption-slider" name="vertical"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Size -->
+                                    <div id="design-size" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Output Size</div>
+                                            <div class="summary"></div>
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+                                            <button class="button-select">
+                                                <select id="input-size" name="size" class="themeConfig">
+                                                    <option data-orientation="landscape" value="1920x1080" selected>Landscape 16:9 (1920x1080)</option>
+                                                    <option data-orientation="landscape" value="1280x720">Landscape 16:9 (1280x720)</option>
+                                                    <option data-orientation="square" value="1080x1080">Square 1:1 (1080x1080)</option>
+                                                    <option data-orientation="square" value="640x640">Square 1:1 (640x640)</option>
+                                                    <option data-orientation="portrait" value="1080x1920">Portrait 9:16 (1080x1920)</option>
+                                                    <option data-orientation="portrait" value="720x1280">Portrait 9:16 (720x1280)</option>
+                                                </select>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </section>
                             </div>
                         </div>
                     </div>
 
-                    <div id="videoload" class="hidden alert alert-info" role="alert" style="margin: 10px 0">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        The audio has been extracted from the video media you imported.
-                        <br/>
-                        <a href="#" style="text-decoration: underline">Click here to use the video background as well.</a>
-                    </div>
-
-                    <section id="minimap" class="well">
-                        <div class="page-header">
-                            <h1>Audio Source</h1>
-                        </div>
-                        <div class="disabled"></div>
-                        <svg width="640" height="80" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <clipPath id="clip">
-                                    <rect height="80" width="640" x="0" y="0"></rect>
-                                </clipPath>
-                            </defs>
-                            <g class="waveform background">
-                                <line x1="0" x2="640" y1="40" y2="40"></line>
-                                <path></path>
-                            </g>
-                            <g class="waveform foreground" clip-path="url(#clip)">
-                                <line x1="0" x2="640" y1="40" y2="40"></line>
-                                <path></path>
-                            </g>
-                            <g class="brush"></g>
-                            <g class="time">
-                                <line x1="0" x2="0" y1="0" y2="80"></line>
-                            </g>
-                        </svg>
-                        <div id="controls">
-                            <div id="timecodes">
-                                <input id="start" type="text">
-                                <input id="end" type="text">
-                            </div>
-                            <hr/>
-                            <div style="float: left;">
-                                <div class="tip">
-                                    Click and drag over the waveform to clip audio, enter
-                                    <br> timecodes above, or use the
-                                    <a href="#">advanced keyboard shortcuts</a>.
-                                </div>
-                            </div>
-                            <div style="float: right;">
-                                <div id="duration">
-                                    <strong></strong> seconds selected
-                                </div>
-                                <button id="playbackRate" data-rate='1' class="tooltip-info" data-placement="left" title="Changing the playback rate is for preview and transcription assistance only.<br/>It will not affect video output.">
-                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
-                                    <select>
-                                        <option value="0.5">0.5x</option>
-                                        <option value="1" selected>1.0x</option>
-                                        <option value="1.5">1.5x</option>
-                                    </select>
-                                </button>
-                                <button id="play">
-                                    <i class="fa fa-play"></i>Play
-                                </button>
-                                <button id="pause" class="hidden">
-                                    <i class="fa fa-pause"></i>Pause
-                                </button>
-                                <button id="restart">
-                                    <i class="fa fa-step-backward"></i>Restart
-                                </button>
-                            </div>
-                            <div class="clear"></div>
-                            <div id="shortcuts" class="hidden">
-                                <hr>
-                                <div class="col">
-                                    <div>
-                                        <kbd>space</kbd> &nbsp; - &nbsp; toggle playback
-                                    </div>
-                                    <div>
-                                        <kbd>&#8594;</kbd> /
-                                        <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 0.1s
-                                    </div>
-                                    <div>
-                                        <kbd>ctrl</kbd> /
-                                        <kbd>&#8984;</kbd> +
-                                        <kbd>&#8594;</kbd> /
-                                        <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 1s
-                                    </div>
-                                    <div>
-                                        <kbd>shift</kbd> +
-                                        <kbd>&#8594;</kbd> /
-                                        <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 10s
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div>
-                                        <kbd>q</kbd> /
-                                        <kbd>w</kbd> &nbsp; - &nbsp; go to IN/OUT
-                                    </div>
-                                    <div>
-                                        <kbd>i</kbd> /
-                                        <kbd>o</kbd> &nbsp; - &nbsp; mark IN/OUT
-                                    </div>
-                                    <div>
-                                        <kbd>5</kbd> &nbsp; - &nbsp; play from IN for 1s
-                                    </div>
-                                    <div>
-                                        <kbd>6</kbd> &nbsp; - &nbsp; play from 1s before OUT
-                                    </div>
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                        </div>
-                    </section>
-
-
-
-                    <section id="splash" class="well" style="border: none;">
-                        <h1>
-                            Welcome to Audiogram
-                            <svg width="50" height="50">
-                                <image xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="images/wave.svg" src="images/wave.png" width="50" height="50"></image>
-                            </svg>
-                        </h1>
-                        <hr>
-                        <p>
-                            Audiogram is a
-                            <a href="http://bbcnewslabs.co.uk/" target="_blank">BBC News Labs</a> prototype, based on
-                            <a href="https://medium.com/@WNYC/socialaudio-e648e8a5f2e9#.7se6rlrt8" target="_blank">original work by NPR's WNYC</a> in New York, which
-                            <b>converts audio into shareable video</b>.
-                        </p>
-                        <p>
-                            Take a look at
-                            <a href="https://twitter.com/i/moments/847796796135026688" target="_blank">some examples on Twitter</a>.
-                        </p>
-                        <p>
-                            It's currently experimetal, and may (probably will) break at some point. Please tell us when it does, so we can make it better.
-                            Similarly,
-                            <b>we want your suggestions and feature requests</b>! Tell us what you like and don't like about
-                            the tool, and how we could make it better, or a more seamless component of your existing workflows.
-                        </p>
-                        <p>
-                            Please email
-                            <b>
-                                <a href="mailto:jonty.usborne@bbc.co.uk">Jonty.Usborne@bbc.co.uk</a>
-                            </b>, the BBC developer on this project, with issues, suggestions, feedback, insights into your team's
-                            workflow, and offers of free cake.
-                        </p>
-                        <hr>
-                        <p>
-                            <b>To get started, select an input source above.</b>
-                        </p>
-                    </section>
-
-                    <section id="transcript-settings" class="well hidden">
-                        <div class="page-header">
-                            <h1>
-                                Subtitle Formatting
-                            </h1>
-                            <div class="tip subFormatToggle">
-                                <a href="#">close</a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3" style="text-align: left; line-height: 32px;">
-                                <label class="settings">Horizontal Align:</label>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="intGEL-arrow" for="input-size">
-                                    <select class="form-control themeConfig" name="subtitles.align" style="text-align: center;">
-                                        <option value="left">left</option>
-                                        <option value="center">center</option>
-                                        <option value="right">right</option>
-                                    </select>
-                                </label>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="subs-slider" name="horizontal" style="margin: 10px 0;"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3" style="text-align: left; line-height: 32px;">
-                                <label class="settings">Vertical Align:</label>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="intGEL-arrow" for="input-size">
-                                    <select class="form-control themeConfig" name="subtitles.valign" style="text-align: center;">
-                                        <option value="top">top</option>
-                                        <option value="middle">middle</option>
-                                        <option value="bottom">bottom</option>
-                                    </select>
-                                </label>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="subs-slider" name="vertical" style="margin: 10px 0;"></div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label class="settings" style="width: 100%; text-align: center;">Max Rows:</label>
-                                <input name="subtitles.linesMax" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
-                            </div>
-                            <div class="col-md-3">
-                                <label class="settings" style="width: 100%; text-align: center;">Char/Line:</label>
-                                <input name="subtitles.lineWidth" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
-                            </div>
-                            <div class="col-md-3">
-                                <label class="settings" style="width: 100%; text-align: center;">Spacing:</label>
-                                <input name="subtitles.lineSpacing" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
-                            </div>
-                            <div class="col-md-3">
-                                <label class="settings" style="width: 100%; text-align: center;">Background:</label>
-                                <label class="intGEL-arrow" for="input-size">
-                                    <select class="form-control themeConfig" name="subtitles.box.opacity" style="text-align: center;">
-                                        <option value="0">0%</option>
-                                        <option value="0.1">10%</option>
-                                        <option value="0.2">20%</option>
-                                        <option value="0.3">30%</option>
-                                        <option value="0.4">40%</option>
-                                        <option value="0.5">50%</option>
-                                        <option value="0.6">60%</option>
-                                        <option value="0.7">70%</option>
-                                        <option value="0.8">80%</option>
-                                        <option value="0.9">90%</option>
-                                        <option value="1">100%</option>
-                                    </select>
-                                </label>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label class="settings" style="width: 100%; text-align: center;">Size:</label>
-                                <input name="subtitles.fontSize" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
-                            </div>
-                            <div class="col-md-3">
-                                <label class="settings" style="width: 100%; text-align: center;">Weight:</label>
-                                <label class="intGEL-arrow" for="input-size">
-                                    <select class="form-control themeConfig" name="subtitles.fontWeight" style="text-align: center;">
-                                        <option>Regular</option>
-                                        <option>Medium</option>
-                                        <option>Bold</option>
-                                    </select>
-                                </label>
-                            </div>
-                            <div class="col-md-3" style="border-left: 1px solid #eee;">
-                                <label class="settings" style="width: 100%; text-align: center;">Stroke:</label>
-                                <input name="subtitles.stroke.width" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
-                            </div>
-                            <div class="col-md-3">
-                                <label class="settings" style="width: 100%; text-align: center;">Stroke Colour:</label>
-                                <input type="color"  class="themeConfig" name="subtitles.stroke.color">
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label class="settings" style="width: 100%; text-align: center;">Font Colours:</label>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="row">
-                                    <div class="col-md-3 subtitle-color-col">
-                                        <input type="color"  class="themeConfig" name="subtitles.color.0">
-                                    </div>
-                                    <div class="col-md-3 subtitle-color-col">
-                                        <input type="color"  class="themeConfig" name="subtitles.color.1">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section id="transcript" class="well hidden">
-                        <div class="page-header">
-                            <h1 style="display: inline-block">
-                                Transcript
-                            </h1>
-                        </div>
-                        <div class="transcript-buttons">
-                            <button id="transcript-btn-enabled" data-enabled='true'>
-                                <input id="input-subtitles" class="themeConfig hidden" type="checkbox" name="subtitles.enabled" value="true" checked>
-                                <i class="on fa fa-check-square"></i>
-                                <i class="off fa fa-square-o"></i>
-                                Overlay Subtitles
-                            </button>
-                            <span style="color: #ccc; padding: 0 10px;">|</span>
-                            <button id="transcript-btn-timings" class="enabledOnly">
-                                <i class="fa fa-clock-o"></i>Set Timings
-                            </button>
-                            <button id="transcript-btn-timings-save" class="timingsOnly" style='font-weight: bold'>
-                                Save
-                            </button>
-                            <button id="transcript-btn-timings-cancel" class="timingsOnly">
-                                Cancel
-                            </button>
-                            <button id="transcript-btn-format" class="subFormatToggle enabledOnly">
-                                <i class="fa fa-align-center"></i>Format
-                            </button>
-                            <button id="transcript-btn-reset" class="hidden">
-                                <i class="fa fa-undo"></i>Reset
-                            </button>
-                            <input id="input-transcript" class="hidden" name="transcript" accept=".srt, .xml, .txt, .json" type="file" />                            
-                            <button id="transcript-btn-import">
-                                <i class="fa fa-upload"></i>Import
-                            </button>
-                            <div>
-                                <button id="transcript-btn-export" type="button" data-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa fa-file-text-o"></i>Export
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li role="presentation">
-                                        <a class="transcript-export-btn" data-format="plain" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (script only)</a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a class="transcript-export-btn" data-format="plain-timecodes" role="menuitem" target="_blank" href="data:text/plain;charset=utf-8;base64,RXJyb3IgbG9hZGluZyB0cmFuc2NyaXB0">Plain text (with timecodes)</a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a class="transcript-export-btn" data-format="srt" role="menuitem" href="#">Facebook Subs (SRT)</a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a class="transcript-export-btn" data-format="ebu" role="menuitem" href="#">BBC Subs (EBU-TT-D)</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div id="transcript-timings" class="wizard">
-                            <p class="buttons buttons-start">
-                                <button id="transcript-btn-timings-wizard-start-on">
-                                    <b>Start Wizard</b>, with first subtitle block <i>visible</i>
-                                </button>
-                                <button id="transcript-btn-timings-wizard-start-off">
-                                    <b>Start Wizard</b>, with first subtitle block <i>hidden</i>
-                                </button>
-                            </p>
-                            <p class="buttons buttons-stop">
-                                <button id="transcript-btn-timings-wizard-restart">
-                                    <i class="fa fa-step-backward"></i>Restart
-                                </button>
-                                <button id="transcript-btn-timings-wizard-finish">
-                                    <i class="fa fa-stop"></i>Finish
-                                </button>
-                                <button id="transcript-btn-timings-wizard-cancel">
-                                    <i class="fa fa-ban"></i>Cancel
-                                </button>
-                            </p>
-                            <div id="transcript-timings-wizard-info" class="hidden alert alert-info" role="alert" style="margin-bottom: 10px;">
-                                <div class="instructions">
-                                    <p>
-                                        To set timings, preview the audio and click on the next subtitle block when it should appear.
-                                    </p>
-                                    <p>
-                                        Click on the next block to transition to it immediately.
-                                    </p>
-                                    <p>
-                                        Alternatively, click on the same block again to hide it until you're ready to click on the next one.
-                                    </p>
-                                    <p>
-                                        You can always use "manual mode" to tweak the timings after.
-                                    </p>
-                                    <hr>
-                                </div>
-                                <p class="buttons-start" style="text-align: center; margin: 0;">
-                                    <button id="transcript-btn-timings-wizard-start-on">
-                                        <b>Start</b>, with first subtitle block <i>visible</i>
-                                    </button>
-                                    <button id="transcript-btn-timings-wizard-start-off">
-                                        <b>Start</b>, with first subtitle block <i>hidden</i>
-                                    </button>
-                                </p>
-                                <p class="buttons-stop" style="display: none; text-align: center; margin: 0;">
-                                    <button id="transcript-btn-timings-wizard-restart">
-                                        <i class="fa fa-step-backward"></i>Restart
-                                    </button>
-                                    <button id="transcript-btn-timings-wizard-finish">
-                                        <i class="fa fa-stop"></i>Finish
-                                    </button>
-                                    <button id="transcript-btn-timings-wizard-cancel">
-                                        <i class="fa fa-ban"></i>Cancel
-                                    </button>
-                                </p>
-                            </div>
-                            <div class="label">
-                                <span class="start">IN</span>
-                                <span class="end">OUT</span>
-                            </div>
-                            <i id="transcript-timings-tooltip-show" data-toggle="tooltip" data-placement="bottom" title="Click to SHOW" data-animation="false" data-trigger="manual"></i>
-                            <i id="transcript-timings-tooltip-hide" data-toggle="tooltip" data-placement="bottom" title="Click to HIDE" data-animation="false" data-trigger="manual"></i>
-                        </div>
-                        <div id="transcript-pane">
-                            <transcript>
-                                <div class="transcript-editor">
-                                    <div class="transcript-btn-select">
-                                        <span>select corresponding audio</span>
-                                    </div>
-                                    <div id='transcript-content' class="transcript-content" contenteditable="true" spellcheck="false">
-
-                                    </div>
-                                </div>
-                            </transcript>
-                            <div class="loading">
-                                <div style="margin: -20px 0 20px 0">
-                                    <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
-                                </div>
-                                The transcript for this clip is waiting in a queue to be processed.
-                                <br/> It will appear here automatically when ready.
-                                <hr style="margin: 10px auto; width: 75%" />                                
-                                <div>
-                                    Alternatively, <a class='transcript-manual' href="#">transcribe manually</a>, or <a class='transcript-import' href="#">import a subtitle file</a> instead.
-                                </div>
-                            </div>
-                            <div class="error">
-                                <div style="margin: -20px 0 20px 0">
-                                    <i class="fa fa-warning fa-3x fa-fw"></i>
-                                </div>
-                                <span></span>
-                                <hr style="margin: 10px auto; width: 75%" />
-                                <div>
-                                    You can still <a class='transcript-manual' href="#">transcribe manually</a>, or <a class='transcript-import' href="#">import a subtitle file</a> instead.
-                                </div>
-                            </div>
-                            <div class="transcript-export">
-                                <a id="trasncript-export-dummy" href="" target="_blank" style="display: none"></a>
-                            </div>
-                        </div>
-                    </section>
 
                 </div>
                 <div class="col-md-5">
 
-                    <section class="well">
-                        <div class="page-header">
-                            <h1>Preview</h1>
-                        </div>
+                    <section id="canvas-wrapper" class="well">
                         <div id="canvas" style="width: 100%">
                             <canvas width="640" height="360"></canvas>
                             <!-- <div id="preview-label">Preview</div> -->
                         </div>
-                    </section>
-
-                    <section id="section-theme" class="well" style="border: none;">
-                        <div id="row-theme" class="row">
-                            <div class="col-md-3">
-                                <label class="settings" for="input-theme">Theme:</label>
-                            </div>
-                            <div id="group-theme-wrapper" class="col-md-6">
-                                <label id="group-theme" class="intGEL-arrow" style="width: 100%" for="input-theme">
-                                    <select id="input-theme" name="theme" class="form-control"></select>
-                                </label>
-                            </div>
-                            <div id="group-theme-advanced" class="col-md-3">
-                                <button type="button" class="btn btn-secondary btn-block">Advanced</button>
-                            </div>
-                        </div>
-                        <div id="row-foreground" class="row">
-                            <hr>
-                            <div class="col-md-3">
-                                <label class="settings" for="input-theme">Overlay:</label>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="intGEL-arrow" style="width: 100%" for="input-theme">
-                                    <select id="input-webcap" name="webcap" class="form-control">
-                                        <option value="" selected>None</option>
-                                        <option value="local">Upload PNG File</option>
-                                        <option disabled></option>
-                                        <option disabled>Web:Cap Image Export (this list auto-refreshes)</option>
-                                        <optgroup label="West 1 Editing Dropzone - Full Frame HD (1920x1080)">
-                                            <option disabled value="loading">Loading...</option>
-                                        </optgroup>
-                                    </select>
-                                </label>
-                                <div id="input-foreground-wrapper" class="hidden" style="margin-top: 10px;">
-                                    <input id="input-foreground" name="foreground" type="file" accept="image/*" />
-                                </div>
-                            </div>
-                            <div class="col-md-3" style="text-align: center;">
-                                <a id="input-webcap-link" target="_blank" href="http://webcap.national.core.bbc.co.uk/">Web:Cap
-                                    <i class="fa fa-external-link" style="margin: 0"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div id="row-background" class="row">
-                            <hr>
-                            <div class="col-md-3">
-                                <label class="settings" for="input-background">Image / Video:</label>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="row">
-                                    <div class="col-md-7">
-                                        <div id="input-background-type-file" class="input-background-type" style="margin-top: 10px;">
-                                            <input id="input-background" name="background" type="file" accept="image/*,video/*" style="width:calc(100% + 15px)" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5" style="text-align: center;">
-                                        <a id="input-image-pid" href="#">or Image PID</a>
-                                    </div>
-                                </div>
-
-                                <div class="row background-advanced hidden">
-                                    <div class="col-md-12">
-                                        <hr>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="intGEL-arrow" for="input-size">
-                                            <select class="form-control themeConfig" name="backgroundPosition.align.x" style="text-align: center;">
-                                                <option value="left">left</option>
-                                                <option value="center">center</option>
-                                                <option value="right">right</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="background-slider" name="horizontal" style="margin: 10px 0;"></div>
-                                    </div>
-                                </div>
-                                <div class="row background-advanced hidden">
-                                    <div class="col-md-4">
-                                        <label class="intGEL-arrow" for="input-size">
-                                            <select class="form-control themeConfig" name="backgroundPosition.align.y" style="text-align: center;">
-                                                <option value="top">top</option>
-                                                <option value="middle">middle</option>
-                                                <option value="bottom">bottom</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="background-slider" name="vertical" style="margin: 10px 0;"></div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div id="row-wave" class="row advanced">
-                            <hr>
-                            <div class="col-md-3">
-                                <label class="settings" for="input-size">Audio Wave:</label>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="row">
-                                    <div id="group-pattern" class="col-md-5">
-                                        <label class="intGEL-arrow" for="input-size">
-                                            <select id="input-pattern" name="pattern" class="themeConfig form-control">
-                                                <option value="none">None</option>
-                                                <option value="wave" selected>Wave</option>
-                                                <option value="line">Line</option>
-                                                <option value="curve">Curved Line</option>
-                                                <option value="bars">Bars</option>
-                                                <option value="pixel">Pixels</option>
-                                                <option value="bricks">Bricks</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div id="group-color" class="col-md-3" style="padding: 0">
-                                        <input type="color"  class="themeConfig" name="wave.color" value="#942924">
-                                    </div>
-                                    <div id="group-wave-advanced" class="col-md-4">
-                                        <button type="button" class="btn btn-secondary btn-block">Position</button>
-                                    </div>
-                                </div>
-                                <div id="row-wave-sliders" class="row">
-                                    <div class="col-md-12">
-                                        <hr>
-                                    </div>
-                                    <div class="col-md-3 tip">
-                                        Vertical:
-                                    </div>
-                                    <div class="col-md-9">
-                                        <div class="wave-slider" name="vertical" style="margin: 10px 0;"></div>
-                                    </div>
-                                    <div class="col-md-3 tip">
-                                        Horizontal:
-                                    </div>
-                                    <div class="col-md-9">
-                                        <div class="wave-slider" name="horizontal" style="margin: 10px 0;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="row-caption" class="row">
-                            <hr>
-                            <div class="col-md-3">
-                                <label class="settings" for="input-caption">Caption:</label>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <textarea id="input-caption" name="caption" lass="form-control" cols="30" rows="2" style="height: 52px; min-height: 0!important; width: 100%"></textarea>
-                                    </div>
-                                </div>
-                                <div class="row caption-advanced hidden">
-                                    <div class="col-md-12">
-                                        <hr>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input type="color"  class="themeConfig" name="caption.color">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input name="caption.fontSize" type="text" class="themeConfig form-control" style="text-align: center;" value="" />
-                                    </div>
-                                    <div class="col-md-5">
-                                        <label class="intGEL-arrow" for="input-size">
-                                            <select class="form-control themeConfig" name="caption.fontWeight" style="text-align: center;">
-                                                <option>Regular</option>
-                                                <option>Medium</option>
-                                                <option>Bold</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <hr>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="intGEL-arrow" for="input-size">
-                                            <select class="form-control themeConfig" name="caption.align" style="text-align: center;">
-                                                <option value="left">left</option>
-                                                <option value="center">center</option>
-                                                <option value="right">right</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="caption-slider" name="horizontal" style="margin: 10px 0;"></div>
-                                    </div>
-                                </div>
-                                <div class="row caption-advanced hidden">
-                                    <div class="col-md-4">
-                                        <label class="intGEL-arrow" for="input-size">
-                                            <select class="form-control themeConfig" name="caption.valign" style="text-align: center;">
-                                                <option value="top">top</option>
-                                                <option value="middle">middle</option>
-                                                <option value="bottom">bottom</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="caption-slider" name="vertical" style="margin: 10px 0;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="row-subs-alias" class="row">
-                            <hr>
-                            <div class="col-md-3">
-                                <label class="settings" for="input-caption">Subtitles:</label>
-                            </div>
-                            <div class="col-md-9">
-                                <a class="subFormatAlias" href="#" style="line-height: 30px;">Edit subtitle formatting</a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <hr>
-                            <div class="col-md-3">
-                                <label class="settings" for="input-size">Size:</label>
-                            </div>
-                            <div class="col-md-9">
-                                <label class="intGEL-arrow" for="input-size">
-                                    <select id="input-size" name="size" class="themeConfig form-control">
-                                        <option data-orientation="landscape" value="1920x1080" selected>Landscape 16:9 (1920x1080)</option>
-                                        <option data-orientation="landscape" value="1280x720">Landscape 16:9 (1280x720)</option>
-                                        <option data-orientation="square" value="1080x1080">Square 1:1 (1080x1080)</option>
-                                        <option data-orientation="square" value="640x640">Square 1:1 (640x640)</option>
-                                        <option data-orientation="portrait" value="1080x1920">Portrait 9:16 (1080x1920)</option>
-                                        <option data-orientation="portrait" value="720x1280">Portrait 9:16 (720x1280)</option>
-                                    </select>
-                                </label>
-                            </div>
-                        </div>
-
-                    </section>
-
-                    <section id="config-save" class="well hidden" style="border: none;">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <button type="button" id="theme-reset" class="btn btn-sm btn-block btn-secondary right">
-                                    <i class="fa fa-undo"></i> Reset Formatting</button>
-                            </div>
-                            <div class="col-md-6">
-                                <button type="button" id="theme-save" class="btn btn-sm btn-block btn-secondary right">
-                                    <i class="fa fa-save"></i> Save Theme</button>
-                            </div>
+                        <div id="preview-footnote">
+                            <i class="fa fa-info-circle"></i> Layout &amp; subtitle preview only. Font weights may render slightly differently.
                         </div>
                     </section>
 
-                    <section class="well">
+                    <section class="well" style="box-shadow: none;">
+                        <div style="text-align: right;">
+                            <button id="input-title" style="margin-right: 5px;">
+                                <b>Project Name:</b>
+                                <span></span>
+                            </button>
+                            <button class="button-select">
+                                <label>Logstore Visibility:</label>
+                                <select id="input-private" name="private">
+                                    <option value=0 selected>Shared</option>
+                                    <option value=1>Private</option>
+                                </select>
+                            </button>
+                        </div>
+                        <hr style="margin: 5px 0;">
                         <div class="row">
-                            <div class="col-md-5">
-                                <label for="input-private" class="intGEL-arrow tooltip-info" data-placement="top" title="Shared audiograms will be visible to all users under 'Recent Projects'">
-                                    <select id="input-private" name="private" class="form-control">
-                                        <option value=0 selected>Shared</option>
-                                        <option value=1>Private</option>
-                                    </select>
-                                </label>
-                            </div>
-                            <div class="col-md-7">
+                            <div class="col-md-12">
                                 <div class="btn-group">
-                                    <button type="button" id="submit" class="btn btn-primary right">
-                                        <i class="fa fa-film"></i>Generate Audiogram</button>
-                                    <button type="button" id="view" class="btn btn-primary right">
-                                        <i class="fa fa-film"></i>View Audiogram</button>
+                                    <button type="button" id="submit" class="right">
+                                        <i class="fa fa-film"></i>Generate Audiogram
+                                    </button>
+                                    <div id="cancel">Cancel</div>
                                 </div>
                             </div>
                         </div>
@@ -1312,36 +1225,28 @@
             </section>
             <section class="well">
                 <div class="btn-group">
-                    <button id="return" type="button" class="left btn btn-secondary">
-                        <i class="fa fa-edit"></i>Return to editor
+                    <button type="button" id="return">
+                        Return to editor
                     </button>
-                    <div style="float: right;">
-                        <div style="float: left;">
-                            <button data-toggle="modal" href="#sharing" class="btn-primary btn" type="button" aria-expanded="false">
-                                Sharing
-                            </button>
-                        </div>
-                        <div id="download-btns" class="dropdown-button btn-group btn-group" style="width: auto; margin-left: 10px">
-                            <a href="#" class="btn btn-primary download-video">Download</a>
-                            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-primary btn-primary dropdown-toggle" type="button">
-                                <span class="caret"></span>
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <ul role="menu" class="dropdown-menu">
-                                <li>
-                                    <a class="download-video" href="#">
-                                        <strong>Video (MP4)</strong>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="download-srt" href="#">Facebook Subtitles (SRT)</a>
-                                </li>
-                                <li>
-                                    <a class="download-ebu" href="#">BBC Subtitles (EBU-TT-D)</a>
-                                </li>
-                            </ul>
-                        </div>
+                    <div style="margin-left: 5px; position: relative; float: right;">
+                        <button type="button" data-toggle="dropdown" aria-expanded="false" style="border-color: #777">
+                            <i class="fa fa-file-text-o"></i><b>Download</b>
+                        </button>
+                        <ul id="download-btns" class="dropdown-menu" role="menu">
+                            <li role="presentation">
+                                <a class="download-video" role="menuitem" href="#"><b>Video (MP4)</b></a>
+                            </li>
+                            <li role="presentation">
+                                <a class="download-srt" role="menuitem" href="#">Facebook Subtitles (SRT)</a>
+                            </li>
+                            <li role="presentation">
+                                <a class="download-ebu" role="menuitem" href="#">BBC Subtitles (XML EBU-TT-D)</a>
+                            </li>
+                        </ul>
                     </div>
+                    <button data-toggle="modal" href="#sharing" type="button" aria-expanded="false" style="float: right;">
+                        Sharing
+                    </button>
                 </div>
             </section>
         </div>
@@ -1354,7 +1259,7 @@
                         <h4 class="modal-title">Sharing Settings</h4>
                     </div>
                     <div class="modal-body" style="background: #eee;">
-                        <p style='font-weight: bold;'>
+                        <p style='font-weight: bold; font-family: ReithSans'>
                             <i class='fa fa-link'></i> Link to video
                         </p>
                         <div class="row">
@@ -1366,13 +1271,13 @@
                             </div>
                         </div>
                         <hr style="border-color: #aaa">
-                        <p style='font-weight: bold;'>
+                        <p style='font-weight: bold; font-family: ReithSans'>
                             <i class='fa fa-users'></i> Editing rights
                         </p>
                         <label class="intGEL-arrow" for="sharing-private">
                             <select id="sharing-private" class="form-control" style="width: 100%; background: #fff;">
-                                <option value="0">Public - all users can see/edit this audiogram</option>
-                                <option value="1">Private - only you can see/edit this audiogram</option>
+                                <option value="0">Public - visible in the logstore to all users</option>
+                                <option value="1">Private - only visible in the logstore to you, but accesible to all with a direct link</option>
                             </select>
                         </label>
                         <div style="font-style: italic; font-size: 0.75em; margin-top: 5px; text-align: center;">
@@ -1380,10 +1285,66 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default left" data-dismiss="modal">Close</button>
+                        <button type="button" class="left" data-dismiss="modal">Close</button>
                         <div id="sharing-spinner" style="float: right; line-height: 32px; display: none;">
                             <i class="fa fa-spinner fa-spin"></i>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="themes" class="modal fade intGEL" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: #b60000; color: #ffffff;">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Select Theme</h4>
+                    </div>
+                    <div class="modal-body" style="">
+                        <div class="row themes">
+                            <div class="theme col-md-3 template">
+                                <div class="preview">
+                                    <img src="/video/5304313c-2f7d-4f15-ae37-0713ee6845d1.jpg" alt="">
+                                </div>
+                                <div class="info">
+                                    <hr>
+                                    <div class="title"></div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="left" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="errorModal" class="modal fade intGEL" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: #b60000; color: #ffffff;">
+                        <h4 class="modal-title"><i class="fa fa-exclamation-triangle"></i> Error</h4>
+                    </div>
+                    <div class="modal-body" style="">
+                        <p>
+                            <b>Sorry, an error has caused Audiogram to stop working.</b>
+                        </p>
+                        <hr>
+                        <p>
+                            Audiogram is still an unsupported prototype, so errors like this may present themselves occasionally - apologies!
+                        </p>
+                        <p>
+                            Please try reloading the page and trying again, or if the error persists please report the following details:
+                        </p>
+                        <hr>
+                        <pre style="text-align: left; font-size: 12px;">
+                            Unkown Error
+                        </pre>
                     </div>
                 </div>
             </div>
@@ -1394,10 +1355,9 @@
     <footer class="site-footer-wrap">
         <div class="message-box-wrap">
             <div class="message-box">
-                <h3>Please note:</h3>This is a prototype. The tool and its infrastructure may present errors or be unavailable
-                at times.
-                <br/> Please contact
-                <a href="mailto:jonty.usborne@bbc.co.uk">jonty.usborne@bbc.co.uk</a> with error reports, as well as general feedback and feature requests.
+                <b>This is a prototype</b> from <a href="http://bbcnewslabs.co.uk" target="_blank">BBC News Labs</a>. The tool and its infrastructure may present errors or be unavailable at times.
+                <br/>
+                Please contact <a href="mailto:jonty.usborne@bbc.co.uk">jonty.usborne@bbc.co.uk</a> with error reports, as well as general feedback and feature requests.
             </div>
         </div>
     </footer>
@@ -1408,6 +1368,7 @@
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
+    <script src="/jquery.cookie.js"></script>
 
     <script type="text/javascript" src="https://static.bbci.co.uk/frameworks/requirejs/0.13.0/sharedmodules/require.js"></script>
 
