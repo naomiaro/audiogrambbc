@@ -57,7 +57,7 @@ module.exports.init = function() {
         if (data.email) {
             USER.name = data.name;
             USER.email = data.email;
-            jQuery("#recent-filter option[value='user']").text(data.name);
+            jQuery("#recent-filter option[value='user']").text('jonty.usborne@bbc.co.uk');
             logger.info(USER.name + ' logged in.\n`' + navigator.userAgent + '`');
             checkMessages(data.lastLogin);
         } else {

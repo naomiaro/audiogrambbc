@@ -71,29 +71,34 @@ function windowResize() {
     }
 }
 
-function sizeButtonSelect() {
+function sizeSelectButton(btn) {
+    var label = btn.find('label');
+    var test = label.text();
+    if (!label.length) {
+        btn.prepend('&nbsp;');
+    }
+    var tmp = document.createElement("div");
+    tmp.setAttribute("class", "intGEL");
+    var clone = btn.clone();
+    jQuery(tmp).append(clone);
+    jQuery("body").append(tmp);
+    jQuery(tmp).attr('id', 'tmp');
+    var buttonWidth = clone.width();
+    var labelWidth = clone.find('label').outerWidth() || 0;
+    var selectWidth = clone.find('select').outerWidth();
+    btn.width(buttonWidth);
+    if (labelWidth) {
+        btn.find('select').css('padding-left', (labelWidth + 10) + 'px');
+        btn.find('select').css('margin-left', -(labelWidth + 10) + 'px');
+    }
+    btn.find('select').css('width', '100%');
+    jQuery(tmp).remove();
+}
+
+function sizeSelectButtons() {
     jQuery('body > .wrapper button.button-select').each(function(){
-        var label = jQuery(this).find('label');
-        var test = label.text();
-        if (!label.length) {
-            jQuery(this).prepend('&nbsp;');
-        }
-        var tmp = document.createElement("div");
-        tmp.setAttribute("class", "intGEL");
-        var clone = jQuery(this).clone();
-        jQuery(tmp).append(clone);
-        jQuery("body").append(tmp);
-        jQuery(tmp).attr('id', 'tmp');
-        var buttonWidth = clone.width();
-        var labelWidth = clone.find('label').outerWidth() || 0;
-        var selectWidth = clone.find('select').outerWidth();
-        jQuery(this).width(buttonWidth);
-        if (labelWidth) {
-            jQuery(this).find('select').css('padding-left', (labelWidth + 10) + 'px');
-            jQuery(this).find('select').css('margin-left', -(labelWidth + 10) + 'px');
-        }
-        jQuery(this).find('select').css('width', '100%');
-        jQuery(tmp).remove();
+        var btn = jQuery(this);
+        sizeSelectButton(btn);
     });
 }
 
@@ -111,8 +116,29 @@ function init(cb) {
     jQuery(document).on("click", "#header-home", function () {
         window.location.href = '/';
     });
+    document.cookie = "username=John Doe";
+    var heroCookie = jQuery.cookie("ag_showhero");
+    var showHero = (heroCookie == 'true' || heroCookie == undefined);
+    if (heroCookie == undefined) jQuery.cookie("ag_showhero", "false");
+    console.log('SHOW HERO', heroCookie, showHero);
+    if (!showHero) {
+        jQuery('#hero, #welcome-wrapper').addClass('collapsed');
+        var current = jQuery("#welcome-toggle").text('Show More');
+    }
+    jQuery(document).on("click", "#welcome-toggle", function () {
+        var currentlyOpen = !jQuery('#hero').hasClass('collapsed');
+        jQuery('#hero, #welcome-wrapper').toggleClass('collapsed');
+        var current = jQuery(this).text();
+        var text = currentlyOpen ? 'Show More' : 'Hide'
+        jQuery(this).text(text);
+        if (currentlyOpen) {
+            jQuery.cookie("ag_showhero", "false");
+        } else {
+            jQuery.cookie("ag_showhero", "true");
+        }
+    });
     initializeSliders();
-    sizeButtonSelect();
+    sizeSelectButtons();
     sizeSliders();
     d3.select('#group-theme-advanced button').on('click', showAdvancedConfig);
     d3.select(window).on("resize", windowResize);
@@ -135,5 +161,6 @@ function init(cb) {
 module.exports = {
     init,
     showAdvancedConfig,
+    sizeSelectButton,
     windowResize
 }

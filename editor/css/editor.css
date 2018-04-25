@@ -149,6 +149,77 @@ body.landing #error {
   font-size: 25px;
 }
 
+#hero.collapsed {
+  display: none;
+}
+
+#welcome-wrapper.collapsed {
+  background: none;
+  margin: -5px 0 0 0;
+  padding: 0;
+}
+#welcome-wrapper.collapsed #welcome {
+  border: none;
+  margin-bottom: 0;
+  padding-bottom: 10px;
+}
+#welcome-wrapper.collapsed #features {
+  display: none;
+}
+
+#hero {
+  margin: -60px -20px 80px;
+  text-align: center;
+  background: -moz-linear-gradient(top,  rgba(187,0,0,0.3) 0%, rgba(187,0,0,0.6) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  rgba(187,0,0,0.3) 0%,rgba(187,0,0,0.6) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  rgba(187,0,0,0.3) 0%,rgba(187,0,0,0.6) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4dbb0000', endColorstr='#99bb0000',GradientType=0 ); /* IE6-9 */
+}
+#hero img {
+  width: 80%;
+  max-width: 640px;
+  margin-bottom: -80px;
+}
+#welcome-wrapper {
+    background: #ffffff;
+    margin: -80px -20px 30px;
+    padding: 80px 0 30px;
+}
+#welcome-toggle {
+  font-weight: normal;
+  position: relative;
+  bottom: -5px;
+}
+#welcome {
+  max-width: 800px;
+  margin: 0 auto;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+#welcome .tooltip-info {
+  cursor: default;
+}
+#features {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+#features i {
+  display: inline-block;
+  border-radius: 60px;
+  box-shadow: 0px 0px 2px #888;
+  padding: 0.5em 0.6em;
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+#features .feature {
+  font-weight: bold;
+}
+#features .desc {
+  font-style: italic;
+}
+
 #landing > p {
   max-width: 800px;
   margin: 0 auto;
@@ -182,13 +253,7 @@ body.landing #error {
   text-align: right;
   height: 0;
   position: relative;
-  top: -53px;
-}
-#landing #recent-filter-wrapper label {
-  width: auto;
-}
-#landing #recent-filter-wrapper select {
-  background: #fff;
+  top: -46px;
 }
 
 #landing .saved:not(.empty) .empty,

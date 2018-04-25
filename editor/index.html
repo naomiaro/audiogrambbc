@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
     <link rel="stylesheet" href="https://bbc.github.io/internalGEL/dist/internalgel-bootstrap.css">
     <link rel="stylesheet" href="https://bbc.github.io/internalGEL/dist/internalgel-fonts.css">
     <link rel="stylesheet" href="https://bbc.github.io/internalGEL/dist/internalgel.css" id="intGEL-stylesheet">
@@ -38,8 +39,8 @@
         </div>
         <div class="headerLinks">
             <!-- <a id="messagesLink" href="#">Messages</a> |  -->
-            <a href="http://bbcnewslabs.co.uk/" target="_blank">BBC News Labs</a> |
-            <a id="version" href="https://github.com/BBC-News-Labs/audiogram/releases" target="_blank"></a>
+            <a href="http://bbcnewslabs.co.uk/" target="_blank">BBC News Labs</a> |&nbsp;
+            <span id="version"></span>
         </div>
     </header>
     <div id="offline" style="display: none">
@@ -110,14 +111,52 @@
 
         <div id="landing">
 
-            <h2>Welcome to Audiogram</h2>
-            <p>
+            <div id="hero">
+                <img src="/images/welcome.png" alt="">
+            </div>
+            <div id="welcome-wrapper">
+                <h2>
+                    Welcome to Audiogram
+                    <button id="welcome-toggle" type="button" class="right">Hide</button>                
+                </h2>
+                <div id="welcome">
+                    <div>
+                        Audiogram is <a href="#" class="tooltip-info" data-placement="bottom" title="This is an experimental tool, and is not formally supported.">prototype</a> transcription, subtitling and audio animation tool developed by <a href="http://bbcnewslabs.co.uk">BBC News Labs</a>.
+                    </div>
+                </div>
+                <div id="features">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <i class="fas fa-quote-left"></i>
+                            <div class="feature">Transcribe</div>
+                            <div class="desc">
+                                Automatically generate time-coded, exportable transcripts.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="far fa-closed-captioning"></i>
+                            <div class="feature">Subtitle</div>
+                            <div class="desc">
+                                Burn subtitles into videos and/or produce SRT/XML subtitle files.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-film"></i>
+                            <div class="feature">Animate</div>
+                            <div class="desc">
+                                If your source is audio-only, produce animiated waveform videos.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <p>
                 Audiogram is a
                 <b>audio &rarr; video, and subtitling tool</b>, built by
                 <a href="http://bbcnewslabs.co.uk/" target="_blank">BBC News Labs</a> off the back of
                 <a href="https://medium.com/@WNYC/socialaudio-e648e8a5f2e9#.7se6rlrt8" target="_blank">original work by NPR's WNYC</a> in New York. You can read about why we built it, and how, in our
                 <a href="https://medium.com/bbc-news-labs/visualising-audio-bbc-news-labs-audiogram-generator-4ce97ee3da51" target="_blank">Medium blog</a>.
-            </p>
+            </p> -->
 
             <h2>New Project</h2>
             <div class="row new">
@@ -455,14 +494,15 @@
 
             </div>
 
-            <h2>Recent Projects</h2>
-            <div id="recent-filter-wrapper" class="intGEL">
-                <label for="recent-filter" class="intGEL-arrow">
-                    <select id="recent-filter" class="form-control">
-                        <option value="all" selected>All</option>
-                        <option value="user">Mine only</option>
+            <h2>Logstore</h2>
+            <div id="recent-filter-wrapper">
+                <button class="button-select">
+                    <label>View:</label>
+                    <select id="recent-filter"><option value="all" selected>
+                        All</option>
+                    <option value="user">Mine only</option>
                     </select>
-                </label>
+                </button>
             </div>
             <div class="row saved">
 
@@ -1145,9 +1185,7 @@
                         </div>
                         <hr style="margin: 5px 0;">
                         <div class="row">
-                            <div class="col-md-6">
-                            </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="btn-group">
                                     <button type="button" id="submit" class="right">
                                         <i class="fa fa-film"></i>Generate Audiogram
@@ -1330,6 +1368,7 @@
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
+    <script src="/jquery.cookie.js"></script>
 
     <script type="text/javascript" src="https://static.bbci.co.uk/frameworks/requirejs/0.13.0/sharedmodules/require.js"></script>
 
