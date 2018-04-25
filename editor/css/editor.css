@@ -710,6 +710,7 @@ body.landing #error {
   top: 7px;
   right: 0;
   color: #bbb;
+  user-select: none;
 }
 
 .transcript-speaker {

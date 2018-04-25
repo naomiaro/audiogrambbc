@@ -1103,7 +1103,7 @@ function init(cb) {
                     var firstNode = selAnchor;
                     var lastNode = selFocus;
                 }
-                var top = firstNode.offsetTop - 36;
+                var top = jQuery(firstNode).offset().top - jQuery('transcript').offset().top - 36;
                 var lineEndNode = jQuery(selAnchor).nextUntil('.transcript-line').filter('.transcript-word').last();
                 if (!lineEndNode.length) lineEndNode = firstNode;
                 var startLeft = jQuery(firstNode).offset().left;
