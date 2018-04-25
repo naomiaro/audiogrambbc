@@ -118,7 +118,9 @@ function updateTrim(extent) {
     var start = extent[0] || utils.getSeconds(d3.select('#start').property('value'));
     var end = extent[1] || utils.getSeconds(d3.select('#end').property('value'));
     if (!isNaN(start) && !isNaN(end)) {
-        if (start > end) [start, end] = [end, start];
+        if (start > end) {
+          start = end + (end = start, 0)
+        }
         var audio = require('./audio');
         var duration = Math.round(100 * audio.duration()) / 100;
         if (start < 0.1) start = 0;
