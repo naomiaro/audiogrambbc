@@ -189,6 +189,8 @@ body.landing #error {
   font-weight: normal;
   position: relative;
   bottom: -5px;
+  background: none;
+  color: #888;
 }
 #welcome {
   max-width: 800px;
