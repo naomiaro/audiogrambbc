@@ -21,6 +21,10 @@ function navigate(state, msg, log) {
       var exitVideo = require("./video").exit;
       exitVideo();
     }
+    if (state == 'edit') {
+      var updateDesignTab = require('./themeHelper').updateDesignTab;
+      updateDesignTab();
+    }
     setBreadcrumb(state);
     var cl = classMap[state];
     jQuery('.modal').modal('hide');

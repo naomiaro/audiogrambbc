@@ -110,7 +110,7 @@ function overlayType() {
         var webcap = require('./webcap');
         webcap.use();
     } else if (type == "history") {
-        var url = jQuery("#input-foreground-type option[value='history']").attr('data-src');
+        var url = jQuery("#input-overlay-type option[value='history']").attr('data-src');
         if (!LOADING) media.loadFromURL('foreground', url, function () { });
     } else {
         if (!LOADING) updateImage(null, 'foreground');
@@ -400,7 +400,9 @@ function apply(theme, cb) {
     var metadata = media.get('audio');
     var isVideo = metadata ? metadata.mimetype ? metadata.mimetype.startsWith('video') : metadata.name.endsWith('mp4') : false;
     jQuery("#input-background-type").val(theme.backgroundImage ? "default" : isVideo ? "source" : "file");
+    if (theme.customBackgroundPath) jQuery('#input-background-type').val("history");
     jQuery("#input-overlay-type").val("default");
+    if (theme.customForegroundPath) jQuery('#input-overlay-type').val("history");
     jQuery("#input-pattern").val(theme.pattern);
     updateDesignTab();
     transcript.format();
@@ -578,6 +580,7 @@ module.exports = {
     updateDesignTab,
     reset: themeReset,
     updateImage,
+    updateDesignTab,
     updateDesignSummaries,
     loadThemeList,
     init
