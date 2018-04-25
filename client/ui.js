@@ -112,6 +112,11 @@ function sizeSliders() {
     });
 }
 
+function hideHero() {
+    jQuery('#hero, #welcome-wrapper').addClass('collapsed');
+    jQuery("#welcome-toggle").text('Show More');
+}
+
 function init(cb) {
     jQuery(document).on("click", "#header-home", function () {
         window.location.href = '/';
@@ -121,11 +126,9 @@ function init(cb) {
     var showHero = (heroCookie == 'true' || heroCookie == undefined);
     if (heroCookie == undefined) jQuery.cookie("ag_showhero", "false");
     console.log('SHOW HERO', heroCookie, showHero);
-    if (!showHero) {
-        jQuery('#hero, #welcome-wrapper').addClass('collapsed');
-        var current = jQuery("#welcome-toggle").text('Show More');
-    }
+    if (!showHero) hideHero();
     jQuery(document).on("click", "#welcome-toggle", function () {
+        jQuery('#error, #success').hide();
         var currentlyOpen = !jQuery('#hero').hasClass('collapsed');
         jQuery('#hero, #welcome-wrapper').toggleClass('collapsed');
         var current = jQuery(this).text();
@@ -162,5 +165,6 @@ module.exports = {
     init,
     showAdvancedConfig,
     sizeSelectButton,
+    hideHero,
     windowResize
 }

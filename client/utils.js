@@ -80,7 +80,11 @@ function setClass(cl, msg, log) {
     } else {
     var bodyClass = cl || '';
     }
-    if (error) bodyClass += ' error';
+    if (error) {
+      var hideHero = require('./ui').hideHero;
+      hideHero();
+      bodyClass += ' error';
+    }
     jQuery("body").attr("class", bodyClass || null);
     jQuery('#error, #success').text(msg || '');
   }
@@ -146,7 +150,12 @@ function error(err) {
     if (typeof err === 'string') {
         var error = { message: err, stack: null };
     } else {
-        var error = JSON.parse(err);
+      var error = "Unkown Error";
+      try {
+        error = JSON.parse(err);
+      } catch (e) {
+        error = {message: err, stack: null};
+      }
     }
     console.error(error.message);
     console.log(error.stack);
