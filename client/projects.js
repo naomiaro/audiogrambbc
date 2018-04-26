@@ -177,6 +177,7 @@ function loadProject(id) {
     // Background settings
     jQuery('#input-background-type option[value="history"]').remove();
     if (data.media.background && data.media.audio.path == data.media.background.path) {
+      jQuery("#input-background-type option[value='source']").attr("disabled", false);      
       jQuery('#input-background-type').val("source");
     } else if (data.media.background) {
       jQuery('#input-background-type').append('<option value="history">Last Used</option>');
