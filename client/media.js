@@ -18,11 +18,18 @@ function _set(obj, type) {
     } else {
         MEDIA = obj;
     }
-    var sourceIsVideo = MEDIA.audio.mimetype.startsWith("video");
-    if (sourceIsVideo) {
-        jQuery("#input-background-type option[value='source']").attr("disabled", false);
-    } else {
-        jQuery("#input-background-type option[value='source']").attr("disabled", true);
+    if (type == 'audio' && MEDIA.audio.mimetype) {
+        var sourceIsVideo = MEDIA.audio.mimetype.startsWith("video");
+        if (sourceIsVideo) {
+            jQuery("#input-background-type option[value='source']").attr("disabled", false);
+            jQuery("#input-background-type").val('source');
+        } else {
+            jQuery("#input-background-type option[value='source']").attr("disabled", true);
+            var currentBackgroundType = jQuery("#input-background-type").val();
+            if (currentBackgroundType == 'source') jQuery("#input-background-type").val('default');
+        }
+        var updateDesignTab = require('./themeHelper').updateDesignTab;
+        updateDesignTab();
     }
     return MEDIA;
 }
@@ -115,11 +122,11 @@ function upload(type, blob) {  // Reset
     var oldId = MEDIA[type] ? MEDIA[type].id : null;
     deleteMedia(type);
     if (!blob || LOADING) return;
-    MEDIA[type] = { 
+    _set({
         id: oldId,
         name: blob.name || "blob",
         size: blob.size
-    };
+    }, type);
     BLOBS[type] = blob;
     // Prepare payload
     var formData = new FormData();
@@ -139,10 +146,10 @@ function upload(type, blob) {  // Reset
             if (MEDIA[res.type] && res.name == MEDIA[res.type].name && res.size == MEDIA[res.type].size) {
                 for (var type in MEDIA) {
                     if (type !== 'audio' && MEDIA[res.type].id == MEDIA[type].id && type !== res.type) {
-                        MEDIA[type] = Object.assign({}, res, { type });
+                        _set(Object.assign({}, res, { type }), type);
                     }
                 }
-                MEDIA[res.type] = res;
+                _set(res, res.type);
             }
         },
         error: error

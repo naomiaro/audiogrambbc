@@ -399,7 +399,7 @@ function apply(theme, cb) {
     // Reset UI
     var metadata = media.get('audio');
     var isVideo = metadata ? metadata.mimetype ? metadata.mimetype.startsWith('video') : metadata.name.endsWith('mp4') : false;
-    jQuery("#input-background-type").val(theme.backgroundImage ? "default" : isVideo ? "source" : "file");
+    jQuery("#input-background-type").val(isVideo ? "source" : theme.backgroundImage ? "default" : "file");
     if (theme.customBackgroundPath) jQuery('#input-background-type').val("history");
     jQuery("#input-overlay-type").val("default");
     if (theme.customForegroundPath) jQuery('#input-overlay-type').val("history");
@@ -580,7 +580,6 @@ module.exports = {
     updateDesignTab,
     reset: themeReset,
     updateImage,
-    updateDesignTab,
     updateDesignSummaries,
     loadThemeList,
     init
