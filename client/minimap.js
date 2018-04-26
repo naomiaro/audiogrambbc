@@ -31,7 +31,6 @@ minimap.selectAll(".brush .resize")
 var t, minimapWidth;
 function _width(_) {
   if (arguments.length) {
-    console.log('MINIMAP WIDTH', _);
     minimapWidth = _;
     t = d3.scaleLinear().domain([0, _]).range([0,1]).clamp(true);
     d3.selectAll("#minimap svg, #minimap clipPath rect").attr("width", _);

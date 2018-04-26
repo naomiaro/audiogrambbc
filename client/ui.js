@@ -125,7 +125,6 @@ function init(cb) {
     var heroCookie = jQuery.cookie("ag_showhero");
     var showHero = (heroCookie == 'true' || heroCookie == undefined);
     if (heroCookie == undefined) jQuery.cookie("ag_showhero", "false");
-    console.log('SHOW HERO', heroCookie, showHero);
     if (!showHero) hideHero();
     jQuery(document).on("click", "#welcome-toggle", function () {
         jQuery('#error, #success').hide();
