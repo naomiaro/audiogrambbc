@@ -613,7 +613,8 @@ function clear() {
 
 function poll(job) {
     kaldiPoll = setTimeout(function(){
-        var duration = +jQuery("#minimap #end").val();
+        var end = jQuery("#minimap #end").val();
+        var duration = +utils.getSeconds(end);
         var pollUrl = `/kaldi/${job}?time=${kaldiTimer}&duration=${duration}`;
         jQuery.getJSON( pollUrl, function( data ) {
             if (data.status=="SUCCESS" && !data.error) {
