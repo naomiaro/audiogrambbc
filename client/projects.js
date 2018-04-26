@@ -257,6 +257,7 @@ function init(cb) {
   jQuery(document).on("change", "#input-audio", function(){
     media.update();
     var name = jQuery('#input-audio')[0].files[0].name;
+    name = name.split('.')[0];
     _title(name);
     utils.navigate("new");
     utils.setClass("loading");
