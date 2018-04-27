@@ -1,5 +1,6 @@
 var media = require('./media');
 var utils = require('./utils');
+var projects = require('./projects');
 
 var logstore_blacklist = ['MOS_STORIES', 'PRI_NEWSPREP'];
 
@@ -43,6 +44,8 @@ function load(site, id) {
             media.loadFromURL('audio', url, function () {
                 // utils.navigate('edit');
             });
+            var title = res.retval.GENERIC.GENE_TITLE;
+            projects.title(title);
             jQuery('#themes.modal').modal('show');
         } else {
             var reason = res.retval ? res.retval.reason : null;

@@ -5,7 +5,6 @@ var utils = require("./utils");
 var media = require("./media");
 var audio = require("./audio");
 var video = require("./video");
-var vcs = require("./vcs");
 var png = require("./png");
 var preview = require("./preview");
 var minimap = require("./minimap");
