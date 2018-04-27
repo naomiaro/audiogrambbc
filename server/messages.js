@@ -18,6 +18,8 @@ function getMessages(req, res) {
 
     var since = req.params.since;
     since = !isNaN(since) ? parseInt(since) : null;
+    var admin = req.query.admin;
+    if (!since && !admin) return res.json({ messages: [] });
     var now = Date.parse(new Date());
 
 

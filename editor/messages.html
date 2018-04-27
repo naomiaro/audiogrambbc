@@ -250,7 +250,7 @@
           });
         }
         function checkMessages() {
-          jQuery.getJSON('/messages/', function (data) {
+          jQuery.getJSON('/messages/?admin=true', function (data) {
               jQuery(function () {
                 if (data.messages && data.messages.length) {
                   displayMessages(data.messages);
