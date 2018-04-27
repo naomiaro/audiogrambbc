@@ -45,9 +45,6 @@ function newProject(e) {
   if (type == "upload") {
     jQuery("#input-audio").trigger('click');
   } else {
-    if (type == "vcs") {
-        vcs.updateList();
-    }
     if (type == "png") {
         png.updateList();
     }
@@ -282,6 +279,9 @@ function init(cb) {
     if (newTitle != null) {
       _title(newTitle);
     }
+  });
+  jQuery(document).on('shown.bs.modal', '#new-vcs', function (e) {
+    jQuery('#vcs-text').focus();
   });
 
   if (cb) return cb(null);

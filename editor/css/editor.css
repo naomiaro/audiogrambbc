@@ -336,9 +336,77 @@ body.landing #error {
   line-height: 60px;
 }
 
-#new-vcs table tbody tr td:first-child,
-#new-png table tbody tr td:first-child {
-    text-align: center;
+#vcs-site-button {
+  max-width: 150px;
+  min-width: 150px;
+}
+#vcs-site-button {
+  max-width: 180px;
+}
+#vcs-site {
+  max-width: 180px;
+  min-width: 180px;
+}
+
+#vcs-text {
+  font-size: 13px;
+  padding: 3px 8px;
+  display: inline-block;
+  width: 250px;
+  margin: 0 5px;
+  position: relative;
+  top: 1px;
+}
+
+#new-vcs table {
+  font-size: 13px;
+  margin-bottom: 0;
+  margin-top: 10px;
+}
+#new-vcs table thead {
+  display: block;
+}
+#new-vcs table tbody {
+  overflow: scroll;
+  display: block;
+  margin-bottom: 0;
+}
+#new-vcs table td,
+#new-vcs table th{
+  padding: 4px 8px;
+}
+#new-vcs table tbody tr.active td{
+  background: #ffff99;
+}
+#new-vcs table tbody tr td:nth-child(1),
+#new-vcs table tbody tr td:nth-child(2),
+#new-vcs table tbody tr td:nth-child(3){
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#new-vcs table tbody tr td:nth-child(1){
+  min-width: 90px;
+  max-width: 90px;
+  width: 90px;
+}
+#new-vcs table tbody tr td:nth-child(2){
+  min-width: 140px;
+  max-width: 140px;
+  width: 140px;
+}
+#new-vcs table tbody tr td:nth-child(3){
+  min-width: 330px;
+  max-width: 330px;
+  width: 330px;
+}
+#new-vcs table tbody tr.error{
+  pointer-events: none;
+  cursor: default;
+}
+#new-vcs table tbody tr.error td{
+  text-align: center;
+  font-style: italic;
 }
 #new-vcs table tbody input,
 #new-png table tbody input {

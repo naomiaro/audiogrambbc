@@ -165,7 +165,6 @@ function useVideoAsBackground() {
     if (sourceBlob && sourceBlob.type.startsWith('video')) {
       updateImage("useVideoAsBackground", "background", sourceBlob, function() {
         utils.setClass(null);
-        logger.info(USER.name + " used their audio source file as the background video");
       });
     } else {
       var mediaSelector = require("./mediaSelector");
