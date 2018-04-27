@@ -374,6 +374,7 @@ body.landing #error {
 #new-vcs table td,
 #new-vcs table th{
   padding: 4px 8px;
+  user-select: none;
 }
 #new-vcs table tbody tr.active td{
   background: #ffff99;
