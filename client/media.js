@@ -76,6 +76,7 @@ function update(blob, cb) {
 
     if (size >= 150) {
         utils.setClass( 'error', 'Maximum upload size is 150MB. (Audio: ' + filename + ' - ' + Math.round(size * 10) / 10 + 'MB)' );
+        jQuery('body').attr('class', 'landing error');
         return;
     }
 
