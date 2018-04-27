@@ -8,9 +8,25 @@ logger = require("../lib/logger"),
 transports = require("../lib/transports"),
 uuidv4 = require('uuid/v4');
 
+var redisHost = require("../settings/").redisHost;
+var redis = require("redis");
+var redisClient = redis.createClient({ host: redisHost });
+var prefix = "audiogram:";
+var user = null;
+
+redisClient.on("error", function (err) {
+  console.log('REDIS ERROR>> \n', err);
+});
+
 function validate(req, res, next) {
   
   console.log("RLW validating");
+
+  if (req.header("host").startsWith("localhost")) {
+    user = "localhost@audiogram.newslabs.co";
+  } else {
+    user = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : null;
+  }
   
   try {
     
@@ -142,6 +158,7 @@ function route(req, res) {
     var job = _.extend({ id: jobId, created: (new Date()).getTime(), media: req.body.media, theme: themeWithBackgroundImage }, req.body);
     transports.addJob(job);
     sendStats(job);
+    updateUserInfo(job);
     
     res.json({ id: jobId, media: req.body.media });
     
@@ -158,6 +175,19 @@ function route(req, res) {
       });
       
     }
+  }
+
+  function updateUserInfo(job) {
+    var themeId = job.theme.id;
+    console.log(`audiogram:user:config:${user}`);
+    redisClient.hget(`audiogram:user:config:${user}`, "themes_recent", function(err, themes){
+      console.log('THEMES...', user, themes);
+      if (!err && themes) {
+        var themes = JSON.parse(themes);
+        console.log(themes);
+      }
+    });
+    
   }
 
   function sendStats(job) {
