@@ -8,7 +8,7 @@ function search() {
     jQuery('#vcs-search i.fa-spinner').show();
     var site = jQuery('#vcs-site').val();
     var term = jQuery('#vcs-text').val();
-    jQuery.getJSON(`http://apis.labs.jupiter.bbc.co.uk/vcsinfo/${site}:${term}`, function (res) {
+    jQuery.getJSON(`/vcs/api/${site}:${term}`, function (res) {
         jQuery("#new-vcs-table-store tbody").text('');
         if (res.retval.results) {
             res.retval.results.forEach(function (item) {
@@ -37,9 +37,9 @@ function search() {
 function load(site, id) {
     jQuery('#vcs-import span').hide();
     jQuery('#vcs-import i.fa-spinner').show();
-    jQuery.getJSON(`http://apis.labs.jupiter.bbc.co.uk/vcsinfo/${site}:${id}`, function (res) {
+    jQuery.getJSON(`/vcs/api/${site}:${id}`, function (res) {
         if (res.retval.status) {
-            var url = `http://apis.labs.jupiter.bbc.co.uk/vcsinfo/${site}:${id}.mp3`;
+            var url = `/vcs/api/media/${site}:${id}`;
             media.loadFromURL('audio', url, function () {
                 // utils.navigate('edit');
             });
@@ -57,7 +57,7 @@ function load(site, id) {
 function init(cb) {
     var windowHeight = jQuery(window).height();    
     jQuery('#new-vcs table tbody').css('max-height', (windowHeight - 320) + 'px');
-    jQuery.getJSON("http://apis.labs.jupiter.bbc.co.uk/vcsinfo/sites", function (res) {
+    jQuery.getJSON("/vcs/api/sites", function (res) {
         res.retval.sites.forEach(function(site){
             jQuery('#vcs-site').append(`<option value='${site.id}'>${site.name}</option>`);
         });

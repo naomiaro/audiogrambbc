@@ -6,6 +6,23 @@ var request = require('request'),
     fs = require("fs"),
     _ = require("lodash");
 
+function api(req, res) {
+    var requestURL = `http://apis.labs.jupiter.bbc.co.uk/vcsinfo/${req.params.term}`;
+    request({ url: requestURL, proxy: '' }, function (error, response, body) {
+        if (response.statusCode !== 200) {
+            return res.json({ error: body });
+        }
+        return res.json(JSON.parse(body));
+    });
+}
+
+function pipeMedia(req, res) {
+    var requestURL = `http://apis.labs.jupiter.bbc.co.uk/vcsinfo/${req.params.term}.mp3`;
+    var reply = request({ url: requestURL, proxy: '' });
+    req.pipe(reply);
+    reply.pipe(res);
+}
+
 function list(req, res) {
     var dir = path.join(__dirname, "../vcs");
     var items = [];
@@ -78,6 +95,8 @@ function media(req, res) {
 
 module.exports = {
     list,
+    api,
     media,
-    search
+    search,
+    pipe: pipeMedia
 };
