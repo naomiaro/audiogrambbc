@@ -9,7 +9,7 @@ var request = require('request'),
 function api(req, res) {
     var requestURL = `http://apis.labs.jupiter.bbc.co.uk/vcsinfo/${req.params.term}`;
     request({ url: requestURL, proxy: '' }, function (error, response, body) {
-        if (response.statusCode !== 200) {
+        if (error || !response || response.statusCode !== 200) {
             return res.json({ error: body });
         }
         return res.json(JSON.parse(body));
