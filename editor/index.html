@@ -159,11 +159,6 @@
             </p> -->
 
             <h2>New Project</h2>
-
-                                    <button id="theme-change" data-toggle="modal" href="#themes" type="button" aria-expanded="false">
-                                        <b>Base Theme:</b>
-                                        <span>Custom</span>
-                                    </button>
             <div class="row new">
 
                 <!-- PNg -->
@@ -1303,6 +1298,13 @@
                         <div id="themes-all" class="group">
                             <div class="group-title">
                                 All Themes
+                                <button class="button-select">
+                                    <label>Sort:</label>
+                                    <select class="themes-filter">
+                                        <option value="name" selected>Alphabetically</option>
+                                        <option value="count" selected>Most Popular</option>
+                                    </select>
+                                </button>
                             </div>
                             <div class="row themes">
                                 <div class="theme col-md-3 template">

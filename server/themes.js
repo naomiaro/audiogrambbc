@@ -77,7 +77,7 @@ function list(req, res) {
       var keys = reply[1];
       var multi = redisClient.multi();
       keys.forEach(function(key, i) {
-        multi.hmget(key, ['id', 'name', 'user', 'created', 'config']);
+        multi.hmget(key, ['id', 'name', 'user', 'created', 'useCount', 'config']);
       });
       multi.exec(function(err, multiReply){
         if (err || !multiReply) return cb(err || "No themes found");
@@ -86,9 +86,10 @@ function list(req, res) {
           var name = multiReply[i][1];
           var user = multiReply[i][2];
           var created = multiReply[i][3];
-          var config = JSON.parse(multiReply[i][4]);
+          var useCount = +multiReply[i][4] || 0;
+          var config = JSON.parse(multiReply[i][5]);
           var videoOptimised = config.pattern == 'none';
-          if (id) themes.push({ id, name, user, created, videoOptimised });
+          if (id) themes.push({ id, name, user, created, useCount, videoOptimised });
         }
         if (cursor === "0") {
           return cb(null, themes);

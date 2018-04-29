@@ -159,6 +159,7 @@ function route(req, res) {
     transports.addJob(job);
     sendStats(job);
     updateUserInfo(job);
+    redisClient.hincrby(`audiogram:theme:${job.theme.id}`, 'useCount', 1);
     
     res.json({ id: jobId, media: req.body.media });
     

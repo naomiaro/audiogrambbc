@@ -1612,6 +1612,7 @@ body > .wrapper button.button-select select {
   padding-right: 30px;
   outline: none !important;
   box-shadow: none !important;
+  font-weight: normal;
 }
 body > .wrapper button.button-select:after {
     font-family: FontAwesome;
@@ -1815,6 +1816,13 @@ button#view i{
   font-family: 'ReithSans';
   font-weight: bold;
   border-bottom: 1px solid #ccc;
+  position: relative;
+}
+#themes .group-title .button-select {
+  zoom: 0.9;
+  position: absolute;
+  top: -10px;
+  right: 0;
 }
 #themes .row {
   margin: 15px 0;
