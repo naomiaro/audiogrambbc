@@ -96,7 +96,7 @@ function sizeSelectButton(btn) {
 }
 
 function sizeSelectButtons() {
-    jQuery('body > .wrapper button.button-select').each(function(){
+    jQuery('body > .wrapper button.button-select, .modal button.button-select').each(function(){
         var btn = jQuery(this);
         sizeSelectButton(btn);
     });
