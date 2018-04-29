@@ -1577,26 +1577,30 @@ g.time line {
 }
 
 /* Buttons */
+body > .modal button,
 body > .wrapper button {
     padding: 3px 8px;
     position: relative;
     font-size: 13px;
 }
 
-body > .wrapper button.button-select {
+body > .wrapper button.button-select,
+body > .modal button.button-select {
   position: relative;
   display: inline-block;
   cursor: pointer;
   /* width: 180px; */
   text-align: left;
 }
-body > .wrapper button.button-select label {
+body > .wrapper button.button-select label,
+body > .modal button.button-select label {
   font-weight: bold;
   font-size: 13px;
   padding-right: 5px;
   margin: 0;
 }
-body > .wrapper button.button-select select {
+body > .wrapper button.button-select select,
+body > .modal button.button-select select {
   background: transparent;
   color: #333;
   border: none;
@@ -1614,7 +1618,8 @@ body > .wrapper button.button-select select {
   box-shadow: none !important;
   font-weight: normal;
 }
-body > .wrapper button.button-select:after {
+body > .wrapper button.button-select:after,
+body > .modal button.button-select:after {
     font-family: FontAwesome;
     font-size: 15px;
     content: "\f0dd";
@@ -1806,35 +1811,35 @@ button#view i{
   font-weight: bold;
 }
 
-#themes .modal-dialog {
+.design-modal .modal-dialog {
   width: 890px;
 }
-#themes .modal-body {
+.design-modal .modal-body {
   overflow-y: scroll;
 }
-#themes .group-title {
+.design-modal .group-title {
   font-family: 'ReithSans';
   font-weight: bold;
   border-bottom: 1px solid #ccc;
   position: relative;
 }
-#themes .group-title .button-select {
+.design-modal .group-title .button-select {
   zoom: 0.9;
   position: absolute;
   top: -10px;
   right: 0;
 }
-#themes .row {
+.design-modal .row {
   margin: 15px 0;
 }
-#themes .theme {
+.design-modal .theme {
   margin-bottom: 10px;
   cursor: pointer;
 }
-#themes .theme.template {
+.design-modal .theme.template {
   display: none;
 }
-#themes .theme .info {
+.design-modal .theme .info {
   background: #fff;
   position: relative;
   border-top: 4px solid #fff;
@@ -1844,32 +1849,32 @@ button#view i{
   transition: top 0.3s ease-out;
   top: 0;
 }
-#themes .theme:hover .info {
+.design-modal .theme:hover .info {
   top: -5px;
 }
-#themes .theme.active .info {
+.design-modal .theme.active .info {
   border-top-width: 3px;
   margin-bottom: -1px;
 }
-#themes .theme.active .info hr {
+.design-modal .theme.active .info hr {
   border-top: 3px solid #000;
 }
-#themes .theme .info hr {
+.design-modal .theme .info hr {
   margin: 0;
   border-color: #ccc;
 }
-#themes .theme .info .title {
+.design-modal .theme .info .title {
   font-family: ReithSans;
   font-size: 13px;
   height: 40px;
   overflow: hidden;
 }
-#themes .theme .preview {
+.design-modal .theme .preview {
   height: 104px;
   background: #ccc;
   text-align: center;
 }
-#themes .theme .preview img {
+.design-modal .theme .preview img {
   width: auto;
   height: 100%;
   max-width: 100%;
