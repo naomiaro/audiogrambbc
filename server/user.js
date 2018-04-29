@@ -78,7 +78,9 @@ function whoami(req, res) {
     redisClient.scard("audiogram:users", function(err, count) {
       stats.gauge("users.registered", count);
     });
-    return res.json({ name, email, lastLogin });
+    redisClient.hgetall(`audiogram:user:config:${email}`, function(err, config){
+      return res.json({ name, email, lastLogin, config });
+    });
   });
 }
 	

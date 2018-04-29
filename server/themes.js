@@ -14,7 +14,7 @@ var prefix = "audiogram:";
 redisClient.on("error", function(err) {
   console.log("REDIS ERROR>> \n", err);
 });
-    
+   
 function save(req, res) {
   var newTheme = JSON.parse(req.body.theme);
   delete newTheme.audioPath;
@@ -77,7 +77,7 @@ function list(req, res) {
       var keys = reply[1];
       var multi = redisClient.multi();
       keys.forEach(function(key, i) {
-        multi.hmget(key, ['id', 'name', 'user', 'created']);
+        multi.hmget(key, ['id', 'name', 'user', 'created', 'config']);
       });
       multi.exec(function(err, multiReply){
         if (err || !multiReply) return cb(err || "No themes found");
@@ -86,7 +86,9 @@ function list(req, res) {
           var name = multiReply[i][1];
           var user = multiReply[i][2];
           var created = multiReply[i][3];
-          if (id) themes.push({id, name, user, created});
+          var config = JSON.parse(multiReply[i][4]);
+          var videoOptimised = config.pattern == 'none';
+          if (id) themes.push({ id, name, user, created, videoOptimised });
         }
         if (cursor === "0") {
           return cb(null, themes);

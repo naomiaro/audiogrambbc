@@ -159,6 +159,11 @@
             </p> -->
 
             <h2>New Project</h2>
+
+                                    <button id="theme-change" data-toggle="modal" href="#themes" type="button" aria-expanded="false">
+                                        <b>Base Theme:</b>
+                                        <span>Custom</span>
+                                    </button>
             <div class="row new">
 
                 <!-- PNg -->
@@ -830,7 +835,7 @@
                             <div class="tab-pane" id="editor-tab-design">
                                 <!-- DESIGN -->
                                 <section id="section-theme">
-                                    <button id="theme-change" data-toggle="modal" href="#themes" type="button" aria-expanded="false">
+                                    <button id="theme-change">
                                         <b>Base Theme:</b> <span>Custom</span>
                                     </button>
                                     <button id="theme-save"><i class="fa fa-save"></i> Save As</button>
@@ -1280,17 +1285,36 @@
                         <h4 class="modal-title">Select Theme</h4>
                     </div>
                     <div class="modal-body" style="">
-                        <div class="row themes">
-                            <div class="theme col-md-3 template">
-                                <div class="preview">
-                                    <img src="/video/5304313c-2f7d-4f15-ae37-0713ee6845d1.jpg" alt="">
-                                </div>
-                                <div class="info">
-                                    <hr>
-                                    <div class="title"></div>
+                        <div id="themes-recent" class="group">
+                            <div class="group-title">
+                                Recently Used
+                            </div>
+                            <div class="row themes">
+                            </div>
+                        </div>
+                        <div id="themes-video" class="group">
+                            <div class="group-title">
+                                Optimised For Video Backgrounds &nbsp;
+                                <i class="fas fa-info-circle tooltip-info" data-placement="right" title="Video audiograms with no waveform overlay are generated much faster"></i>
+                            </div>
+                            <div class="row themes">
+                            </div>
+                        </div>
+                        <div id="themes-all" class="group">
+                            <div class="group-title">
+                                All Themes
+                            </div>
+                            <div class="row themes">
+                                <div class="theme col-md-3 template">
+                                    <div class="preview">
+                                        <img src="/video/5304313c-2f7d-4f15-ae37-0713ee6845d1.jpg" alt="">
+                                    </div>
+                                    <div class="info">
+                                        <hr>
+                                        <div class="title"></div>
+                                    </div>
                                 </div>
                             </div>
-                            
                         </div>
                     </div>
                     <div class="modal-footer">

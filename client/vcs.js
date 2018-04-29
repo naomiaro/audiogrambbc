@@ -1,6 +1,7 @@
 var media = require('./media');
 var utils = require('./utils');
 var projects = require('./projects');
+var themeHelper = require('./themeHelper');
 
 var logstore_blacklist = ['MOS_STORIES', 'PRI_NEWSPREP'];
 
@@ -39,14 +40,14 @@ function load(site, id) {
     jQuery('#vcs-import span').hide();
     jQuery('#vcs-import i.fa-spinner').show();
     jQuery.getJSON(`/vcs/api/${site}:${id}`, function (res) {
-        if (res.retval.status) {
+        if (res.retval && res.retval.status) {
             var url = `/vcs/api/media/${site}:${id}`;
             media.loadFromURL('audio', url, function () {
                 // utils.navigate('edit');
             });
             var title = res.retval.GENERIC.GENE_TITLE;
             projects.title(title);
-            jQuery('#themes.modal').modal('show');
+            themeHelper.openModal();
         } else {
             var reason = res.retval ? res.retval.reason : null;
             var error = reason || 'Error fetching that item.';
@@ -61,12 +62,14 @@ function init(cb) {
     var windowHeight = jQuery(window).height();    
     jQuery('#new-vcs table tbody').css('max-height', (windowHeight - 320) + 'px');
     jQuery.getJSON("/vcs/api/sites", function (res) {
-        res.retval.sites.forEach(function(site){
-            jQuery('#vcs-site').append(`<option value='${site.id}'>${site.name}</option>`);
-        });
-        var hasWest1 = jQuery('#vcs-site option[value=west1]').length;
-        var defaultSite = hasWest1 ? 'west1' : jQuery('#vcs-site option:first').val();
-        jQuery('#vcs-site').val(defaultSite);
+        if (res.retval) {
+            res.retval.sites.forEach(function(site){
+                jQuery('#vcs-site').append(`<option value='${site.id}'>${site.name}</option>`);
+            });
+            var hasWest1 = jQuery('#vcs-site option[value=west1]').length;
+            var defaultSite = hasWest1 ? 'west1' : jQuery('#vcs-site option:first').val();
+            jQuery('#vcs-site').val(defaultSite);
+        }
     });
     jQuery(document).on("click", "#vcs-search", function (e) {
         search();

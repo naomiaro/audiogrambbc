@@ -159,8 +159,10 @@ function loadImagePid() {
 }
 
 function useVideoAsBackground() {
-    d3.select('#loading-message').text('Loading video...');
-    utils.setClass('loading');
+    if (!jQuery('body').hasClass('loading')) {
+        d3.select('#loading-message').text('Loading video...');
+        utils.setClass('loading');
+    }
     var sourceBlob = media.blobs('audio');
     if (sourceBlob && sourceBlob.type.startsWith('video')) {
       updateImage("useVideoAsBackground", "background", sourceBlob, function() {
@@ -486,25 +488,37 @@ function updateDesignTab() {
 function loadThemeList(cb) {
     var bodyHeight = jQuery(window).height() - 200;
     jQuery("#themes .modal-body").css('height', bodyHeight + "px");
+    var recent = USER.config.themes_recent.split(',');
 
     jQuery.getJSON("/themes/list", function(data) {
         if (data.error) {
             console.log("Error fetching themes", data.error);
             return cb(data.error);
         }
+        // Add themes
         data.themes.forEach(function(theme){
             var id = theme.id;
             var name = theme.name;
             if (id && name && name !== "default" && name !== "Custom") {
-                var clone = jQuery("#themes .theme.template:first").clone();
-                jQuery("#themes .themes").append(clone);
+                var recentIndex = recent.indexOf(id);
+                var clone = jQuery("#themes-all .theme.template:first").clone();
+                jQuery("#themes-all .themes").append(clone);
                 clone.removeClass("template");
                 clone.attr("data-id", id);
                 clone.attr("data-name", name);
+                if (recentIndex > -1) clone.attr("data-recent", recentIndex);
+                if (theme.videoOptimised) clone.attr("data-videoOptimised", true);
                 clone.find(".title").text(name);
                 clone.find(".preview img").attr("src", `/settings/themes/${id}`);
             }
         });
+        // Move recently used
+        var recentCount = jQuery('#themes-all .theme[data-recent]').length;
+        for (let i = 0; i < recentCount; i++) {
+            var theme = jQuery(`#themes-all .theme[data-recent=${i}]`);
+            theme.appendTo("#themes-recent .themes");
+        }
+        if (recentCount) jQuery('#theme-recent').hide();
         if (cb) return cb(null);
     });
 }
@@ -527,9 +541,34 @@ function selectTheme() {
     });
 }
 
+function openModal() {
+    jQuery('#loading-message').text('Selecting theme...');
+    var mediaBlobs = media.blobs();
+    if (mediaBlobs && mediaBlobs.audio && mediaBlobs.audio.type.startsWith('video')) {
+        var count = jQuery('#themes-all .theme[data-videoOptimised=true]').length;
+        if (count) {
+            jQuery('#themes-video').show();
+            jQuery('#themes-all .theme[data-videoOptimised=true]').each(function(i, el){
+                jQuery(el).appendTo("#themes-video .themes");
+            });
+        }
+    } else {
+        var count = jQuery('#themes-video .theme').length;
+        if (count) {
+            jQuery('#themes-video .theme').each(function (el) {
+                jQuery(el).appendTo("#themes-all .themes");
+            });
+            // TODO: reorder all
+        }
+        jQuery('#themes-video').hide();
+    }
+    jQuery('#themes').modal('show'); 
+}
+
 function init(cb) {
     // d3.selectAll('.themeConfig').on('change', updateThemeConfig);
     jQuery(document).on("change", ".themeConfig", updateThemeConfig);
+    jQuery(document).on("click", "#theme-change", openModal);
     d3.selectAll('#theme-reset').on('click', themeReset);
     d3.selectAll('#theme-save').on('click', themeSave);
     jQuery(document).on('show.bs.modal', '#themes', function (e) {
@@ -537,6 +576,11 @@ function init(cb) {
     });
     jQuery(document).on('hide.bs.modal', '#themes', function (e) {
         jQuery("#themes").removeClass('active');
+    });
+    jQuery(document).on('hidden.bs.modal', '#themes', function (e) {
+        if (jQuery('body').hasClass('loading') && jQuery('#loading-message').text() == 'Selecting theme...') {
+            jQuery('#themes').modal('show'); 
+        }
     });
     jQuery(document).on('shown.bs.modal', '#themes', function (e) {
         var current = preview.theme();
@@ -581,5 +625,6 @@ module.exports = {
     updateImage,
     updateDesignSummaries,
     loadThemeList,
+    openModal,
     init
 }

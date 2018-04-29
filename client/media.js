@@ -95,8 +95,13 @@ function update(blob, cb) {
             if (cb) cb(err);
             jQuery('#minimap, #submit').addClass('hidden');
         } else {
-            utils.setClass(null);
-            if (!LOADING) upload('audio', audioFile);
+            if (!LOADING) {
+                utils.setClass('loading');
+                BLOBS['audio'] = audioFile;
+                upload('audio', audioFile);
+            } else {
+                utils.setClass(null);
+            }
             if (!blob) logger.info( USER.name + ' uploaded a local audio file: ' + filename );
             if (cb) cb(null);
         }

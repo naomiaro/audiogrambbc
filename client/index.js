@@ -33,7 +33,6 @@ window.onerror = function (error, url, line) {
 };
 
 global.LOADING = true;
-user.init();
 jQuery('#version').text('Version: __VERSION__');
 
 // Check DB status
@@ -56,6 +55,7 @@ jQuery.ajax({
 jQuery(function () {
 
   var initQueue = d3.queue();
+  initQueue.defer(user.init);
   initQueue.defer(ui.init);
   initQueue.defer(audio.init);
   initQueue.defer(mediaSelector.init);

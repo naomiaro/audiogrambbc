@@ -251,13 +251,14 @@ function init(cb) {
   jQuery(document).on("click", "#landing .new > [data-type]", newProject);
   jQuery(document).on("click", "#landing .saved [data-id]", selectProject);
   jQuery(document).on("change", "#input-audio", function(){
-    media.update();
     var name = jQuery('#input-audio')[0].files[0].name;
     name = name.split('.')[0];
     _title(name);
     utils.navigate("new");
     utils.setClass("loading");
-    jQuery('#themes.modal').modal('show');
+    media.update(undefined, function(err){
+      themeHelper.openModal();
+    });
   });
   jQuery(document).on("change", "#recent-filter", function(){
     utils.stats("increment", `user_activity.logstore.filter`);
