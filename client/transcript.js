@@ -33,6 +33,8 @@ function reverseHMS(str) {
 
 // Highlight selected words 
 function highlight(start, end) {
+    start = start || utils.getSeconds(jQuery('#start').val());
+    end = end || utils.getSeconds(jQuery('#end').val());
     jQuery(".transcript-word").removeClass("unused");
     var allAdded = !jQuery(".transcript-word:not(.added)").length;
     if (!allAdded && start>=0 && end) {
@@ -620,7 +622,8 @@ function poll(job) {
             if (data.status=="SUCCESS" && !data.error) {
                 load({segments: data.script});
                 jQuery("#transcript").removeClass("loading");
-                format();                
+                format();
+                highlight();
             } else if (data.error) {
                 jQuery("#transcript-pane .error span").html("The BBC R&D Kaldi transcription failed<br/><i>Ref: " + job + "</i>");
                 jQuery("#transcript").removeClass("loading").addClass("error");
