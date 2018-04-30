@@ -488,7 +488,7 @@ function updateDesignTab() {
 function loadThemeList(cb) {
     var bodyHeight = jQuery(window).height() - 200;
     jQuery("#themes .modal-body").css('height', bodyHeight + "px");
-    var recent = USER.config.themes_recent.split(',');
+    var recent = USER.config && USER.config.themes_recent ? USER.config.themes_recent.split(',') : [];
 
     jQuery.getJSON("/themes/list", function(data) {
         if (data.error) {
