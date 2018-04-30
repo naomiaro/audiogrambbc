@@ -181,12 +181,17 @@ function route(req, res) {
   function updateUserInfo(job) {
     var themeId = job.theme.id;
     redisClient.hget(`audiogram:user:config:${user}`, "themes_recent", function(err, themes){
-      if (!err && themes) {
-        var themes = themes.split(',');
-        themes.unshift(themeId);
-        themes = Array.from(new Set(themes));
-        themes = themes.slice(0, 4);
-        redisClient.hset(`audiogram:user:config:${user}`, "themes_recent", themes.join(','));
+      if (!err) {
+        if (themes) {
+          themes = themes.split(',');
+          themes.unshift(themeId);
+          themes = Array.from(new Set(themes));
+          themes = themes.slice(0, 4);
+          var themes_recent = themes.join(',');
+        } else {
+          var themes_recent = themeId;
+        }
+        redisClient.hset(`audiogram:user:config:${user}`, "themes_recent", themes_recent);
       }
     });
   }
