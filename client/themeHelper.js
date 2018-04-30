@@ -625,6 +625,8 @@ function init(cb) {
     jQuery(document).on('hidden.bs.modal', '#themes', function (e) {
         if (jQuery('body').hasClass('loading') && jQuery('#loading-message').text() == 'Selecting theme...') {
             jQuery('#themes').modal('show'); 
+        } else {
+            jQuery('.modal').modal('hide');
         }
     });
     jQuery(document).on('shown.bs.modal', '#themes', function (e) {
