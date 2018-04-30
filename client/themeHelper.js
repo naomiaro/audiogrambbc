@@ -609,8 +609,24 @@ function openModal() {
     jQuery('#themes').modal('show'); 
 }
 
+function identNew() {
+    var blob = jQuery('#input-ident').get(0).files[0];
+    var name = jQuery('#input-ident').val().split('\\').pop().split('.')[0];
+    var size = blob.size / 1000000;
+
+    if (size >= 100) {
+        alert('File too large. Maximum 100MB.');
+        return;
+    }
+
+    var title = prompt('Save ident as:', name);
+    console.log(title);
+
+}
+
 function init(cb) {
     // d3.selectAll('.themeConfig').on('change', updateThemeConfig);
+    jQuery(document).on("change", "#input-ident", identNew);
     jQuery(document).on("change", ".themeConfig", updateThemeConfig);
     jQuery(document).on("click", "#theme-change", openModal);
     jQuery(document).on("change", '#themes-all .themes-filter', sortThemes);
