@@ -1852,13 +1852,16 @@ button#view i{
 .design-modal .row {
   margin: 15px 0;
 }
+.design-modal .ident,
 .design-modal .theme {
   margin-bottom: 10px;
   cursor: pointer;
 }
-.design-modal .theme.template {
+.design-modal .theme.template,
+.design-modal .ident.template {
   display: none;
 }
+.design-modal .ident .info,
 .design-modal .theme .info {
   background: #fff;
   position: relative;
@@ -1869,6 +1872,7 @@ button#view i{
   transition: top 0.3s ease-out;
   top: 0;
 }
+.design-modal .ident:hover .info,
 .design-modal .theme:hover .info {
   top: -5px;
 }
@@ -1879,21 +1883,25 @@ button#view i{
 .design-modal .theme.active .info hr {
   border-top: 3px solid #000;
 }
+.design-modal .ident .info hr,
 .design-modal .theme .info hr {
   margin: 0;
   border-color: #ccc;
 }
+.design-modal .ident .info .title,
 .design-modal .theme .info .title {
   font-family: ReithSans;
   font-size: 13px;
   height: 40px;
   overflow: hidden;
 }
+.design-modal .ident .preview,
 .design-modal .theme .preview {
   height: 104px;
   background: #ccc;
   text-align: center;
 }
+.design-modal .ident .preview img,
 .design-modal .theme .preview img {
   width: auto;
   height: 100%;

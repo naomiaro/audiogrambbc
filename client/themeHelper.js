@@ -673,6 +673,29 @@ function openModal() {
     jQuery('#themes').modal('show'); 
 }
 
+function identsList() {
+    jQuery.getJSON("/idents/list", function (data) {
+        if (data.error) {
+            return console.log("Error fetching idents", data.error);
+        }
+        // Add themes
+        data.idents.forEach(function (ident) {
+            var ident = JSON.parse(ident);
+            var id = ident.id;
+            var title = ident.title;
+            if (id) {
+                var clone = jQuery("#idents .ident.template:first").clone();
+                jQuery("#idents .idents").append(clone);
+                clone.removeClass("template");
+                clone.attr("data-id", id);
+                clone.attr("data-title", title);
+                clone.find(".title").text(title);
+                clone.find(".preview img").attr("src", `/settings/backgrounds/${id}.gif`);
+            }
+        });
+    });
+}
+
 function identNew() {
     var blob = jQuery('#input-ident').get(0).files[0];
     if (!blob) return;
@@ -717,11 +740,15 @@ function identNew() {
 }
 
 function init(cb) {
+<<<<<<< 33fe9bf45e4e79f131a9cc7d44f013fe4958374d
 <<<<<<< f451077854996d85b1d2ad6261ab1d25e58fca87
     // d3.selectAll('.themeConfig').on('change', updateThemeConfig);
     jQuery(document).on("click", ".theme .theme-delete", deleteTheme);
     jQuery(document).on("click", ".theme .theme-edit", renameTheme);
 =======
+=======
+    identsList();
+>>>>>>> Save new idents
     jQuery('#idents').modal('show');
     jQuery(document).on("click", "#ident-new", function(){
         jQuery('#input-ident').click();
