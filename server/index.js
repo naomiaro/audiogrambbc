@@ -12,6 +12,7 @@ var express = require("express"),
 // Routes and middleware
 var whitelist = require("./whitelist.js"),
   themes = require("./themes.js"),
+  idents = require("./idents.js"),
   logger = require("../lib/logger/"),
   render = require("./render.js"),
   status = require("./status.js"),
@@ -98,6 +99,9 @@ app.get('/themes/list', themes.list);
 app.get("/themes/config/:id", themes.get);
 // Edit themes
 // app.post("/themes/add/", themes.add);
+
+app.post("/idents/save", idents.save);
+app.get('/idents/list', idents.list);
 
 // If not using S3, serve videos locally
 if (!serverSettings.s3Bucket) {
