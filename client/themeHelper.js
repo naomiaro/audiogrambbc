@@ -675,6 +675,7 @@ function openModal() {
 
 function identNew() {
     var blob = jQuery('#input-ident').get(0).files[0];
+    if (!blob) return;
     var name = jQuery('#input-ident').val().split('\\').pop().split('.')[0];
     var size = blob.size / 1000000;
 
@@ -684,14 +685,48 @@ function identNew() {
     }
 
     var title = prompt('Save ident as:', name);
-    console.log(title);
+    if (!title || title == '') title = name;
+
+    var formData = new FormData();
+    formData.append('type', 'ident');
+    formData.append('file', blob);
+    // AJAX submit
+    jQuery.ajax({
+        async: true,
+        url: '/upload/',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        dataType: 'json',
+        cache: false,
+        processData: false,
+        success: function (res) {
+            console.log('IDENT UPLOAD >>>', res);
+            var ident = {
+                id: res.id,
+                path: res.path,
+                title
+            }
+            jQuery.post('/idents/save', ident, function (res) {
+                console.log('IDENT SAVED >>>', res);
+            }, 'json');
+        },
+        error: error
+    });
 
 }
 
 function init(cb) {
+<<<<<<< f451077854996d85b1d2ad6261ab1d25e58fca87
     // d3.selectAll('.themeConfig').on('change', updateThemeConfig);
     jQuery(document).on("click", ".theme .theme-delete", deleteTheme);
     jQuery(document).on("click", ".theme .theme-edit", renameTheme);
+=======
+    jQuery('#idents').modal('show');
+    jQuery(document).on("click", "#ident-new", function(){
+        jQuery('#input-ident').click();
+    });
+>>>>>>> ident server routes
     jQuery(document).on("change", "#input-ident", identNew);
     jQuery(document).on("change", ".themeConfig", updateThemeConfig);
     jQuery(document).on("click", "#theme-change", openModal);
