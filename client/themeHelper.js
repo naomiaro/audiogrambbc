@@ -609,6 +609,29 @@ function openModal() {
     jQuery('#themes').modal('show'); 
 }
 
+function identsList() {
+    jQuery.getJSON("/idents/list", function (data) {
+        if (data.error) {
+            return console.log("Error fetching idents", data.error);
+        }
+        // Add themes
+        data.idents.forEach(function (ident) {
+            var ident = JSON.parse(ident);
+            var id = ident.id;
+            var title = ident.title;
+            if (id) {
+                var clone = jQuery("#idents .ident.template:first").clone();
+                jQuery("#idents .idents").append(clone);
+                clone.removeClass("template");
+                clone.attr("data-id", id);
+                clone.attr("data-title", title);
+                clone.find(".title").text(title);
+                clone.find(".preview img").attr("src", `/settings/backgrounds/${id}.gif`);
+            }
+        });
+    });
+}
+
 function identNew() {
     var blob = jQuery('#input-ident').get(0).files[0];
     if (!blob) return;
@@ -653,6 +676,7 @@ function identNew() {
 }
 
 function init(cb) {
+    identsList();
     jQuery('#idents').modal('show');
     jQuery(document).on("click", "#ident-new", function(){
         jQuery('#input-ident').click();
