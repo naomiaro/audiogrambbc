@@ -488,7 +488,7 @@ function updateDesignTab() {
 function loadThemeList(cb) {
     var bodyHeight = jQuery(window).height() - 200;
     jQuery("#themes .modal-body").css('height', bodyHeight + "px");
-    var recent = USER.config.themes_recent.split(',');
+    var recent = USER.config && USER.config.themes_recent ? USER.config.themes_recent.split(',') : [];
 
     jQuery.getJSON("/themes/list", function(data) {
         if (data.error) {
@@ -625,6 +625,8 @@ function init(cb) {
     jQuery(document).on('hidden.bs.modal', '#themes', function (e) {
         if (jQuery('body').hasClass('loading') && jQuery('#loading-message').text() == 'Selecting theme...') {
             jQuery('#themes').modal('show'); 
+        } else {
+            jQuery('.modal').modal('hide');
         }
     });
     jQuery(document).on('shown.bs.modal', '#themes', function (e) {
