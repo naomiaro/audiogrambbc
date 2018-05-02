@@ -33,9 +33,11 @@ function initializeCanvas(theme, cb) {
   } else if (serverSettings.storagePath && theme.customBackgroundPath) {
     bg.src = path.join(serverSettings.storagePath, theme.customBackgroundPath);
   } else {
-    return cb('Missing background image');
+    // return cb('Missing background image');
   }
-  renderer.backgroundImage(bg);
+  if (!theme.noBackground && bg.src) {
+    renderer.backgroundImage(bg);
+  }
 
   return cb(null, renderer);
 

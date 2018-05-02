@@ -76,6 +76,9 @@ function submitted() {
     var removeForeground = jQuery('#input-overlay-type').val() == 'none';
     if (removeForeground) delete mediaInfo.foreground;
 
+    var removeBackground = jQuery('#input-background-type').val() == 'color';
+    if (removeBackground) delete mediaInfo.background;
+
     formData.append('media', JSON.stringify(mediaInfo));
 
     formData.append('backgroundInfo', JSON.stringify(backgroundInfo || theme.backgroundImageInfo));
@@ -90,6 +93,7 @@ function submitted() {
         'theme',
         JSON.stringify(
             $.extend({}, theme, {
+                noBackground: removeBackground || undefined,
                 backgroundImage: theme.backgroundImage ? theme.backgroundImage : null,
                 backgroundImageFile: null,
                 foregroundImage: removeForeground ? null : theme.foregroundImage ? theme.foregroundImage : null

@@ -189,6 +189,7 @@ function redraw(overrideSubs) {
     var foreground = img.foreground ? img.foreground : theme.foregroundImageFile ? theme.foregroundImageFile : null;
     if (jQuery('#input-overlay-type').val() == 'none') foreground = null;
     var background = img.background ? img.background : theme.backgroundImageFile ? theme.backgroundImageFile : null;
+    if (jQuery("#input-background-type").val() == 'color') background = null;
     renderer.foregroundImage(jQuery.isEmptyObject(foreground) ? null : foreground);
     renderer.backgroundImage(jQuery.isEmptyObject(background) ? null : background);
         

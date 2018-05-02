@@ -119,11 +119,15 @@ function overlayType() {
 
 function backgroundType() {
     jQuery("#input-background-type-detail").children().hide();
+    jQuery('#design-background .position-wrapper').show();
     var type = jQuery("#input-background-type").val();
     if (type == "source") {
         useVideoAsBackground();
     } else if (type == "file") {
         jQuery("#input-background").show();
+    } else if (type == "color") {
+        jQuery("#input-color-wrapper").show();
+        jQuery('#design-background .position-wrapper').hide();
     } else if (type == "pid") {
         jQuery("#input-image-pid").show().click();
     } else if (type == "history") {
@@ -132,6 +136,7 @@ function backgroundType() {
     } else {
         if (!LOADING) updateImage(null, 'background');
     }
+    if (!LOADING) preview.redraw();
 }
 
 function loadImagePid() {
@@ -365,6 +370,11 @@ function apply(theme, cb) {
         var caption = theme.caption.text || '';
         updateCaption(caption);
     }
+    // Can't handle short color codes
+    if (theme.backgroundColor.length == 4) {
+        var shortColor = theme.backgroundColor.slice(1);
+        theme.backgroundColor = `#${shortColor}${shortColor}`;
+    }
     // Reset custom config fields
     jQuery('.themeConfig').each(function() {
         if (this.name != 'size') {
@@ -402,6 +412,7 @@ function apply(theme, cb) {
     var isVideo = metadata ? metadata.mimetype ? metadata.mimetype.startsWith('video') : metadata.name.endsWith('mp4') : false;
     jQuery("#input-background-type").val(isVideo ? "source" : theme.backgroundImage ? "default" : "file");
     if (theme.customBackgroundPath) jQuery('#input-background-type').val("history");
+    if (theme.noBackground) jQuery('#input-background-type').val("color");
     jQuery("#input-overlay-type").val("default");
     if (theme.customForegroundPath) jQuery('#input-overlay-type').val("history");
     jQuery("#input-pattern").val(theme.pattern);
