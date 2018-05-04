@@ -1812,6 +1812,19 @@ button#view i{
 #themes .modal-body {
   overflow-y: scroll;
 }
+#themes .theme .edit {
+  position: absolute;
+  right: 19px;
+  top: 4px;
+  opacity: 0;
+  -webkit-transition: opacity 0.3s ease-out;
+  -moz-transition: opacity 0.3s ease-out;
+  -o-transition: opacity 0.3s ease-out;
+  transition: opacity 0.3s ease-out;
+}
+#themes .theme:hover .edit {
+  opacity: 1;
+}
 #themes .group-title {
   font-family: 'ReithSans';
   font-weight: bold;

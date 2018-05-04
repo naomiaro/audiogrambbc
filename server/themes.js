@@ -14,6 +14,37 @@ var prefix = "audiogram:";
 redisClient.on("error", function(err) {
   console.log("REDIS ERROR>> \n", err);
 });
+
+function update(req, res) {
+  var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : null;
+  var id = req.body.id;
+  redisClient.hget(`audiogram:theme:${id}`, "user", function (error, reply) {
+    if (email != reply) {
+      return res.json({error: 'Only the user who created a theme can alter it.'});
+    } else {
+      var newName = req.body.name;
+      redisClient.hset(`audiogram:theme:${id}`, "name", newName, function (error, reply) {
+        if (error) return res.json({ error });
+        return res.json(req.body);
+      });
+    }
+  });
+}
+
+function remove(req, res) {
+  var email = req.header("BBC_IDOK") ? req.header("BBC_EMAIL") : null;
+  var id = req.params.id;
+  redisClient.hget(`audiogram:theme:${id}`, "user", function (error, reply) {
+    if (email != reply) {
+      return res.json({ error: 'Only the user who created a theme can alter it.' });
+    } else {
+      redisClient.hset(`audiogram:theme:${id}`, "deleted", 1, function (error, reply) {
+        if (error) return res.json({ error });
+        return res.json({ deleted: req.params.id });
+      });
+    }
+  });
+}
    
 function save(req, res) {
   var newTheme = JSON.parse(req.body.theme);
@@ -77,19 +108,22 @@ function list(req, res) {
       var keys = reply[1];
       var multi = redisClient.multi();
       keys.forEach(function(key, i) {
-        multi.hmget(key, ['id', 'name', 'user', 'created', 'useCount', 'config']);
+        multi.hmget(key, ['id', 'name', 'user', 'created', 'useCount', 'config', 'deleted']);
       });
       multi.exec(function(err, multiReply){
         if (err || !multiReply) return cb(err || "No themes found");
         for (let i = 0; i < multiReply.length; i++) {
           var id = multiReply[i][0];
-          var name = multiReply[i][1];
-          var user = multiReply[i][2];
-          var created = multiReply[i][3];
-          var useCount = +multiReply[i][4] || 0;
-          var config = JSON.parse(multiReply[i][5]);
-          var videoOptimised = config.pattern == 'none';
-          if (id) themes.push({ id, name, user, created, useCount, videoOptimised });
+          if (id) {
+            var name = multiReply[i][1];
+            var user = multiReply[i][2];
+            var created = multiReply[i][3];
+            var useCount = +multiReply[i][4] || 0;
+            var config = JSON.parse(multiReply[i][5]);
+            var deleted = multiReply[i][6] == 1;
+            var videoOptimised = config.pattern == 'none';
+            themes.push({ id, name, user, created, useCount, videoOptimised, deleted });
+          }
         }
         if (cursor === "0") {
           return cb(null, themes);
@@ -197,6 +231,8 @@ function add(req, res) {
 module.exports = {
   add: add,
   save,
+  update,
+  remove,
   get,
   list
 };

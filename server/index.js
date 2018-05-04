@@ -94,6 +94,8 @@ app.post("/submit/", [multer(fileOptions).fields(filesToUpload), render.validate
 // app.post("/themes/add", [multer({ dest: "./settings/backgrounds" }).fields(filesToUpload), themes.add]);
 app.post("/themes/add", themes.add);
 app.post("/themes/save", themes.save);
+app.post("/themes/update", themes.update);
+app.delete("/themes/:id", themes.remove);
 app.get('/themes/list', themes.list);
 app.get("/themes/config/:id", themes.get);
 // Edit themes

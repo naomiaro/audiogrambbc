@@ -499,7 +499,8 @@ function loadThemeList(cb) {
         data.themes.forEach(function(theme){
             var id = theme.id;
             var name = theme.name;
-            if (id && name && name !== "default" && name !== "Custom") {
+            var deleted = theme.deleted;
+            if (!deleted && id && name && name !== "default" && name !== "Custom") {
                 var recentIndex = recent.indexOf(id);
                 var clone = jQuery("#themes-all .theme.template:first").clone();
                 jQuery("#themes-all .themes").append(clone);
@@ -507,10 +508,14 @@ function loadThemeList(cb) {
                 clone.attr("data-id", id);
                 clone.attr("data-name", name);
                 clone.attr("data-count", theme.useCount);
+                clone.attr("data-user", theme.user);
                 if (recentIndex > -1) clone.attr("data-recent", recentIndex);
                 if (theme.videoOptimised) clone.attr("data-videoOptimised", true);
                 clone.find(".title").text(name);
                 clone.find(".preview img").attr("src", `/settings/themes/${id}`);
+                if (theme.user == USER.email) {
+                    clone.find(".edit").removeClass('hidden');
+                }
             }
         });
         // Move recently used
@@ -524,6 +529,58 @@ function loadThemeList(cb) {
         sortThemes();
         if (cb) return cb(null);
     });
+}
+
+function renameTheme(e) {
+    utils.stopIt(e);
+    var theme = jQuery(this).parents('.theme:first');
+    var user = theme.attr('data-user');
+    if (user != USER.email) {
+        return alert('Only the original author of a theme can edit it.');
+    }
+    var themeId = theme.attr('data-id');
+    var currentName = theme.attr('data-name');
+    var newName = prompt('Update the theme name:', currentName);
+    if (newName && newName != currentName && newName != '') {
+        var postData = { id: themeId, name: newName };
+        jQuery.post('/themes/update', postData)
+            .fail(function (xhr, status, error) {
+                return alert('Sorry, an error occured.\n\n' + status);
+            })
+            .done(function (data) {
+                if (data.error) {
+                    return alert('Sorry, an error occured.\n\n' + data.error);
+                }
+                theme.attr('data-name', newName);
+                theme.find('.info .title').text(newName);
+            });
+    }
+}
+
+function deleteTheme(e) {
+    utils.stopIt(e);
+    var theme = jQuery(this).parents('.theme:first');
+    var user = theme.attr('data-user');
+    if (user != USER.email) {
+        return alert('Only the original author of a theme can delete it.');
+    }
+    var confirmed = confirm('Are you sure you want to delete this theme?\nYou cannot undo this action!');
+    if (confirmed) {
+        var themeId = theme.attr('data-id');  
+        jQuery.ajax({
+            url: `/themes/${themeId}`,
+            type: 'DELETE',
+            failure: function (xhr, status, error) {
+                return alert('Sorry, an error occured.\n\n' + status);
+            },
+            success: function (data) {
+                if (data.result) {
+                    return alert('Sorry, an error occured.\n\n' + data.error);
+                }
+                theme.hide();
+            }
+        });      
+    }
 }
 
 function selectTheme() {
@@ -544,25 +601,21 @@ function selectTheme() {
     });
 }
 
-function sortThemesAlphabetically(selector) {
-    selector = selector || "#themes-all .theme:not(.template)";
-    var themes = jQuery(selector);
-
-}
-
 function sortThemes() {
     var by = jQuery('#themes-all .themes-filter').val();
     var all = jQuery("#themes-all .theme:not(.template)");
     var names = [];
     var counts = [];
     all.each(function (i, el) {
-        names.push(jQuery(el).attr('data-name'));
+        var name = jQuery(el).attr('data-name')
+        names.push(name.toLocaleLowerCase());
         var count = jQuery(el).attr('data-count');
         if (counts.indexOf(counts) == -1) counts.push(count);
     });
     var namesSorted = names.sort();
     all.each(function (i, el) {
-        var position = namesSorted.indexOf(jQuery(el).attr('data-name'));
+        var name = jQuery(el).attr('data-name');
+        var position = namesSorted.indexOf(name.toLocaleLowerCase());
         jQuery(el).attr('data-sort', position);
     });
     all.sort(function (a, b) {
@@ -611,6 +664,8 @@ function openModal() {
 
 function init(cb) {
     // d3.selectAll('.themeConfig').on('change', updateThemeConfig);
+    jQuery(document).on("click", ".theme .theme-delete", deleteTheme);
+    jQuery(document).on("click", ".theme .theme-edit", renameTheme);
     jQuery(document).on("change", ".themeConfig", updateThemeConfig);
     jQuery(document).on("click", "#theme-change", openModal);
     jQuery(document).on("change", '#themes-all .themes-filter', sortThemes);
