@@ -802,6 +802,7 @@
                                             </div>
                                             The transcript for this clip is waiting in a queue to be processed.
                                             <br/> It will appear here automatically when ready.
+                                            <!-- <br> <span class="estimate"></span> -->
                                             <hr style="margin: 10px auto; width: 75%" />
                                             <div>
                                                 Alternatively,
@@ -851,39 +852,44 @@
                                                 <label>Type:</label>
                                                 <select id="input-background-type">
                                                     <option value="default" selected>Theme Default</option>
+                                                    <option value="color" selected>Solid Colour</option>
                                                     <option value="source" disabled>Same As Audio Source</option>
                                                     <option value="file">Image/Video File</option>
                                                     <option value="pid">Image PID</option>
                                                 </select>
                                             </button>
                                             <div id="input-background-type-detail">
+                                                <div id="input-color-wrapper" style="display: none;">
+                                                    <input id="input-color" class="themeConfig" name="backgroundColor" type="color" />
+                                                </div>
                                                 <input id="input-background" name="background" type="file" accept="image/*,video/*" />
                                                 <a id="input-image-pid" href="#" style="display: none;">Update Image PID</a>
                                             </div>
 
-                                            <hr>
-
-                                            <div class="slider-wrapper">
-                                                <button class="button-select">
-                                                    <label>H Align:</label>
-                                                    <select class="themeConfig" name="backgroundPosition.align.x">
-                                                        <option value="left">left</option>
-                                                        <option value="center">center</option>
-                                                        <option value="right">right</option>
-                                                    </select>
-                                                </button>
-                                                <div class="background-slider" name="horizontal"></div>
-                                            </div>
-                                            <div class="slider-wrapper">
-                                                <button class="button-select">
-                                                    <label>V Align:</label>
-                                                    <select class="themeConfig" name="backgroundPosition.align.y">
-                                                        <option value="top">top</option>
-                                                        <option value="middle">middle</option>
-                                                        <option value="bottom">bottom</option>
-                                                    </select>
-                                                </button>
-                                                <div class="background-slider" name="vertical"></div>
+                                            <div class="position-wrapper">
+                                                <hr>
+                                                <div class="slider-wrapper">
+                                                    <button class="button-select">
+                                                        <label>H Align:</label>
+                                                        <select class="themeConfig" name="backgroundPosition.align.x">
+                                                            <option value="left">left</option>
+                                                            <option value="center">center</option>
+                                                            <option value="right">right</option>
+                                                        </select>
+                                                    </button>
+                                                    <div class="background-slider" name="horizontal"></div>
+                                                </div>
+                                                <div class="slider-wrapper">
+                                                    <button class="button-select">
+                                                        <label>V Align:</label>
+                                                        <select class="themeConfig" name="backgroundPosition.align.y">
+                                                            <option value="top">top</option>
+                                                            <option value="middle">middle</option>
+                                                            <option value="bottom">bottom</option>
+                                                        </select>
+                                                    </button>
+                                                    <div class="background-slider" name="vertical"></div>
+                                                </div>
                                             </div>
 
                                         </div>

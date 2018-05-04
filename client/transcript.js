@@ -33,6 +33,8 @@ function reverseHMS(str) {
 
 // Highlight selected words 
 function highlight(start, end) {
+    start = start || utils.getSeconds(jQuery('#start').val());
+    end = end || utils.getSeconds(jQuery('#end').val());
     jQuery(".transcript-word").removeClass("unused");
     var allAdded = !jQuery(".transcript-word:not(.added)").length;
     if (!allAdded && start>=0 && end) {
@@ -620,7 +622,8 @@ function poll(job) {
             if (data.status=="SUCCESS" && !data.error) {
                 load({segments: data.script});
                 jQuery("#transcript").removeClass("loading");
-                format();                
+                format();
+                highlight();
             } else if (data.error) {
                 jQuery("#transcript-pane .error span").html("The BBC R&D Kaldi transcription failed<br/><i>Ref: " + job + "</i>");
                 jQuery("#transcript").removeClass("loading").addClass("error");
@@ -653,6 +656,7 @@ function generate(blob) {
         success: function(data){
             kaldiTimer = Date.now();
             poll(data.job);
+            // startTimer();
         },
         error: function(jqXHR, textStatus, errorThrown){
             jQuery("#transcript-pane .error span").text(errorThrown + " (" + jqXHR.status + "): " + jqXHR.responseText);
@@ -661,6 +665,31 @@ function generate(blob) {
         }
     });
     
+}
+
+function startTimer() {
+    // Trendline: y=0.351x+126
+    var duration = audio.duration();
+    var estimate = (0.351*duration)+130;
+    var end = (kaldiTimer/1000) + estimate;
+    updateTimer(end);
+}
+
+function updateTimer(end){
+    var now = Date.now();
+    var remaining = end - (now/1000);
+    if (remaining > 0) {
+        var hms = utils.formatHMS(remaining).split('.')[0];
+        var text = `Estimated time remaining: ${hms}`;
+    } else {
+        var text = "Sorry this job is taking a little longer than average. Shouldn't be much longer!";
+    }
+    jQuery('#transcript-pane .loading .estimate').text(text);
+    if (remaining > 0) {
+        setTimeout(() => {
+            updateTimer(end);
+        }, 1000);
+    }
 }
 
 function exportTranscript() {
