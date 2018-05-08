@@ -740,20 +740,14 @@ function identNew() {
 }
 
 function init(cb) {
-<<<<<<< 33fe9bf45e4e79f131a9cc7d44f013fe4958374d
-<<<<<<< f451077854996d85b1d2ad6261ab1d25e58fca87
     // d3.selectAll('.themeConfig').on('change', updateThemeConfig);
     jQuery(document).on("click", ".theme .theme-delete", deleteTheme);
     jQuery(document).on("click", ".theme .theme-edit", renameTheme);
-=======
-=======
     identsList();
->>>>>>> Save new idents
     jQuery('#idents').modal('show');
     jQuery(document).on("click", "#ident-new", function(){
         jQuery('#input-ident').click();
     });
->>>>>>> ident server routes
     jQuery(document).on("change", "#input-ident", identNew);
     jQuery(document).on("change", ".themeConfig", updateThemeConfig);
     jQuery(document).on("click", "#theme-change", openModal);
