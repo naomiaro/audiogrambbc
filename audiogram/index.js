@@ -16,6 +16,7 @@ var path = require("path"),
     drawFrames = require("./draw-frames.js"),
     subtitles = require("../renderer/subtitles.js"),
     combineFrames = require("./combine-frames.js"),
+    idents = require("./idents.js"),
     backgroundVideo = require("./background-video.js"),
     trimAudio = require("./trim.js"),
     spawn = require("child_process").spawn,
@@ -334,6 +335,18 @@ Audiogram.prototype.combineFrames = function(cb) {
 
 };
 
+// Add pre/post-roll idents
+Audiogram.prototype.idents = function (cb) {
+  this.status("idents");
+  var options = {
+    idents: this.settings.idents,
+    dest: this.dir,
+    videoPath: this.videoPath
+  }
+  console.log('>>>', options);
+  idents(options, cb);
+};
+
 // Master render function, queue up steps in order
 Audiogram.prototype.render = function(cb) {
 
@@ -397,6 +410,13 @@ Audiogram.prototype.render = function(cb) {
     
   }
 
+  // Add pre/post-roll subtitles
+  this.settings.idents = JSON.parse(this.settings.idents);
+  console.log('IDENTS >>', this.settings.idents);
+  if (this.settings.idents.pre || this.settings.idents.post) {
+    q.defer(this.idents.bind(this));    
+  }
+
   // Save subtitle files
   q.defer(this.saveSubtitles.bind(this), "srt");
   q.defer(this.saveSubtitles.bind(this), "xml");
@@ -433,10 +453,10 @@ Audiogram.prototype.render = function(cb) {
         if (fs.existsSync(self.backgroundVideoPath)) fs.unlinkSync(self.backgroundVideoPath);
       }
       // Delete working directory
-      rimraf(self.dir, function(rimrafErr) {
-        if (rimrafErr) console.log(rimrafErr);
+      // rimraf(self.dir, function(rimrafErr) {
+        // if (rimrafErr) console.log(rimrafErr);
         return cb(err);
-      });
+      // });
     } else {
       return cb(err);      
     }

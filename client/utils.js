@@ -242,6 +242,8 @@ function statusMessage(result) {
         msg += ', ' + perc + '% complete';
       }
       return msg;
+    case "idents":
+      return "Adding pre/post-roll idents"
     case "subtitles":
       return "Overlaying subtitles";
     case "ready":

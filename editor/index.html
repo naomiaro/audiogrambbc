@@ -1112,6 +1112,28 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- Idents -->
+                                    <div id="design-idents" class="design-block">
+                                        <div class="heading">
+                                            <div class="title">Idents</div>
+                                            <div class="summary"></div>
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus" style="display: none;"></i>
+                                        </div>
+                                        <div class="body" style="display: none;">
+                                            <button id="ident-pre" data-type="pre">
+                                                <b>Pre-roll:</b>
+                                                <span>None</span>
+                                            </button>
+                                            &nbsp;
+                                            <button id="ident-post" data-type="post">
+                                                <b>Post-roll:</b>
+                                                <span>None</span>
+                                            </button>
+                                            <input type="hidden" id="input-ident-pre">
+                                            <input type="hidden" id="input-ident-post">
+                                        </div>
+                                    </div>
                                     <!-- Size -->
                                     <div id="design-size" class="design-block">
                                         <div class="heading">
@@ -1288,7 +1310,10 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <button id="ident-new"><i class="fas fa-upload"></i> &nbsp; <b>Upload video</b> <em>(.mp4)</em></button>
+                                    <button id="ident-new">
+                                        <i class="fas fa-upload"></i>
+                                        <i class="fa fa-spinner fa-spin" style="display: none;"></i>                                        
+                                        <b>&nbsp;Upload video</b> <em>(.mp4)</em></button>
                                     <input id="input-ident" accept=".mp4" type="file" style="display: none;">
                                 </div>
                             </div>
@@ -1312,6 +1337,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="left" data-dismiss="modal">Close</button>
+                        <button id="ident-remove" type="button" class="left">Remove</button>
                     </div>
                 </div>
             </div>

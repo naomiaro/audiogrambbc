@@ -1007,6 +1007,9 @@ h1 {
   font-size: 12px;
   text-transform: uppercase;
 }
+.intGEL .nav-tabs > li:not(.active) > a {
+    background: none !important;
+}
 .intGEL .intGEL-arrow {
   width: 100%;
 }
@@ -1906,4 +1909,22 @@ button#view i{
   width: auto;
   height: 100%;
   max-width: 100%;
+}
+
+#ident-remove {
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+#idents:not([data-orientation=square]) .ident[data-orientation=square],
+#idents:not([data-orientation=landscape]) .ident[data-orientation=landscape],
+#idents:not([data-orientation=portrait]) .ident[data-orientation=portrait]{
+  cursor: not-allowed;
+}
+
+#idents:not([data-orientation=square]) .ident[data-orientation=square] .info,
+#idents:not([data-orientation=landscape]) .ident[data-orientation=landscape] .info,
+#idents:not([data-orientation=portrait]) .ident[data-orientation=portrait] .info{
+  top: 0 !important;
+  opacity: 0.5;
 }
