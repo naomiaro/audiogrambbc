@@ -6,7 +6,7 @@ var request = require('request');
       return cb(null, true);
     }
     var url = `http://apis.labs.jupiter.bbc.co.uk/whois/${email}`;
-    request({url, proxy: null }, function(err, adRes, adBody) {
+    request({ url, proxy: null, timeout: 3000 }, function(err, adRes, adBody) {
       if (err) return cb(err, null);
       try {
         var userData = JSON.parse(adBody);
