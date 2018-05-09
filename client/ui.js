@@ -157,6 +157,16 @@ function init(cb) {
         jQuery(this).parent().find('span').text(val);
     });
     windowResize();
+    // Design tooltip
+    var designTabCoookie = jQuery.cookie("ag_designtab");
+    if (designTabCoookie) {
+        jQuery('#design-tab-tooltip').remove();
+    } else {
+        jQuery(document).on('click', '#design-tab-link', function () {
+            jQuery('#design-tab-tooltip').remove();
+            jQuery.cookie("ag_designtab", true);
+        });
+    }
     return cb(null);
 }
 
