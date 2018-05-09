@@ -12,7 +12,10 @@ function search() {
     var term = jQuery('#vcs-text').val();
     jQuery.getJSON(`/vcs/api/${site}:${term}`, function (res) {
         jQuery("#new-vcs-table-store tbody").text('');
-        if (res.retval.results) {
+        if (!res.retval) {
+            var el = `<tr class='error'><td colspan='3'>Sorry, the VCS server doesn't appear to be responding.</td></tr>`;
+            jQuery("#new-vcs-table-store tbody").append(el);   
+        } else if (res.retval.results) {
             res.retval.results.forEach(function (item) {
                 var logstore = item.logstore.split('$')[1];
                 if (logstore_blacklist.indexOf(logstore) == -1) {

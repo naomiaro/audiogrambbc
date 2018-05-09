@@ -8,7 +8,7 @@ var request = require('request'),
 
 function api(req, res) {
     var requestURL = `http://apis.labs.jupiter.bbc.co.uk/vcsinfo/${req.params.term}`;
-    request({ url: requestURL, proxy: '' }, function (error, response, body) {
+    request({ url: requestURL, proxy: '', timeout: 5000 }, function (error, response, body) {
         if (error || !response || response.statusCode !== 200) {
             return res.json({ error: body });
         }
@@ -60,7 +60,7 @@ function list(req, res) {
 
 function search(req, res) {
     var requestURL = "http://vcsio.newslabs.co/vcs/search/" + req.params.id;
-    request({ url: requestURL, proxy: '' }, function (error, response, body) {
+    request({ url: requestURL, proxy: '', timeout: 5000 }, function (error, response, body) {
         if (response.statusCode !== 200) {
             return res.json({error: body});
         }
