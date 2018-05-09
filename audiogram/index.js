@@ -453,10 +453,10 @@ Audiogram.prototype.render = function(cb) {
         if (fs.existsSync(self.backgroundVideoPath)) fs.unlinkSync(self.backgroundVideoPath);
       }
       // Delete working directory
-      // rimraf(self.dir, function(rimrafErr) {
-        // if (rimrafErr) console.log(rimrafErr);
+      rimraf(self.dir, function(rimrafErr) {
+        if (rimrafErr) console.log(rimrafErr);
         return cb(err);
-      // });
+      });
     } else {
       return cb(err);      
     }
