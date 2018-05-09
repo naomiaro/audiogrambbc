@@ -213,18 +213,19 @@ function loadProject(id) {
     jQuery("#input-theme").val(data.theme.name.trim());
     q.defer(themeHelper.update, data.theme);
     // Load idents
-    var idents = JSON.parse(data.idents);
-    if (idents.pre) {
-      jQuery('#input-ident-pre').val(idents.pre.id);
-      jQuery('#input-ident-pre').attr('data-orientation', idents.pre.orientation);
-      jQuery('#ident-pre span').text(idents.pre.name);
+    if (data.idents) {
+      var idents = JSON.parse(data.idents);
+      if (idents.pre) {
+        jQuery('#input-ident-pre').val(idents.pre.id);
+        jQuery('#input-ident-pre').attr('data-orientation', idents.pre.orientation);
+        jQuery('#ident-pre span').text(idents.pre.name);
+      }
+      if (idents.post) {
+        jQuery('#input-ident-post').val(idents.post.id);
+        jQuery('#input-ident-post').attr('data-orientation', idents.post.orientation);
+        jQuery('#ident-post span').text(idents.post.name);
+      }
     }
-    if (idents.post) {
-      jQuery('#input-ident-post').val(idents.post.id);
-      jQuery('#input-ident-post').attr('data-orientation', idents.post.orientation);
-      jQuery('#ident-post span').text(idents.post.name);
-    }
-    console.log(data.idents);
     // Load transcript
     q.defer(function(data, cb) {
       var script = JSON.parse(data.transcript);
