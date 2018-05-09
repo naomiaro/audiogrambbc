@@ -24,7 +24,7 @@ function themeReset() {
 function themeSave() {
     var theme = preview.theme();
     // Prompt for theme name
-    var newName = prompt('Save theme with these settings.\n\nEnter a theme name.\nUsing an existing theme name will overwrite that theme.', theme.name);
+    var newName = prompt('Save theme with these settings.\n\nEnter a theme name.', theme.name);
     if (newName != null) {
         // Get theme config
         var body = {},
@@ -428,6 +428,22 @@ function apply(theme, cb) {
 }
 
 function updateThemeConfig() {
+    if (this.name.includes('size')) {
+        var orientation = getOrientation();
+        var identPre = jQuery('#input-ident-pre').attr('data-orientation');
+        var identPost = jQuery('#input-ident-post').attr('data-orientation');
+        if ((identPre && identPre !== orientation) || (identPost && identPost !== orientation)) {
+            var confirmed = confirm('The pre/post-roll idents will be removed because they\'ll no longer fit the output size. You\'ll need to reselect idents that match the new orientation.\n\nDo you want to continue?');
+            if (confirmed) {
+                jQuery('#input-ident-pre, #input-ident-post').val(null);
+                jQuery('#input-ident-pre, #input-ident-post').attr('data-orientation', null);
+                jQuery('#ident-pre span, #ident-post span').text('None');
+                updateDesignSummaries();
+            } else {
+                this.value = jQuery('#input-size option[data-orientation=' + (identPre || identPost) + ']').val();
+            }
+        }
+    }
     preview.themeConfig(this.name, this.type == 'checkbox' ? this.checked : this.value);
     if (this.name.includes('subtitles')) {
         transcript.format();
@@ -484,6 +500,11 @@ function updateDesignSummaries() {
         var summary = "None";
     }
     jQuery('#design-caption .summary').text(utils.trimText(summary, 50));
+    // Idents
+    var pre = jQuery('#ident-pre span').text();
+    var post = jQuery('#ident-post span').text();
+    var summary = `Pre: ${pre}, Post: ${post}`;
+    jQuery('#design-idents .summary').text(summary);
     // Size
     var type = jQuery('#input-size').val();
     var summary = jQuery('#input-size option[value="' + type + '"]').text();
@@ -673,10 +694,153 @@ function openModal() {
     jQuery('#themes').modal('show'); 
 }
 
+function identsList() {
+    var bodyHeight = jQuery(window).height() - 200;
+    jQuery("#idents .modal-body").css('height', bodyHeight + "px");
+    jQuery.getJSON("/idents/list", function (data) {
+        if (data.error) {
+            return console.log("Error fetching idents", data.error);
+        }
+        // Remove idents
+        jQuery("#idents .ident:not(.template)").remove();
+        // Add idents
+        data.idents.forEach(function (ident) {
+            var id = ident.id;
+            var title = ident.title;
+            if (id) {
+                var clone = jQuery("#idents .ident.template:first").clone();
+                jQuery("#idents .idents").append(clone);
+                clone.removeClass("template");
+                clone.attr("data-id", id);
+                clone.attr("data-title", title);
+                clone.attr("data-orientation", ident.orientation);
+                clone.find(".title").text(title);
+                clone.find(".preview img").attr("src", `/settings/backgrounds/${id}.gif`);
+            }
+        });
+        jQuery('#ident-new .fa-spinner').hide();
+        jQuery('#ident-new .fa-upload').show();
+    });
+}
+
+function identNew() {
+    var blob = jQuery('#input-ident').get(0).files[0];
+    if (!blob) return;
+    var name = jQuery('#input-ident').val().split('\\').pop().split('.')[0];
+    var size = blob.size / 1000000;
+
+    if (size >= 100) {
+        alert('File too large. Maximum 100MB.');
+        return;
+    }
+
+    var title = prompt('Save ident as:', name);
+    if (!title || title == '') title = name;
+
+    jQuery('#ident-new .fa-upload').hide();
+    jQuery('#ident-new .fa-spinner').show();
+
+    var formData = new FormData();
+    formData.append('type', 'ident');
+    formData.append('file', blob);
+    // AJAX submit
+    jQuery.ajax({
+        async: true,
+        url: '/upload/',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        dataType: 'json',
+        cache: false,
+        processData: false,
+        success: function (res) {
+            console.log('IDENT UPLOAD >>>', res);
+            var ident = {
+                id: res.id,
+                path: res.path,
+                title
+            }
+            jQuery.post('/idents/save', ident, function (res) {
+                console.log('IDENT SAVED >>>', res);
+                identsList();
+                if (!res || !res.id) {
+                    alert('Sorry, there was an error saving that ident');                    
+                }
+            }, 'json');
+        },
+        error: function (err) {
+            alert('Sorry, there was an error saving that ident');
+        }
+    });
+
+}
+
+function getOrientation() {
+    var size = jQuery('#input-size').val().split('x');
+    var width = +size[0];
+    var height = +size[1];
+    if (width == height) {
+        return 'square';
+    } else if (width > height) {
+        return 'landscape';
+    } else {
+        return 'portrait';
+    }
+}
+
+function identModal() {
+    var type = jQuery(this).attr('data-type');
+    var orientation = getOrientation();
+    jQuery("#idents").attr('data-orientation', orientation);
+    var title = (type == 'pre') ? 'Pre-roll Ident' : 'Post-roll Ident';
+    var current = jQuery(`#input-ident-${type}`).val();
+    if (current) {
+        jQuery('#ident-remove').show();
+    } else {
+        jQuery('#ident-remove').hide();
+    }
+    jQuery('#idents .modal-title').text(title);
+    jQuery('#idents').attr('data-type', type);
+    jQuery('#idents').modal('show');
+}
+
+function identRemove() {
+    var type = jQuery('#idents').attr('data-type');
+    jQuery(`#input-ident-${type}`).val(null);
+    jQuery(`#input-ident-${type}`).attr('data-orientation', null);
+    jQuery(`#ident-${type} span`).text('None');
+    jQuery('#idents').modal('hide');
+    updateDesignSummaries();
+}
+
+function identSelect() {
+    if (jQuery(this).attr('data-orientation') != jQuery("#idents").attr('data-orientation')) {
+        return alert('You must select an ident with the same orientation as your output video.\n\nEither select another ident, or change the size of your audiogram.');
+    }
+    var id = jQuery(this).attr('data-id');
+    var title = jQuery(this).attr('data-title');
+    var orientation = jQuery(this).attr('data-orientation');
+    var type = jQuery('#idents').attr('data-type');
+    jQuery(`#input-ident-${type}`).val(id);
+    jQuery(`#input-ident-${type}`).attr('data-orientation', orientation);
+    jQuery(`#ident-${type} span`).text(utils.trimText(title, 20));
+    jQuery('#idents').modal('hide');
+    updateDesignSummaries();
+    console.log(id);
+}
+
 function init(cb) {
     // d3.selectAll('.themeConfig').on('change', updateThemeConfig);
     jQuery(document).on("click", ".theme .theme-delete", deleteTheme);
     jQuery(document).on("click", ".theme .theme-edit", renameTheme);
+    identsList();
+    jQuery(document).on("click", "#ident-pre, #ident-post", identModal);
+    jQuery(document).on("click", "#ident-new", function(){
+        jQuery('#input-ident').click();
+    });
+    jQuery(document).on("click", "#idents .ident", identSelect);
+    jQuery(document).on("click", "#ident-remove", identRemove);
+    jQuery(document).on("change", "#input-ident", identNew);
     jQuery(document).on("change", ".themeConfig", updateThemeConfig);
     jQuery(document).on("click", "#theme-change", openModal);
     jQuery(document).on("change", '#themes-all .themes-filter', sortThemes);

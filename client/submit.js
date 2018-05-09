@@ -56,6 +56,19 @@ function submitted() {
         return utils.setClass('error', 'Submit Error: No valid theme detected.');
     }
 
+    // Force sizes
+    if (theme.width == theme.height) {
+        theme.width = 1080;
+        theme.height = 1080;
+    } else if (theme.width > theme.height) {
+        // 1920x1080
+        theme.width = 1920;
+        theme.height = 1080;
+    } else {
+        theme.width = 1080;
+        theme.height = 1920;
+    }
+
     video.kill();
     audio.pause();
 
@@ -80,6 +93,25 @@ function submitted() {
     if (removeBackground) delete mediaInfo.background;
 
     formData.append('media', JSON.stringify(mediaInfo));
+
+    var idents = {};
+    var identPre = jQuery('#input-ident-pre').val();
+    if (identPre) {
+        idents.pre = {
+            id: identPre,
+            name: jQuery('#ident-pre span').text(),
+            orientation: jQuery('#input-ident-pre').attr('data-orientation')
+        };
+    }
+    var identPost = jQuery('#input-ident-post').val();
+    if (identPost) {
+        idents.post = {
+            id: identPost,
+            name: jQuery('#ident-post span').text(),
+            orientation: jQuery('#input-ident-post').attr('data-orientation')
+        };
+    }
+    formData.append('idents', JSON.stringify(idents));
 
     formData.append('backgroundInfo', JSON.stringify(backgroundInfo || theme.backgroundImageInfo));
     if (selection.start || selection.end) {
