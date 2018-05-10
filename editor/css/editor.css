@@ -1586,6 +1586,7 @@ g.time line {
   right: -290px;
   width: 290px;
   opacity: 0.7;
+  z-index: 0;
 }
 #design-tab-tooltip .tooltip-inner {
   max-width: 999px;
