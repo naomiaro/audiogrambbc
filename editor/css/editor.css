@@ -1193,13 +1193,16 @@ input[type='submit']:active {
   text-align: right;
 }
 
-#minimap.trimmed:hover .timecodes {
+#minimap.trimmed:hover .timecodes,
+#minimap:hover #minimap-tips-link {
   -webkit-opacity: 1;
   -moz-opacity: 1;
   opacity: 1;
 }
 
-#minimap .timecodes {
+#minimap .timecodes,
+#minimap-tips-link {
+  position: absolute;
   -webkit-opacity: 0;
   -moz-opacity: 0;
   opacity: 0;
@@ -1208,7 +1211,16 @@ input[type='submit']:active {
   -ms-transition: all 0.25s ease;
   -o-transition: all 0.25s ease;
   transition: all 0.25s ease;
-  position: absolute;
+}
+
+#minimap-tips-link {
+  z-index: 1;
+  top: 5px;
+  right: 5px;
+  color: #666;
+}
+
+#minimap .timecodes {
   top: 83px;
   text-align: left;
   width: 100%;

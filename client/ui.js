@@ -156,6 +156,9 @@ function init(cb) {
         var val = jQuery(this).val();
         jQuery(this).parent().find('span').text(val);
     });
+    jQuery(document).on('hidden.bs.modal', '.modal', function (e) {
+        document.activeElement.blur();
+    });
     windowResize();
     // Design tooltip
     var designTabCoookie = jQuery.cookie("ag_designtab");

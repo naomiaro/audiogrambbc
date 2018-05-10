@@ -548,6 +548,9 @@
 
             <section id="minimap">
                 <div class="map well">
+                    <button id="minimap-tips-link" data-toggle="modal" href="#minimap-tips" type="button" aria-expanded="false">
+                        <i class="fas fa-keyboard"></i>
+                    </button>
                     <div class="disabled"></div>
                     <svg width="640" height="80" xmlns="http://www.w3.org/2000/svg">
                         <defs>
@@ -610,46 +613,6 @@
                     </div>
                 </div>
                 <div class="clear"></div>
-                <div id="shortcuts" class="hidden">
-                    <hr>
-                    <div class="col">
-                        <div>
-                            <kbd>space</kbd> &nbsp; - &nbsp; toggle playback
-                        </div>
-                        <div>
-                            <kbd>&#8594;</kbd> /
-                            <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 0.1s
-                        </div>
-                        <div>
-                            <kbd>ctrl</kbd> /
-                            <kbd>&#8984;</kbd> +
-                            <kbd>&#8594;</kbd> /
-                            <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 1s
-                        </div>
-                        <div>
-                            <kbd>shift</kbd> +
-                            <kbd>&#8594;</kbd> /
-                            <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 10s
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div>
-                            <kbd>q</kbd> /
-                            <kbd>w</kbd> &nbsp; - &nbsp; go to IN/OUT
-                        </div>
-                        <div>
-                            <kbd>i</kbd> /
-                            <kbd>o</kbd> &nbsp; - &nbsp; mark IN/OUT
-                        </div>
-                        <div>
-                            <kbd>5</kbd> &nbsp; - &nbsp; play from IN for 1s
-                        </div>
-                        <div>
-                            <kbd>6</kbd> &nbsp; - &nbsp; play from 1s before OUT
-                        </div>
-                    </div>
-                    <div class="clear"></div>
-                </div>
             </section>
 
             <div class="row">
@@ -1410,27 +1373,55 @@
         </div>
 
 
-        <div id="errorModal" class="modal fade intGEL" role="dialog">
+        <div id="minimap-tips" class="modal fade intGEL" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header" style="background: #b60000; color: #ffffff;">
-                        <h4 class="modal-title"><i class="fa fa-exclamation-triangle"></i> Error</h4>
+                        <h4 class="modal-title">Keyboard Shortcuts</h4>
                     </div>
-                    <div class="modal-body" style="">
-                        <p>
-                            <b>Sorry, an error has caused Audiogram to stop working.</b>
-                        </p>
-                        <hr>
-                        <p>
-                            Audiogram is still an unsupported prototype, so errors like this may present themselves occasionally - apologies!
-                        </p>
-                        <p>
-                            Please try reloading the page and trying again, or if the error persists please report the following details:
-                        </p>
-                        <hr>
-                        <pre style="text-align: left; font-size: 12px;">
-                            Unkown Error
-                        </pre>
+                    <div class="modal-body">
+                        <div id="shortcuts">
+                            <div class="col">
+                                <div>
+                                    <kbd>space</kbd> &nbsp; - &nbsp; toggle playback
+                                </div>
+                                <div>
+                                    <kbd>&#8594;</kbd> /
+                                    <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 0.1s
+                                </div>
+                                <div>
+                                    <kbd>ctrl</kbd> /
+                                    <kbd>&#8984;</kbd> +
+                                    <kbd>&#8594;</kbd> /
+                                    <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 1s
+                                </div>
+                                <div>
+                                    <kbd>shift</kbd> +
+                                    <kbd>&#8594;</kbd> /
+                                    <kbd>&#8592;</kbd> &nbsp; - &nbsp; move 10s
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div>
+                                    <kbd>q</kbd> /
+                                    <kbd>w</kbd> &nbsp; - &nbsp; go to IN/OUT
+                                </div>
+                                <div>
+                                    <kbd>i</kbd> /
+                                    <kbd>o</kbd> &nbsp; - &nbsp; mark IN/OUT
+                                </div>
+                                <div>
+                                    <kbd>5</kbd> &nbsp; - &nbsp; play from IN for 1s
+                                </div>
+                                <div>
+                                    <kbd>6</kbd> &nbsp; - &nbsp; play from 1s before OUT
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="left" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

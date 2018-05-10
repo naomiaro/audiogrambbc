@@ -28,8 +28,7 @@ var user = require('./user');
 
 window.onerror = function (error, url, line) {
   var errorJSON = { error, source: url + ':' + line };
-  jQuery('#errorModal pre').text(JSON.stringify(errorJSON, null, 2));
-  // jQuery('#errorModal').modal({ backdrop: 'static', keyboard: false });
+  // TODO: send to logger
 };
 
 global.LOADING = true;
