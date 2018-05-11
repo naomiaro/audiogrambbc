@@ -505,6 +505,10 @@ function updateDesignSummaries() {
     var post = jQuery('#ident-post span').text();
     var summary = `Pre: ${pre}, Post: ${post}`;
     jQuery('#design-idents .summary').text(summary);
+    // DOG
+    var dog = jQuery('#input-dog').val();
+    var summary = jQuery('#input-dog option[value="' + dog + '"]').text();
+    jQuery('#design-dog .summary').text(summary);
     // Size
     var type = jQuery('#input-size').val();
     var summary = jQuery('#input-size option[value="' + type + '"]').text();

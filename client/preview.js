@@ -16,6 +16,7 @@ var theme,
     file,
     img = {},
     imgInfo = {},
+    dogs = {},
     selection;
 
 function _file(_) {
@@ -74,9 +75,6 @@ function _caption(_) {
 function _selection(_) {
     return arguments.length ? (selection = _) : selection;
 }
-
-bbcDog = new Image();
-bbcDog.src = "/images/bbc.png";
 
 minimap.onBrush(function (extent) {
 
@@ -183,7 +181,7 @@ function redraw(overrideSubs) {
     var renderer = getRenderer(theme);
     
     // BBC watermark
-    renderer.bbcDog(bbcDog || null);
+    renderer.bbcDog(dogs[theme.dog] || null);
     
     // Render images
     var foreground = img.foreground ? img.foreground : theme.foregroundImageFile ? theme.foregroundImageFile : null;
@@ -242,6 +240,28 @@ function loadAudio(audioFile, cb) {
 
 }
 
+function init(cb) {
+    var imageQueue = d3.queue();
+    jQuery('#input-dog option').each(function (i, el) {
+        var dog = jQuery(el).val();
+        imageQueue.defer(function (dog, imgCb) {
+            dogs[dog] = new Image();
+            dogs[dog].src = `/images/${dog}.png`;
+            dogs[dog].onload = function(){
+                console.log(dog.src);
+                return imgCb(null);
+            };
+            dogs[dog].onerror = function(e){
+                console.warn(e);
+                return imgCb(e);
+            };
+        }, dog);
+    });
+    imageQueue.await(function (err) {
+        return cb(err);
+    });
+}
+
 module.exports = {
     caption: _caption,
     theme: _theme,
@@ -252,5 +272,6 @@ module.exports = {
     loadAudio: loadAudio,
     redraw: redraw,
     resize,
-    selection: _selection
+    selection: _selection,
+    init
 };

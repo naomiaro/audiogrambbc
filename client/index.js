@@ -58,14 +58,15 @@ jQuery(function () {
   initQueue.defer(ui.init);
   initQueue.defer(audio.init);
   initQueue.defer(mediaSelector.init);
-  initQueue.defer(minimap.init)
+  initQueue.defer(minimap.init);
   initQueue.defer(projects.init);
-  initQueue.defer(submit.init)
-  initQueue.defer(transcript.init)
+  initQueue.defer(submit.init);
+  initQueue.defer(transcript.init);
   initQueue.defer(transcriptTimings.init);
   initQueue.defer(vcs.init);
-  initQueue.defer(png.init)
-  initQueue.defer(webcap.init)
+  initQueue.defer(png.init);
+  initQueue.defer(webcap.init);
+  initQueue.defer(preview.init);
   initQueue.defer(themeHelper.init);
 
   initQueue.await(function (err) {

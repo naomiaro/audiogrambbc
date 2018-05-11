@@ -12,7 +12,8 @@ function initializeCanvas(theme, cb) {
 
   // Load BBC watermark
   var dog = new Canvas.Image;
-  dog.src = path.join(serverSettings.storagePath, "../editor/images/bbc.png");
+  var dogName = theme.dog || 'bbc';
+  dog.src = path.join(serverSettings.storagePath, `../editor/images/${dogName}.png`);
   renderer.bbcDog(dog);
 
   // Load foreground image
