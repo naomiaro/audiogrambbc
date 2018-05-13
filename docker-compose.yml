@@ -1,0 +1,65 @@
+# FOR REFERENCE ONLY
+# Path on host...
+#   /opt/bbc/newslabs/audiogram/docker-compose/audiogram
+
+version: '2'
+services:
+ audiogram:
+  environment:
+   - REDIS_MODE=docker
+   - NODE_ENV=production
+   - PNGDIR=/var/bigpool/disk1/audiogram_data/fromPNg
+  ports:
+   - 8888:8081
+  volumes:
+   - /samba/newsjbhfs30.national.core.bbc.co.uk/Editing_DropZone/From WebCap/HD Straps:/home/audiogram/src/webcap
+   - /opt/bbc/newslabs/audiogram/data/video:/home/audiogram/src/media/video
+   - /opt/bbc/newslabs/audiogram/media/audio:/home/audiogram/src/media/audio
+   - /opt/bbc/newslabs/audiogram/media/background:/home/audiogram/src/media/background
+   - /opt/bbc/newslabs/audiogram/media/foreground:/home/audiogram/src/media/foreground
+   - /opt/bbc/newslabs/audiogram/backgrounds:/home/audiogram/src/settings/backgrounds
+   - /opt/bbc/newslabs/audiogram/conf.d/themes.json:/home/audiogram/src/settings/themes.json
+   - /opt/bbc/newslabs/audiogram/conf.d/whitelist.json:/home/audiogram/src/whitelist.json
+   - /opt/bbc/newslabs/audiogram/data/tmp:/home/audiogram/src/tmp
+   - /opt/bbc/newslabs/audiogram/data/console.log:/home/audiogram/src/console.log
+   - /opt/bbc/newslabs/audiogram/data/themes:/home/audiogram/src/settings/themes
+  links:
+   - redis:redis
+  restart: on-failure
+  image: artifactory-noforge.virt.ch.bbc.co.uk:8443/audiogram:3.6.0-49
+  networks:
+    - private
+ redis:
+  command: ["redis-server", "--appendonly", "yes", "--logfile", "redis.log"]
+  volumes:
+   - /opt/bbc/newslabs/audiogram/data/redis:/data
+  image: redis
+  networks:
+    - private
+ grafana_graphite:
+  build: .
+  image: kamon/grafana_graphite
+  container_name: kamon-grafana-dashboard
+  environment:
+    - HTTP_PROXY=http://www-cache.reith.bbc.co.uk:80
+    - NO_PROXY=localhost,*newslabs.co,*bbc.co.uk
+  ports:
+    - '8080:80'
+    - '8081:81'
+    - '8125:8125/udp'
+    - '8126:8126'
+    - '2003:2003'
+  volumes:
+    - /opt/bbc/newslabs/audiogram/data/docker-grafana-graphite/grafana/dashboards:/src/dashboards
+    - /opt/bbc/newslabs/audiogram/data/docker-grafana-graphite/graphite:/opt/graphite/conf
+    - /opt/bbc/newslabs/audiogram/data/docker-grafana-graphite/data/whisper:/opt/graphite/storage/whisper
+    - /opt/bbc/newslabs/audiogram/data/docker-grafana-graphite/data/grafana:/opt/grafana/data
+    - /opt/bbc/newslabs/audiogram/data/docker-grafana-graphite/log/graphite:/opt/graphite/storage/log
+  networks:
+    - private
+networks:
+  private:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 192.168.0.0/24
