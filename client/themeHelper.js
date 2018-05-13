@@ -389,6 +389,8 @@ function apply(theme, cb) {
             }
         }
     });
+    var fontWeight = jQuery("select[name='subtitles.fontWeight']");
+    if (!fontWeight.val()) jQuery("select[name='subtitles.fontWeight']").val('Regular');
     jQuery('#input-size').val(jQuery("#input-size option[data-orientation='" + theme.orientation + "']:not(':disabled'):first").val());
     if (jQuery('#input-size option:selected').is(':disabled')) {
         jQuery('#input-size').val(jQuery("#input-size option:not(':disabled'):first").val());
