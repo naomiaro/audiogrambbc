@@ -222,6 +222,11 @@ function draw(context, theme, subs, time) {
   context.textAlign = theme.subtitles.align || "center";
   lines.forEach(function(text, i){
     text = text.replace(/  +/g, ' ');
+    if (theme.subtitles.fontTransform == 'upper') {
+      text = text.toUpperCase();
+    } else if (theme.subtitles.fontTransform == 'lower') {
+      text = text.toLowerCase();
+    }
     var lineY = y + i * (fontSize + (spacing * ratio.width))
     if (theme.subtitles.stroke && theme.subtitles.stroke.width>0) {
       context.strokeStyle = theme.subtitles.stroke.color;

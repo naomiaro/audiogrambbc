@@ -1592,6 +1592,18 @@ g.time line {
   max-width: 999px;
 }
 
+.design-tip {
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 12px;
+  text-align: left;
+  color: #888;
+  border-top: 1px solid #ccc;
+  padding-top: 5px;
+  text-indent: -10px;
+  padding-left: 20px;
+}
+
 .nav-tabs > li a {
   border-top: 3px solid transparent !important;
   border-bottom: none !important;

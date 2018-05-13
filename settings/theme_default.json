@@ -30,6 +30,7 @@
     "font": "HelveticaNeue",
     "fontSize": "45",
     "fontWeight": "Medium",
+    "fontTransform": "none",
     "color": ["#ffffff", "#ebec00", "#ff0000"],
     "stroke": {
       "color": "#000000",
