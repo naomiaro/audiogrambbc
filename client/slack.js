@@ -3,7 +3,7 @@ var utils = require('./utils');
 function sendMessage(payload) {
 	// Whitelist logging is done direclty within whitelist.html, so update the webook there too if it changes
 	var webhook = {
-					"live" : "https://hooks.slack.com/services/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",
+					"live" : " https://hooks.slack.com/services/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",
 					"dev" : "https://hooks.slack.com/services/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"
 				  };
 	var url = (window.location.href.includes("localhost")) ? webhook.dev : webhook.live;
