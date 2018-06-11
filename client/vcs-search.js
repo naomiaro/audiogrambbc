@@ -85,7 +85,7 @@ function vcsSearch(id, media) {
     .fail(function(jqXHR, textStatus, errorThrown) {
         d3.select('#vcs-results').classed('hidden', true);
         utils.setClass('error', "An internal error occured searching for VCS item '" + item + "'. " + errorThrown);
-        // d3.select("#vcs-results").html("<b>An internal error occured.</b><br/>Please try again, or <a href='mailto:jonty.usborne@bbc.co.uk'>report the issue</a>.").classed("error", true);
+        // d3.select("#vcs-results").html("<b>An internal error occured.</b><br/>Please try again, or <a href='mailto:audiogram@bbcnewslabs.co.uk'>report the issue</a>.").classed("error", true);
         console.log(errorThrown);
         // utils.setClass(null);
     })
