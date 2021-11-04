@@ -1,3 +1,12 @@
+```sh
+> docker run --name bbcaudiogram-redis -d redis
+```
+
+```sh
+> docker run -p 8081:8081 -t -i --link bbcaudiogram-redis:redis --env REDIS_MODE='docker' bbcaudiogram
+```
+
+
 # Audiogram
 
 [![Build Status](https://travis-ci.org/nypublicradio/audiogram.svg?branch=alpha)](https://travis-ci.org/nypublicradio/audiogram)
