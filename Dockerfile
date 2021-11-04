@@ -9,7 +9,7 @@ software-properties-common --yes \
 redis-server --yes \
 python --yes
 
-RUN add-apt-repository ppa:jonathonf/ffmpeg-3 -y
+RUN add-apt-repository ppa:jonathonf/ffmpeg-4 -y
 RUN apt-get update --yes && apt-get upgrade --yes
 RUN apt-get install ffmpeg -y
 
